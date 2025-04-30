@@ -1,0 +1,40 @@
+src/
+├── api/                        # Thư mục chứa tất cả các API
+│   ├── authApi.js              # API liên quan đến auth (đăng nhập, đăng ký, verify, quên mật khẩu)
+│   ├── lessonApi.js            # API cho bài học (CRUD)
+│   └── exerciseApi.js          # API cho bài tập (CRUD)
+├── components/                 # Các component tái sử dụng
+│   ├── Layout.jsx              # Layout chung cho các trang (header, sidebar, footer)
+│   └── ProtectedRoute.jsx      # Component bảo vệ route
+├── pages/                      # Các trang chính
+│   ├── Start.jsx               # Trang bắt đầu độc lập
+│   ├── auth/                   # Các trang liên quan đến auth
+│   │   ├── Login.jsx           # Tab đăng nhập
+│   │   ├── Register.jsx        # Tab đăng ký
+│   │   ├── Auth.jsx            # Trang chứa 2 tab (đăng nhập/đăng ký)
+│   │   ├── ForgotPassword.jsx  # Trang quên mật khẩu
+│   │   └── authSlice.js        # Redux slice cho auth
+│   ├── admin/                  # Phân hệ Admin
+│   │   ├── dashboard/          # Dashboard Admin
+│   │   │   └── AdminDashboard.jsx
+│   │   ├── lessons/            # Quản lý bài học (CRUD)
+│   │   │   ├── LessonList.jsx  # Danh sách bài học
+│   │   │   ├── LessonCreate.jsx # Tạo bài học
+│   │   │   └── LessonEdit.jsx  # Sửa bài học
+│   │   └── exercises/          # Quản lý bài tập (CRUD)
+│   │       ├── ExerciseList.jsx  # Danh sách bài tập
+│   │       ├── ExerciseCreate.jsx # Tạo bài tập
+│   │       └── ExerciseEdit.jsx  # Sửa bài tập
+│   └── user/                   # Phân hệ User
+│       ├── dashboard/          # Dashboard User
+│       │   └── UserDashboard.jsx
+│       ├── lessons/            # Chức năng bài học cho User
+│       │   ├── LessonList.jsx  # Danh sách bài học
+│       │   └── LessonDetail.jsx # Xem và làm bài học
+│       └── exercises/          # Chức năng bài tập cho User
+│           ├── ExerciseList.jsx  # Danh sách bài tập
+│           └── ExerciseDetail.jsx # Xem và làm bài tập
+├── routes/                     # Cấu hình router
+│   └── AppRouter.jsx
+└── store/                      # Redux store
+    └── index.js
