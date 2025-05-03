@@ -10,15 +10,17 @@ const AuthPage = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('login');
 
+  // Chuyển hướng nếu đang ở /auth
   useEffect(() => {
-    if (location.pathname.includes('register')) {
-      setActiveTab('register');
-    } else if (location.pathname.includes('login')) {
-      setActiveTab('login');
-    } else if (location.pathname.includes('forgot-password')) {
-      setActiveTab(null);
+    if (location.pathname === '/auth') {
+      navigate('/auth/login', { replace: true });
     }
-  }, [location.pathname]);
+
+    const path = location.pathname;
+    if (path.includes('register')) setActiveTab('register');
+    else if (path.includes('login')) setActiveTab('login');
+    else if (path.includes('forgot-password')) setActiveTab(null);
+  }, [location.pathname, navigate]);
 
   const switchToLogin = () => {
     setActiveTab('login');

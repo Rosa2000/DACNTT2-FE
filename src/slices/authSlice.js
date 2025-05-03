@@ -95,6 +95,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
+    isAuthenticated: false,
     status: 'idle',
     error: null,
     successMessage: null,
@@ -102,14 +103,20 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
+      state.isAuthenticated = false;
       state.status = 'idle';
       state.error = null;
       state.successMessage = null;
       localStorage.removeItem('token');
     },
+    clearMessages: (state) => {
+      state.error = null;
+      state.successMessage = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Xử lý đăng nhập
       .addCase(loginUserAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -123,6 +130,7 @@ const authSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
+      // Xử lý đăng ký tài khoản
       .addCase(registerUserAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -135,6 +143,7 @@ const authSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
+      // Xử lý quên mật khẩu
       .addCase(forgotPasswordRequestAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -150,6 +159,7 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.successMessage = null;
       })
+      // Xử lý xác thực đăng nhập
       .addCase(verifyLoginAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -157,11 +167,13 @@ const authSlice = createSlice({
       .addCase(verifyLoginAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.user = action.payload;
+        state.isAuthenticated = true;
         state.error = null;
       })
       .addCase(verifyLoginAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+        state.isAuthenticated = true;
         state.user = null;
       });
   },

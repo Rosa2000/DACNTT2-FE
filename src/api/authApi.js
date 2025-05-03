@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5055/v1/auth_management';
+const API_URL = `${process.env.REACT_APP_BASE_URL}/auth_management`;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -27,7 +27,7 @@ api.interceptors.response.use(
       // Không điều hướng ở đây để tránh xung đột với logic trong authSlice
       return Promise.reject(error);
     }
-    const errorMessage = error.response?.data?.message || 'Lỗi không xác định từ server';
+    const errorMessage = error.response?.data?.message || error.message || 'Lỗi không xác định từ server';
     return Promise.reject({ ...error, message: errorMessage });
   }
 );
@@ -49,5 +49,8 @@ export const register = (data) =>
 
 export const verifyLogin = () =>
   api.get('/verify_login');
+
+export const verifyEmail = (token) =>
+  api.get(`/verify-email?token=${token}`);
 
 export default api;

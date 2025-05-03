@@ -1,20 +1,20 @@
-import { React, useState, useEffect } from 'react'; // Thêm useEffect
+import { React, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { logout } from '../../pages/auth'; // Import từ index.js của auth
+import { logout } from '../../slices/authSlice';
 import styles from './Layout.module.css';
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth); // Lấy thông tin người dùng từ Redux
+  const { user } = useSelector((state) => state.auth);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const isLoggedIn = !!user; // Kiểm tra trạng thái đăng nhập
-  const username = user?.fullname;
+  // Kiểm tra trạng thái đăng nhập
+  const isLoggedIn = !!user; 
+  const username = user?.data?.user?.fullname;
 
-  // Kiểm tra trạng thái đăng nhập và điều hướng nếu chưa đăng nhập
   useEffect(() => {
     if (!isLoggedIn) {
       toast.error('Vui lòng đăng nhập để truy cập!');
