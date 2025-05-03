@@ -7,6 +7,7 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.7.0",
     "all": "^0.0.0",
+    "axios": "^1.9.0",
     "cra-template-redux": "2.0.0",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
