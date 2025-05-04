@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUserAsync } from '.'; // Import từ index.js
+import { loginUserAsync, verifyLoginAsync } from '../../slices/authSlice';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
@@ -11,17 +11,32 @@ import { toast } from 'react-toastify';
 const Login = ({ switchToForgotPassword }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { status, error } = useSelector((state) => state.auth);
+  const { status } = useSelector((state) => state.auth);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login form submitted:', { username, password });
+    setLoginError(null); // Xóa lỗi cũ trước khi gửi request
     dispatch(loginUserAsync({ username, password })).then((result) => {
       if (result.meta.requestStatus === 'fulfilled') {
-        toast.success('Đăng nhập thành công!');
-        navigate('/dashboard');
+        console.log('Login successful:', result.payload);
+        dispatch(verifyLoginAsync()).then((verifyResult) => {
+          if (verifyResult.meta.requestStatus === 'fulfilled') {
+            toast.success('Đăng nhập thành công!');
+            const groupId = verifyResult.payload?.user_group?.[0]?.group_id;
+            if (groupId === 1) {
+              navigate('/admin/dashboard');
+            } else {
+              navigate('/user/dashboard');
+            }
+          } else {
+            setLoginError('Không thể xác thực tài khoản');
+          }
+        });
+      } else {
+        setLoginError('Tên đăng nhập hoặc mật khẩu không đúng');
       }
     });
   };
@@ -56,8 +71,7 @@ const Login = ({ switchToForgotPassword }) => {
     <div className={styles['form-content']}>
       <h2 className={styles['form-title']}>Đăng Nhập</h2>
       <form onSubmit={handleSubmit}>
-        {error && <div className={styles['error-message']}>{error}</div>}
-        <div className={styles['form-group']}>
+          {loginError && <div className={styles['error-message']}>{loginError}</div>}        <div className={styles['form-group']}>
           <label className={styles.label} htmlFor="username">
             Tên đăng nhập
           </label>

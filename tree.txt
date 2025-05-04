@@ -2,18 +2,26 @@ src/
 ├── api/                        # Thư mục chứa tất cả các API
 │   ├── authApi.js              # API liên quan đến auth (đăng nhập, đăng ký, verify, quên mật khẩu)
 │   ├── lessonApi.js            # API cho bài học (CRUD)
-│   └── exerciseApi.js          # API cho bài tập (CRUD)
+│   ├── exerciseApi.js          # API cho bài tập (CRUD)
+│   ├── userManagementApi.js    # API quản lý người dùng
+│   └── index.js                # export api trong thư mục
 ├── components/                 # Các component tái sử dụng
-│   ├── Layout.jsx              # Layout chung cho các trang (header, sidebar, footer)
+|   ├──layout/
+│       ├── Layout.jsx          # Layout chung cho các trang (header, sidebar, footer)
+│       ├── Layout.module.css   # css của Layout
+│   ├── NotAuthorized.jsx       # trang không có quyền truy cập
 │   └── ProtectedRoute.jsx      # Component bảo vệ route
 ├── pages/                      # Các trang chính
-│   ├── Start.jsx               # Trang bắt đầu độc lập
+│   ├── welcome/                # Trang bắt đầu độc lập
+│       ├── WelcomePage.jsx
+│       ├── WelcomePage.module.css
 │   ├── auth/                   # Các trang liên quan đến auth
 │   │   ├── Login.jsx           # Tab đăng nhập
 │   │   ├── Register.jsx        # Tab đăng ký
-│   │   ├── Auth.jsx            # Trang chứa 2 tab (đăng nhập/đăng ký)
+│   │   ├── AuthPage.jsx        # Trang chứa 2 tab (đăng nhập/đăng ký)
 │   │   ├── ForgotPassword.jsx  # Trang quên mật khẩu
-│   │   └── authSlice.js        # Redux slice cho auth
+│   │   ├── index.js            
+│   │   └── AuthPage.module.css # Redux slice cho auth
 │   ├── admin/                  # Phân hệ Admin
 │   │   ├── dashboard/          # Dashboard Admin
 │   │   │   └── AdminDashboard.jsx
@@ -35,6 +43,18 @@ src/
 │           ├── ExerciseList.jsx  # Danh sách bài tập
 │           └── ExerciseDetail.jsx # Xem và làm bài tập
 ├── routes/                     # Cấu hình router
+│   ├──adminRoutes.jsx
+│   ├──userRoutes.jsx
 │   └── AppRouter.jsx
-└── store/                      # Redux store
-    └── index.js
+├── slices/
+│   ├──authSlice.js
+│   ├──exerciseSlice.js
+│   ├──lessonSlice.js
+│   └──index.js
+├── store/                      # Redux store
+│   └── store.js
+├──styles/
+│   └──theme.js
+├──App.css
+├──App.jsx
+└──index.js

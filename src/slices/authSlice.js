@@ -1,27 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { login, verifyLogin, register, forgotPassword } from '../api/authApi';
+import {
+  login,
+  loginWithGoogle,
+  // logout,
+  forgotPassword,
+  register,
+  verifyLogin,
+} from '../api/authApi';
+
+// const getRoleFromUserGroup = (user) => {
+//   const groupId = user?.user_group?.[0]?.group_id;
+//   console.log('User group ID:', groupId); // Debug
+//   if (groupId === 1) return 'admin';
+//   if (groupId === 2) return 'user';
+//   return 'unknown';
+// };
 
 export const loginUserAsync = createAsyncThunk(
   'auth/loginUser',
   async ({ username, password }, { rejectWithValue }) => {
     try {
       const response = await login(username, password);
-      console.log('Login response:', response.data); // Debug
-      // Backend trả về trực tiếp { user, accessToken }
-      const userData = response.data;
-      if (response.data.accessToken) {
-        localStorage.setItem('token', response.data.accessToken);
+      if (response.data.code === 0 && response.data.data?.accessToken) {
+        localStorage.setItem('token', response.data.data.accessToken);
+        return response.data.data; // Trả về { user, accessToken }
       }
-      return userData;
+      return rejectWithValue(response.data.message || 'Đăng nhập thất bại');
     } catch (error) {
-      console.log('Login error:', error.response?.data); // Debug
-      if (error.response?.status === 401) {
-        return rejectWithValue(error.response.data.message || 'Tên đăng nhập hoặc mật khẩu không đúng');
-      }
-      if (error.response?.status === 500) {
-        return rejectWithValue(error.response.data.message || 'Lỗi server, vui lòng thử lại sau');
-      }
-      return rejectWithValue(error.message || 'Lỗi kết nối đến server');
+      return rejectWithValue(error.response?.data?.message || 'Lỗi kết nối đến server');
     }
   }
 );
@@ -31,11 +37,9 @@ export const registerUserAsync = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await register(formData);
-      console.log('Register response:', response.data); // Debug
       // Backend trả về dữ liệu user trực tiếp
       return response.data || {};
     } catch (error) {
-      console.log('Register error:', error.response?.data); // Debug
       if (error.response?.status === 400) {
         return rejectWithValue(error.response.data.message || 'Thông tin không hợp lệ');
       }
@@ -50,16 +54,14 @@ export const registerUserAsync = createAsyncThunk(
   }
 );
 
-export const forgotPasswordRequestAsync = createAsyncThunk(
-  'auth/forgotPasswordRequest',
+export const forgotPasswordAsync = createAsyncThunk(
+  'auth/forgotPassword',
   async ({ email }, { rejectWithValue }) => {
     try {
       const response = await forgotPassword({ email });
-      console.log('Forgot password response:', response.data); // Debug
       // Backend trả về dữ liệu trực tiếp
       return response.data.message || 'Email khôi phục đã được gửi!';
     } catch (error) {
-      console.log('Forgot password error:', error.response?.data); // Debug
       if (error.response?.status === 404) {
         return rejectWithValue(error.response.data.message || 'Email không tồn tại');
       }
@@ -76,17 +78,15 @@ export const verifyLoginAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await verifyLogin();
-      console.log('Verify login response:', response.data); // Debug
-      return response.data || {};
+      if (response.data.code === 0 && response.data.data) {
+        return response.data.data; // Trả về thông tin user
+      }
+      return rejectWithValue(response.data.message || 'Không xác thực được');
     } catch (error) {
-      console.log('Verify login error:', error.response?.data); // Debug
-      if (error.response?.status === 401) {
-        return rejectWithValue('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+      if (error.response?.status === 401 || error.response?.data?.code === -3) {
+        return rejectWithValue('Phiên đăng nhập hết hạn hoặc không có quyền');
       }
-      if (error.response?.status === 500) {
-        return rejectWithValue(error.response.data.message || 'Lỗi server, vui lòng thử lại sau');
-      }
-      return rejectWithValue(error.message || 'Lỗi kết nối đến server');
+      return rejectWithValue(error.response?.data?.message || 'Lỗi kết nối đến server');
     }
   }
 );
@@ -96,6 +96,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     isAuthenticated: false,
+    role: null,
     status: 'idle',
     error: null,
     successMessage: null,
@@ -104,6 +105,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.role = null;
       state.status = 'idle';
       state.error = null;
       state.successMessage = null;
@@ -124,11 +126,16 @@ const authSlice = createSlice({
       .addCase(loginUserAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.user = action.payload.user || action.payload;
+        state.isAuthenticated = true;
+        // Xác định role dựa trên user_group
+        const groupId = action.payload.user?.user_group?.[0]?.group_id;
+        state.role = groupId === 1 ? 'admin' : groupId === 2 ? 'user' : 'unknown';
         state.error = null;
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+        state.isAuthenticated = false;
       })
       // Xử lý đăng ký tài khoản
       .addCase(registerUserAsync.pending, (state) => {
@@ -144,17 +151,17 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
       // Xử lý quên mật khẩu
-      .addCase(forgotPasswordRequestAsync.pending, (state) => {
+      .addCase(forgotPasswordAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
         state.successMessage = null;
       })
-      .addCase(forgotPasswordRequestAsync.fulfilled, (state, action) => {
+      .addCase(forgotPasswordAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.successMessage = action.payload;
         state.error = null;
       })
-      .addCase(forgotPasswordRequestAsync.rejected, (state, action) => {
+      .addCase(forgotPasswordAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
         state.successMessage = null;
@@ -167,17 +174,20 @@ const authSlice = createSlice({
       .addCase(verifyLoginAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.user = action.payload;
-        state.isAuthenticated = true;
+        state.isAuthenticated = !!action.payload && Object.keys(action.payload).length > 0;
+        // Xác định role dựa trên user_group
+        const groupId = action.payload?.user_group?.[0]?.group_id;
+        state.role = groupId === 1 ? 'admin' : groupId === 2 ? 'user' : 'unknown';
         state.error = null;
       })
       .addCase(verifyLoginAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
-        state.isAuthenticated = true;
+        state.isAuthenticated = false;
         state.user = null;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, clearMessages } = authSlice.actions;
 export default authSlice.reducer;

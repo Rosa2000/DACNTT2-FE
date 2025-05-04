@@ -56,14 +56,14 @@ const AuthPage = () => {
 
         <Routes>
           <Route
-            path="/login"
+            path="login"
             element={<Login switchToForgotPassword={switchToForgotPassword} />}
           />
           <Route
-            path="/register"
+            path="register"
             element={<Register switchToLogin={switchToLogin} />}
           />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
         </Routes>
       </div>
     </div>

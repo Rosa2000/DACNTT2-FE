@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { forgotPasswordRequestAsync } from '../../slices';
+import { forgotPasswordAsync } from '../../slices';
+import styles from './AuthPage.module.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(forgotPasswordRequestAsync({ email }));
+    dispatch(forgotPasswordAsync({ email }));
   };
 
   useEffect(() => {

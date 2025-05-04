@@ -8,24 +8,17 @@ import styles from './Layout.module.css';
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, role } = useSelector((state) => state.auth);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Kiểm tra trạng thái đăng nhập
-  const isLoggedIn = !!user; 
-  const username = user?.data?.user?.fullname;
-
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       toast.error('Vui lòng đăng nhập để truy cập!');
       navigate('/auth/login');
     }
-  }, [isLoggedIn, navigate]);
+  }, [isAuthenticated, navigate]);
 
-  // Nếu chưa đăng nhập, không render gì cả
-  if (!isLoggedIn) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -35,12 +28,13 @@ const Layout = ({ children }) => {
     dispatch(logout());
     toast.success('Đăng xuất thành công!');
     setIsDropdownOpen(false);
-    navigate('/');
+    navigate('/auth/login');
   };
+
+  const username = user?.fullname || user?.username || 'Người dùng';
 
   return (
     <div className={styles.layout}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles['header-container']}>
           <div className="flex items-center">
@@ -49,8 +43,8 @@ const Layout = ({ children }) => {
             </Link>
           </div>
           <nav className={styles.nav}>
-            {user.isAdmin ? (
-              // Header cho Admin
+            {role === 'admin' ? (
+              // Nếu là admin, hiển thị các liên kết quản lý
               <>
                 <Link to="/admin/vocabulary">Quản lý bài học</Link>
                 <Link to="/admin/quiz">Quản lý bài tập</Link>
@@ -58,7 +52,7 @@ const Layout = ({ children }) => {
                 <Link to="/admin/statistics">Thống kê</Link>
               </>
             ) : (
-              // Header cho User
+              // Nếu không phải admin, hiển thị các liên kết khác
               <>
                 <Link to="/">Trang Chủ</Link>
                 <Link to="/lessons">Học Ngữ Pháp</Link>
@@ -92,7 +86,7 @@ const Layout = ({ children }) => {
         </div>
       </header>
 
-      {/* Nội dung của trang */}
+      {/* Main Content */}
       <main className={styles.main}>{children}</main>
 
       {/* Footer */}

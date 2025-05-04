@@ -1,7 +1,6 @@
 // src/routes/adminRoutes.jsx
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AdminDashboard from '../pages/admin/dashboard/AdminDashboard';
 import LessonCreate from '../pages/admin/lessons/LessonCreate';
@@ -10,51 +9,49 @@ import ExerciseCreate from '../pages/admin/exercises/ExerciseCreate';
 import ExerciseEdit from '../pages/admin/exercises/ExerciseEdit';
 
 const AdminRoutes = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-
   return (
-    <>
+    <Routes>
       <Route
-        path="/admin/dashboard"
+        path="dashboard"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={user?.role === 'admin'}>
+          <ProtectedRoute isAdmin>
             <AdminDashboard />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/admin/lessons/create"
+        path="lessons/create"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={user?.role === 'admin'}>
+          <ProtectedRoute isAdmin>
             <LessonCreate />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/admin/lessons/edit/:id"
+        path="lessons/edit/:id"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={user?.role === 'admin'}>
+          <ProtectedRoute isAdmin>
             <LessonEdit />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/admin/exercises/create"
+        path="exercises/create"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={user?.role === 'admin'}>
+          <ProtectedRoute isAdmin>
             <ExerciseCreate />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/admin/exercises/edit/:id"
+        path="exercises/edit/:id"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={user?.role === 'admin'}>
+          <ProtectedRoute isAdmin>
             <ExerciseEdit />
           </ProtectedRoute>
         }
       />
-    </>
+    </Routes>
   );
 };
 

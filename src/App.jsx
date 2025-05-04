@@ -1,16 +1,21 @@
 // src/App.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { verifyLoginAsync } from './slices/authSlice';
+import { verifyLoginAsync, clearMessages } from './slices/authSlice';
 import AppRouter from './routes/AppRouter';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 
 function App() {
   const dispatch = useDispatch();
+  const hasVerified = useRef(false);
 
   useEffect(() => {
-    dispatch(verifyLoginAsync());
+    if (!hasVerified.current) {
+      dispatch(clearMessages());
+      dispatch(verifyLoginAsync());
+      hasVerified.current = true;
+    }
   }, [dispatch]);
 
   return (

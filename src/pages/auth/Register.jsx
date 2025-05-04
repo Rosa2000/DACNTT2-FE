@@ -16,6 +16,8 @@ const Register = ({ switchToLogin }) => {
     password: ''
   });
 
+  const [registerError, setRegisterError] = useState(null);
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData(prevState => ({
@@ -26,10 +28,14 @@ const Register = ({ switchToLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setRegisterError(null); // Xóa lỗi cũ
     dispatch(registerUserAsync(formData)).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
         toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
         switchToLogin();
+      } else {
+        setRegisterError(result.payload || "Đăng ký thất bại");
+        toast.error(result.payload || "Đăng ký thất bại");
       }
     });
   };
@@ -38,8 +44,7 @@ const Register = ({ switchToLogin }) => {
     <div className={styles['form-content']}>
       <h2 className={styles['form-title']}>Đăng Ký</h2>
       <form onSubmit={handleSubmit}>
-        {auth.error && <div className={styles["error-message"]}>{auth.error}</div>}
-        
+        {registerError && <div className={styles["error-message"]}>{registerError}</div>}         
         <div className={styles["form-group"]}>
           <label className={styles.label} htmlFor="fullname">Họ và tên</label>
           <input

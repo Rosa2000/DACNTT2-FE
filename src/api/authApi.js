@@ -10,6 +10,8 @@ api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization; //xoá header nếu không có token
   }
   return config;
 });
@@ -17,14 +19,11 @@ api.interceptors.request.use((config) => {
 // Response interceptor để xử lý lỗi 401
 api.interceptors.response.use(
   (response) => {
-    console.log('Response từ API:', response); // Debug response
     return response;
   },
   (error) => {
-    console.log('Error từ API:', error.response); // Debug lỗi
-    if (error.response?.status === 401) {
+        if (error.response?.status === 401|| error.response?.data?.code === -3) {
       localStorage.removeItem('token');
-      // Không điều hướng ở đây để tránh xung đột với logic trong authSlice
       return Promise.reject(error);
     }
     const errorMessage = error.response?.data?.message || error.message || 'Lỗi không xác định từ server';
