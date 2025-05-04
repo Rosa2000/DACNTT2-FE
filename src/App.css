@@ -14,6 +14,8 @@
   }
 }
 
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
 .App-header {
   min-height: 100vh;
   display: flex;
@@ -21,6 +23,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
+  font-family: 'Roboto', Arial, sans-serif;
 }
 
 .App-link {

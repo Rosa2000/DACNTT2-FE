@@ -13,6 +13,7 @@ code {
 }
 
 /* Reset CSS */
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 * {
   margin: 0;
   padding: 0;
@@ -27,8 +28,9 @@ html, body, #root {
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   line-height: 1.6;
+  
 }
 
 h1, h2, h3, h4, h5, h6 {
