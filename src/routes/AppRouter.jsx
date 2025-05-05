@@ -6,6 +6,7 @@ import AuthPage from '../pages/auth/AuthPage';
 import NotAuthorized from '../components/NotAuthorized';
 import AdminRoutes from './adminRoutes';
 import DashboardRedirect from '../components/DashboardRedirect';
+import UserRoutes from './userRoutes';
 
 const AppRouter = () => {
   const { isAuthenticated, status, user } = useSelector((state) => state.auth);
@@ -29,6 +30,9 @@ const AppRouter = () => {
 
       {/* Admin routes */}
       <Route path="/admin/*" element={<AdminRoutes />} />
+
+      {/* User routes */}
+      <Route path="/user/*" element={<UserRoutes />} />
 
       {/* Trang lỗi và fallback */}
       <Route path="/not-authorized" element={<NotAuthorized />} />

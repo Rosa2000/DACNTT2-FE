@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logout } from '../../slices/authSlice';
 import styles from './Layout.module.css';
+import { persistor } from '../../store';
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -28,6 +29,9 @@ const Layout = ({ children }) => {
     dispatch(logout());
     toast.success('Đăng xuất thành công!');
     setIsDropdownOpen(false);
+    persistor.purge();
+    localStorage.removeItem('token');
+    localStorage.removeItem('persist:root');
     navigate('/auth/login');
   };
 

@@ -83,6 +83,7 @@ export const verifyLoginAsync = createAsyncThunk(
       }
       return rejectWithValue(response.data.message || 'Không xác thực được');
     } catch (error) {
+      console.log('Verify error:', error);
       if (error.response?.status === 401 || error.response?.data?.code === -3) {
         return rejectWithValue('Phiên đăng nhập hết hạn hoặc không có quyền');
       }
@@ -109,7 +110,6 @@ const authSlice = createSlice({
       state.status = 'idle';
       state.error = null;
       state.successMessage = null;
-      localStorage.removeItem('token');
     },
     clearMessages: (state) => {
       state.error = null;

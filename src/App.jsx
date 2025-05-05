@@ -12,12 +12,16 @@ function App() {
 
   useEffect(() => {
     if (!hasVerified.current) {
-      dispatch(clearMessages());
-      dispatch(verifyLoginAsync());
+      const token = localStorage.getItem('token');
+      if (token) {
+        dispatch(clearMessages());
+        dispatch(verifyLoginAsync());
+      }
       hasVerified.current = true;
     }
   }, [dispatch]);
 
+  console.log('App component mounted. Verifying login status...', { hasVerified: hasVerified.current }, { token: localStorage.getItem('token') });
   return (
     <BrowserRouter>
       <div className="App">

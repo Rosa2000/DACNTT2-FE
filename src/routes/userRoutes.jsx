@@ -1,6 +1,6 @@
 // src/routes/userRoutes.jsx
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from '../components/ProtectedRoute';
 import UserDashboard from '../pages/user/dashboard/UserDashboard';
@@ -13,7 +13,7 @@ const UserRoutes = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   return (
-    <>
+    <Routes>
       <Route
         path="/dashboard"
         element={
@@ -54,7 +54,7 @@ const UserRoutes = () => {
           </ProtectedRoute>
         }
       />
-    </>
+    </Routes>
   );
 };
 

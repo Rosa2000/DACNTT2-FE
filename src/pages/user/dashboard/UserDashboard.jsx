@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../../../components/layout/Layout';
 import styles from './UserDashboard.module.css';
 
 const Dashboard = () => {
+  // const dispatch = useDispatch();
   // Giả lập dữ liệu người dùng và bài tập cuối cùng
-  const username = 'User'; // Có thể thay bằng dữ liệu thực tế từ API
+  // const username = 'User'; // Có thể thay bằng dữ liệu thực tế từ API
   const lastExercise = {
     title: 'Bài tập ngữ pháp: Thì hiện tại đơn',
     completedDate: '20/04/2025',
     score: '85/100',
   };
+
+  const { user } = useSelector((state) => state.auth);
+  const username = user?.fullname || user?.username || 'Người dùng';
 
   return (
     <Layout>
