@@ -50,8 +50,8 @@ const Layout = ({ children }) => {
             {role === 'admin' ? (
               // Nếu là admin, hiển thị các liên kết quản lý
               <>
-                <Link to="/admin/vocabulary">Quản lý bài học</Link>
-                <Link to="/admin/quiz">Quản lý bài tập</Link>
+                <Link to="/admin/lessons">Quản lý bài học</Link>
+                <Link to="/admin/exercises">Quản lý bài tập</Link>
                 <Link to="/admin/users">Quản lý người dùng</Link>
                 <Link to="/admin/statistics">Thống kê</Link>
               </>
@@ -59,9 +59,9 @@ const Layout = ({ children }) => {
               // Nếu không phải admin, hiển thị các liên kết khác
               <>
                 <Link to="/">Trang Chủ</Link>
-                <Link to="/lessons">Học Ngữ Pháp</Link>
-                <Link to="/exercises">Bài Tập</Link>
-                <Link to="/test">Kiểm Tra Trình Độ</Link>
+                <Link to="/user/lessons">Học Ngữ Pháp</Link>
+                <Link to="/user/exercises">Bài Tập</Link>
+                <Link to="/user/test">Kiểm Tra Trình Độ</Link>
               </>
             )}
             <div className={styles['user-menu']}>
@@ -71,7 +71,7 @@ const Layout = ({ children }) => {
               {isDropdownOpen && (
                 <div className={styles.dropdown}>
                   <Link
-                    to="/profile"
+                    to="/user/profile"
                     className={styles['dropdown-item']}
                     onClick={() => setIsDropdownOpen(false)}
                   >

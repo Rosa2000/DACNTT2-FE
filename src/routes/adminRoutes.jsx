@@ -5,6 +5,8 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import AdminDashboard from '../pages/admin/dashboard/AdminDashboard';
 import LessonCreate from '../pages/admin/lessons/LessonCreate';
 import LessonEdit from '../pages/admin/lessons/LessonEdit';
+import LessonList from '../pages/admin/lessons/LessonList';
+import ExerciseList from '../pages/admin/exercises/ExerciseList';
 import ExerciseCreate from '../pages/admin/exercises/ExerciseCreate';
 import ExerciseEdit from '../pages/admin/exercises/ExerciseEdit';
 
@@ -16,6 +18,14 @@ const AdminRoutes = () => {
         element={
           <ProtectedRoute isAdmin>
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="lessons"
+        element={
+          <ProtectedRoute isAdmin>
+            <LessonList />
           </ProtectedRoute>
         }
       />
@@ -32,6 +42,14 @@ const AdminRoutes = () => {
         element={
           <ProtectedRoute isAdmin>
             <LessonEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="exercises"
+        element={
+          <ProtectedRoute isAdmin>
+            <ExerciseList />
           </ProtectedRoute>
         }
       />

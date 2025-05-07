@@ -1,0 +1,87 @@
+.card {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .content {
+    flex: 1;
+  }
+  
+  .subtitle {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+    text-align: center;
+  }
+  
+  .description {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .buttonContainer {
+    margin-top: auto;
+  }
+  
+  .solidButton {
+    width: 100%;
+    background-color: #58cc02;
+    color: white;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .solidButton:hover {
+    background-color: #46a202;
+  }
+  
+  .outlinedButton {
+    width: 100%;
+    background-color: white;
+    color: #1f2937;
+    border: 1px solid #1f2937;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+  
+  .outlinedButton:hover {
+    background-color: #58cc02;
+    border-color: #58cc02;
+    color: white;
+  }
+  

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.BASE_URL + 'lesson';
+const API_URL = process.env.BASE_URL + 'lessons';
 
 const api = axios.create({
   baseURL: API_URL, 

@@ -1,0 +1,24 @@
+:global(.react-calendar-heatmap .color-empty) {
+    fill: #eeeeee;
+}
+
+:global(.react-calendar-heatmap .color-low) {
+    fill: #d0f3c2;
+}
+
+:global(.react-calendar-heatmap .color-medium) {
+    fill: #a4e786;
+}
+
+:global(.react-calendar-heatmap .color-high) {
+    fill: #58cc02;
+}
+
+:global(.react-calendar-heatmap .color-very-high) {
+    fill: #008000;
+}
+
+:global(.react-calendar-heatmap rect) {
+    rx: 6px;
+    ry: 6px;
+}

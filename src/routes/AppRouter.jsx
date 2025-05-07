@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import WelcomePage from '../pages/welcome/WelcomePage';
 import AuthPage from '../pages/auth/AuthPage';
-import NotAuthorized from '../components/NotAuthorized';
+import NotAuthorized from '../components/notAuthorized/NotAuthorized';
 import AdminRoutes from './adminRoutes';
 import DashboardRedirect from '../components/DashboardRedirect';
 import UserRoutes from './userRoutes';

@@ -1,0 +1,113 @@
+.card {
+  display: grid;
+  grid-template-columns: 120px 1fr 140px;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(16, 30, 54, 0.06);
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(16, 30, 54, 0.12);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.level {
+  color: #27ae60;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #222;
+}
+
+.description {
+  color: #444;
+  font-size: 1rem;
+  margin: 0 0 8px 0;
+  max-width: 90%;
+}
+
+.meta {
+  font-size: 0.98rem;
+  color: #6c757d;
+  margin-bottom: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.meta span:not(:last-child)::after {
+  content: '•';
+  margin: 0 8px;
+  color: #bdbdbd;
+}
+
+.type {
+  color: #444;
+}
+
+.score {
+  color: #888;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.button {
+  padding: 10px 24px;
+  border: 1px solid #222;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.button:hover {
+  background: #f4f4f4;
+  color: #111;
+  border-color: #111;
+}
+
+@media (max-width: 768px) {
+  .card {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .left, .right {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .center {
+    margin-bottom: 8px;
+  }
+}
