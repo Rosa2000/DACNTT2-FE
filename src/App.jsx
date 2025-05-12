@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { verifyLoginAsync, clearMessages } from './slices/authSlice';
 import AppRouter from './routes/AppRouter';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import './App.css';
 
 function App() {
@@ -23,12 +24,13 @@ function App() {
 
   console.log('App component mounted. Verifying login status...', { hasVerified: hasVerified.current }, { token: localStorage.getItem('token') });
   return (
-    <BrowserRouter>
-      <div className="App">
-        <AppRouter />
-      </div>
-    </BrowserRouter>
-    
+    <HelmetProvider>
+      <BrowserRouter>
+        <div className="App">
+          <AppRouter />
+        </div>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

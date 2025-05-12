@@ -1,0 +1,88 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  outline: none;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Variants */
+.primary {
+  background-color: #58cc02;
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: #4caf02;
+  transform: translateY(-1px);
+}
+
+.secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.outline {
+  background-color: transparent;
+  color: #58cc02;
+  border: 2px solid #58cc02;
+}
+
+.outline:hover:not(:disabled) {
+  background-color: rgba(88, 204, 2, 0.1);
+  transform: translateY(-1px);
+}
+
+.text {
+  background-color: transparent;
+  color: #58cc02;
+  padding: 0;
+}
+
+.text:hover:not(:disabled) {
+  color: #4caf02;
+  background-color: transparent;
+}
+
+/* Sizes */
+.small {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.medium {
+  padding: 8px 16px;
+  font-size: 16px;
+}
+
+.large {
+  padding: 12px 24px;
+  font-size: 18px;
+}
+
+/* Full width */
+.fullWidth {
+  width: 100%;
+}
+
+/* Icon */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} 

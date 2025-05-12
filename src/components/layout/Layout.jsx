@@ -1,16 +1,31 @@
 import { React, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { logout } from '../../slices/authSlice';
+import {
+  UserOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  HomeOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  BarChartOutlined,
+  TeamOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import Button from '../button/Button';
 import styles from './Layout.module.css';
 import { persistor } from '../../store';
+import PageHeader from '../pageHeader/PageHeader';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBreadcrumb, pageHeaderRightContent }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, role } = useSelector((state) => state.auth);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -19,10 +34,18 @@ const Layout = ({ children }) => {
     }
   }, [isAuthenticated, navigate]);
 
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [location]);
+
   if (!isAuthenticated) return null;
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const handleLogout = () => {
@@ -37,75 +60,149 @@ const Layout = ({ children }) => {
 
   const username = user?.fullname || user?.username || 'Người dùng';
 
+  const isActive = (path) => {
+    return location.pathname.startsWith(path) ? styles.active : '';
+  };
+
+  const menuItems = role === 'admin' ? [
+    { path: '/admin/lessons', icon: <BookOutlined />, label: 'Quản lý bài học' },
+    { path: '/admin/exercises', icon: <FileTextOutlined />, label: 'Quản lý bài tập' },
+    { path: '/admin/users', icon: <TeamOutlined />, label: 'Quản lý người dùng' },
+    { path: '/admin/statistics', icon: <BarChartOutlined />, label: 'Thống kê' },
+  ] : [
+    { path: '/', icon: <HomeOutlined />, label: 'Trang Chủ' },
+    { path: '/user/lessons', icon: <BookOutlined />, label: 'Học Ngữ Pháp' },
+    { path: '/user/exercises', icon: <FileTextOutlined />, label: 'Bài Tập' },
+    { path: '/user/test', icon: <BarChartOutlined />, label: 'Kiểm Tra Trình Độ' },
+  ];
+
   return (
     <div className={styles.layout}>
-      <header className={styles.header}>
-        <div className={styles['header-container']}>
-          <div className="flex items-center">
-            <Link to="/" className={styles.logo}>
-              EZ English
+      <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
+        <div className={styles['sidebar-header']}>
+          <Link to="/" className={styles.logo}>
+            EZ English
+          </Link>
+          <Button
+            variant="text"
+            onClick={toggleSidebar}
+            className={styles['collapse-button']}
+            icon={<MenuOutlined />}
+          />
+        </div>
+
+        <nav className={styles['sidebar-nav']}>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`${styles['nav-item']} ${isActive(item.path)}`}
+            >
+              <span className={styles['nav-icon']}>{item.icon}</span>
+              {!isSidebarCollapsed && <span className={styles['nav-label']}>{item.label}</span>}
             </Link>
-          </div>
-          <nav className={styles.nav}>
-            {role === 'admin' ? (
-              // Nếu là admin, hiển thị các liên kết quản lý
-              <>
-                <Link to="/admin/lessons">Quản lý bài học</Link>
-                <Link to="/admin/exercises">Quản lý bài tập</Link>
-                <Link to="/admin/users">Quản lý người dùng</Link>
-                <Link to="/admin/statistics">Thống kê</Link>
-              </>
-            ) : (
-              // Nếu không phải admin, hiển thị các liên kết khác
-              <>
-                <Link to="/">Trang Chủ</Link>
-                <Link to="/user/lessons">Học Ngữ Pháp</Link>
-                <Link to="/user/exercises">Bài Tập</Link>
-                <Link to="/user/test">Kiểm Tra Trình Độ</Link>
-              </>
+          ))}
+        </nav>
+
+        <div className={styles['sidebar-footer']}>
+          <div className={styles['user-menu']}>
+            <Button
+              variant="text"
+              onClick={toggleDropdown}
+              className={styles['user-button']}
+              icon={<UserOutlined className={styles['user-icon']} />}
+            >
+              {!isSidebarCollapsed && <span className={styles['username']}>{username}</span>}
+            </Button>
+            {isDropdownOpen && (
+              <div className={styles.dropdown}>
+                <Link
+                  to="/user/profile"
+                  className={styles['dropdown-item']}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <UserOutlined /> Hồ sơ
+                </Link>
+                <Button
+                  variant="text"
+                  onClick={handleLogout}
+                  className={styles['dropdown-item']}
+                  icon={<LogoutOutlined />}
+                >
+                  Đăng xuất
+                </Button>
+              </div>
             )}
-            <div className={styles['user-menu']}>
-              <button onClick={toggleDropdown} className={styles['user-button']}>
-                Xin chào {username} <span className={styles.arrow}>▼</span>
-              </button>
-              {isDropdownOpen && (
-                <div className={styles.dropdown}>
-                  <Link
-                    to="/user/profile"
-                    className={styles['dropdown-item']}
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    Hồ sơ
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className={styles['dropdown-item']}
-                  >
-                    Đăng xuất
-                  </button>
-                </div>
-              )}
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className={styles.main}>{children}</main>
-
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles['footer-content']}>
-          <h4>Liên Hệ Với Chúng Tôi</h4>
-          <p>Email: support@ezenglish.com | Hotline: 0123 456 789</p>
-          <div className={styles['social-links']}>
-            <a href="#">Facebook</a>
-            <a href="#">Instagram</a>
-            <a href="#">YouTube</a>
           </div>
-          <p className={styles.copyright}>© 2025 EZ English. All rights reserved.</p>
         </div>
-      </footer>
+      </aside>
+
+      <div className={`${styles['main-container']} ${isSidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
+        {pageHeaderTitle && (
+          <PageHeader 
+            title={pageHeaderTitle} 
+            subtitle={pageHeaderSubtitle} 
+            breadcrumb={pageHeaderBreadcrumb} 
+            rightContent={pageHeaderRightContent}
+          />
+        )}
+        <main className={styles.main}>{children}</main>
+
+        <footer className={styles.footer}>
+          <div className={styles['footer-content']}>
+            <div className={styles['footer-section']}>
+              <h4>EZ English</h4>
+              <p>Nền tảng học tiếng Anh trực tuyến hàng đầu Việt Nam</p>
+              <p>Giúp bạn học tiếng Anh một cách hiệu quả và thú vị</p>
+            </div>
+            <div className={styles['footer-section']}>
+              <h4>Liên Hệ</h4>
+              <p>
+                <strong>Email:</strong> support@ezenglish.com
+              </p>
+              <p>
+                <strong>Hotline:</strong> 0123 456 789
+              </p>
+              <p>
+                <strong>Địa chỉ:</strong> 123 Đường ABC, Quận XYZ, TP.HCM
+              </p>
+            </div>
+            <div className={styles['footer-section']}>
+              <h4>Theo Dõi Chúng Tôi</h4>
+              <div className={styles['social-links']}>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <i className="fab fa-facebook"></i> Facebook
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <i className="fab fa-instagram"></i> Instagram
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <i className="fab fa-youtube"></i> YouTube
+                </a>
+              </div>
+            </div>
+            <div className={styles['footer-section']}>
+              <h4>Liên Kết Nhanh</h4>
+              <div className={styles['quick-links']}>
+                <Link to="/about">Về Chúng Tôi</Link>
+                <Link to="/privacy">Chính Sách Bảo Mật</Link>
+                <Link to="/terms">Điều Khoản Sử Dụng</Link>
+                <Link to="/faq">Câu Hỏi Thường Gặp</Link>
+              </div>
+            </div>
+          </div>
+          <div className={styles['footer-bottom']}>
+            <p className={styles.copyright}>
+              © 2024 EZ English. All rights reserved.
+            </p>
+            <div className={styles['footer-bottom-links']}>
+              <Link to="/privacy">Bảo Mật</Link>
+              <Link to="/terms">Điều Khoản</Link>
+              <Link to="/sitemap">Sitemap</Link>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };
