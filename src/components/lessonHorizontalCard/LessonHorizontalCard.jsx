@@ -5,8 +5,7 @@ const LessonHorizontalCard = ({
   title,
   level,
   type,
-  score,
-  description,
+  category,
   buttonText = 'Làm bài',
   onButtonClick
 }) => {
@@ -17,10 +16,9 @@ const LessonHorizontalCard = ({
       </div>
       <div className={styles.center}>
         <h3 className={styles.title}>{title}</h3>
-        <p className={styles.description}>{description}</p>
         <div className={styles.meta}>
           <span className={styles.type}>{type}</span>
-          <span className={styles.score}>Max Score: {score}</span>
+          {category && <span className={styles.category}>{category}</span>}
         </div>
       </div>
       <div className={styles.right}>

@@ -22,7 +22,6 @@ function App() {
     }
   }, [dispatch]);
 
-  console.log('App component mounted. Verifying login status...', { hasVerified: hasVerified.current }, { token: localStorage.getItem('token') });
   return (
     <HelmetProvider>
       <BrowserRouter>

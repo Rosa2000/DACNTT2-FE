@@ -1,45 +1,42 @@
 .card {
-  display: grid;
-  grid-template-columns: 120px 1fr 140px;
+  display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(16, 30, 54, 0.06);
-  padding: 24px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.2s;
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(16, 30, 54, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .left {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  height: 100%;
+  padding: 0 1rem;
 }
 
 .level {
-  color: #27ae60;
-  font-weight: 600;
-  font-size: 1.1rem;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #374151;
 }
 
 .center {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  flex: 1;
+  padding: 0 1rem;
 }
 
 .title {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #222;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
 }
 
 .description {
@@ -50,61 +47,44 @@
 }
 
 .meta {
-  font-size: 0.98rem;
-  color: #6c757d;
-  margin-bottom: 0;
   display: flex;
-  gap: 8px;
+  gap: 1rem;
   align-items: center;
-  justify-content: center;
 }
 
-.meta span:not(:last-child)::after {
-  content: '•';
-  margin: 0 8px;
-  color: #bdbdbd;
-}
-
-.type {
-  color: #444;
-}
-
-.score {
-  color: #888;
+.type, .category {
+  font-size: 0.875rem;
+  color: #6b7280;
+  padding: 0.25rem 0.75rem;
+  background: #f3f4f6;
+  border-radius: 999px;
 }
 
 .right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
+  padding: 0 1rem;
 }
 
 .button {
-  padding: 10px 24px;
-  border: 1px solid #222;
-  border-radius: 8px;
-  background: #fff;
-  color: #222;
-  font-weight: 500;
-  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #58cc02;
+  color: white;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .button:hover {
-  background: #f4f4f4;
-  color: #111;
-  border-color: #111;
+  background: #46a202;
 }
 
 @media (max-width: 768px) {
   .card {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     padding: 16px;
   }
   .left, .right {
-    justify-content: center;
     margin-bottom: 8px;
   }
   .center {

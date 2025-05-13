@@ -1,7 +1,8 @@
 .container {
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 48px;
 }
 
 .header {
@@ -34,9 +35,8 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
 /* Đảm bảo tiêu đề trong Card luôn được căn giữa */
@@ -61,6 +61,18 @@
     font-size: 1.5rem;
   }
 
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
   .cardGrid {
     grid-template-columns: 1fr;
   }

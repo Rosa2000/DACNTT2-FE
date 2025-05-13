@@ -21,7 +21,6 @@ const ProtectedRoute = ({ children, isAdmin = false }) => {
 
   if (!isAuthenticated || (isAdmin && role !== 'admin')) return null;
 
-  console.log('ProtectedRoute: User is authenticated and authorized.', { isAuthenticated, role });
   return children;
 };
 

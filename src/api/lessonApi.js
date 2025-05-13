@@ -1,21 +1,50 @@
 import axios from 'axios';
 
-const API_URL = process.env.BASE_URL + 'lessons';
+const API_URL = `${process.env.REACT_APP_BASE_URL}/lesson`;
 
 const api = axios.create({
-  baseURL: API_URL, 
+  baseURL: API_URL,
 });
 
+// Thêm token vào header 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization; //xoá header nếu không có token
   }
   return config;
 });
 
-export const getLessons = () => api.get('/lessons');
-export const getLessonById = (id) => api.get(`/lessons/${id}`);
-export const createLesson = (data) => api.post('/lessons', data);
-export const updateLesson = (id, data) => api.put(`/lessons/${id}`, data);
-export const deleteLesson = (id) => api.delete(`/lessons/${id}`);
+// Response interceptor để xử lý lỗi 401
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401 || error.response?.data?.code === -3) {
+      localStorage.removeItem('token');
+      return Promise.reject(error);
+    }
+    const errorMessage = error.response?.data?.message || error.message || 'Lỗi không xác định từ server';
+    return Promise.reject({ ...error, message: errorMessage });
+  }
+);
+
+export const getLessons = (params) => 
+  api.get('/data_lessons', { params });
+
+export const getLessonById = (id) => 
+  api.get('/data_lessons', { params: { id } });
+
+export const createLesson = (data) => 
+  api.post('/add_lesson', data);
+
+export const updateLesson = (id, data) => 
+  api.post('/edit_lesson', data, { params: { id } });
+
+export const deleteLesson = (id) => 
+  api.post('/delete_lesson', null, { params: { id } });
+
+export default api;
