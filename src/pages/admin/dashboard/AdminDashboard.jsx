@@ -2,12 +2,32 @@ import React from 'react';
 import { Row, Col, Card, Statistic } from 'antd';
 import { UserOutlined, BookOutlined, CheckCircleOutlined, LineChartOutlined } from '@ant-design/icons';
 import Layout from '../../../components/layout/Layout';
-import UserGrowthChart from '../../../components/admin/charts/UserGrowthChart';
-import LearningProgressChart from '../../../components/admin/charts/LearningProgressChart';
+import TimeSeriesChart from '../../../components/timeSeriesChart/TimeSeriesChart';
+import GroupedColumnChart from '../../../components/groupedColumnChart/GroupedColumnChart';
 
 const title = 'Admin Dashboard';
 const description = 'Chào mừng đến với bảng điều khiển dành cho Admin.';
 const AdminDashboard = () => {
+  // Dữ liệu mẫu cho biểu đồ tăng trưởng người dùng
+  const userGrowthData = [
+    { date: '2024-01', value: 100 },
+    { date: '2024-02', value: 150 },
+    { date: '2024-03', value: 200 },
+    { date: '2024-04', value: 280 },
+    { date: '2024-05', value: 350 },
+    { date: '2024-06', value: 420 },
+  ];
+
+  // Dữ liệu mẫu cho biểu đồ tiến độ học tập
+  const learningProgressData = [
+    { category: 'Beginner', type: 'Hoàn thành', value: 75 },
+    { category: 'Beginner', type: 'Đang học', value: 25 },
+    { category: 'Intermediate', type: 'Hoàn thành', value: 45 },
+    { category: 'Intermediate', type: 'Đang học', value: 35 },
+    { category: 'Advanced', type: 'Hoàn thành', value: 30 },
+    { category: 'Advanced', type: 'Đang học', value: 20 },
+  ];
+
   return (
     <Layout>
       <div className="dashboard-container">
@@ -55,14 +75,20 @@ const AdminDashboard = () => {
         {/* Biểu đồ thống kê */}
         <Row gutter={16} style={{ marginTop: 16 }}>
           <Col span={12}>
-            <Card title="Tăng trưởng người dùng">
-              <UserGrowthChart />
-            </Card>
+            <TimeSeriesChart
+              title="Tăng trưởng người dùng"
+              data={userGrowthData}
+              yField="value"
+            />
           </Col>
           <Col span={12}>
-            <Card title="Tiến độ học tập">
-              <LearningProgressChart />
-            </Card>
+            <GroupedColumnChart
+              title="Tiến độ học tập"
+              data={learningProgressData}
+              xField="category"
+              yField="value"
+              seriesField="type"
+            />
           </Col>
         </Row>
 

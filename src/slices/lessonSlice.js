@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getLessons, getLessonById } from '../api/lessonApi';
+import { getLessons, getLessonById, createLesson as createLessonApi } from '../api/lessonApi';
 
 // Async thunks
 export const fetchLessons = createAsyncThunk(
@@ -22,6 +22,20 @@ export const fetchLessonById = createAsyncThunk(
       return response.data?.data?.data[0];
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Thunk tạo bài học mới
+export const createLesson = createAsyncThunk(
+  'lessons/createLesson',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await createLessonApi(data);
+      // Trả về dữ liệu bài học mới (nếu backend trả về)
+      return response.data?.data || data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Lỗi khi tạo bài học');
     }
   }
 );
@@ -94,6 +108,21 @@ const lessonSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.currentLesson = null;
+      })
+      .addCase(createLesson.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createLesson.fulfilled, (state, action) => {
+        state.loading = false;
+        // Push bài học mới vào đầu danh sách
+        if (action.payload) {
+          state.lessons = [action.payload, ...state.lessons];
+        }
+      })
+      .addCase(createLesson.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });
