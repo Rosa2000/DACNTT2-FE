@@ -4,10 +4,21 @@ import { getLessons, getLessonById, createLesson as createLessonApi } from '../a
 // Async thunks
 export const fetchLessons = createAsyncThunk(
   'lessons/fetchLessons',
-  async ({ level, category }, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 10, filters = '', level, category, status_id }, { rejectWithValue }) => {
     try {
-      const response = await getLessons({ level, category });
-      return Array.isArray(response?.data?.data?.data) ? response?.data?.data?.data : [];
+      const response = await getLessons({ 
+        page, 
+        pageSize, 
+        filters, 
+        level, 
+        category, 
+        status_id 
+      });
+      return {
+        data: Array.isArray(response?.data?.data?.data) ? response?.data?.data?.data : [],
+        total: response?.data?.data?.total || 0,
+        totalPages: response?.data?.data?.totalPages || 0
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -88,12 +99,16 @@ const lessonSlice = createSlice({
       })
       .addCase(fetchLessons.fulfilled, (state, action) => {
         state.loading = false;
-        state.lessons = Array.isArray(action.payload) ? action.payload : [];
+        state.lessons = action.payload.data;
+        state.total = action.payload.total;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchLessons.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.lessons = [];
+        state.total = 0;
+        state.totalPages = 0;
       })
       // Fetch lesson by id
       .addCase(fetchLessonById.pending, (state) => {

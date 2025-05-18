@@ -53,6 +53,7 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
     toast.success('Đăng xuất thành công!');
     setIsDropdownOpen(false);
     persistor.purge();
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('persist:root');
     navigate('/auth/login');

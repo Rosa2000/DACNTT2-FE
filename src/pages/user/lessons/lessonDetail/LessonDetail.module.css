@@ -3,6 +3,7 @@
   max-width: 100%;
   margin: 0;
   padding: 24px 48px;
+  text-align: left;
 }
 
 .header {
@@ -34,6 +35,7 @@
 
 .content {
   margin-bottom: 3rem;
+  text-align: left;
 }
 
 .section {
@@ -168,35 +170,41 @@
   margin: 2rem 0 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #eee;
+  text-align: left;
 }
 
 .content h2 {
   font-size: 1.75rem;
   color: #444;
   margin: 1.5rem 0 1rem;
+  text-align: left;
 }
 
 .content h3 {
   font-size: 1.5rem;
   color: #555;
   margin: 1.25rem 0 0.75rem;
+  text-align: left;
 }
 
 .content p {
   margin: 1rem 0;
   line-height: 1.6;
   color: #666;
+  text-align: left;
 }
 
 .content ul, .content ol {
   margin: 1rem 0;
   padding-left: 2rem;
+  text-align: left;
 }
 
 .content li {
   margin: 0.5rem 0;
   line-height: 1.6;
   color: #666;
+  text-align: left;
 }
 
 .content strong {
@@ -210,10 +218,12 @@
   background: #f8f9fa;
   border-left: 4px solid #007bff;
   color: #666;
+  text-align: left;
 }
 
 .content blockquote p {
   margin: 0;
+  text-align: left;
 }
 
 .content code {
@@ -254,13 +264,15 @@
   padding: 2.5rem 2rem;
   margin: 0 auto;
   max-width: 800px;
+  text-align: left;
 }
 
 .meta {
   display: flex;
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: flex-start;
   margin: 1rem 0;
+  text-align: left;
 }
 
 .type, .category, .level {

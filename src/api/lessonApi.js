@@ -33,7 +33,16 @@ api.interceptors.response.use(
 );
 
 export const getLessons = (params) => 
-  api.get('/data_lessons', { params });
+  api.get('/data_lessons', { 
+    params: {
+      page: params.page || 1,
+      pageSize: params.pageSize || 10,
+      filters: params.filters || '',
+      level: params.level,
+      category: params.category,
+      status_id: params.status_id
+    }
+  });
 
 export const getLessonById = (id) => 
   api.get('/data_lessons', { params: { id } });

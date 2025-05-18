@@ -22,9 +22,15 @@ const LessonList = () => {
   const [levelFilter, setLevelFilter] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [statusFilter, setStatusFilter] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   const fetchWithAllFilters = (newFilters = {}) => {
     dispatch(fetchLessons({
+      page: pagination.current,
+      pageSize: pagination.pageSize,
       filters: searchText,
       level: levelFilter,
       category: categoryFilter,
@@ -36,7 +42,7 @@ const LessonList = () => {
   useEffect(() => {
     fetchWithAllFilters();
     // eslint-disable-next-line
-  }, []);
+  }, [pagination.current, pagination.pageSize]);
 
   const handleCreateLesson = () => {
     navigate('/admin/lessons/create');
@@ -48,22 +54,51 @@ const LessonList = () => {
 
   const handleSearch = (value) => {
     setSearchText(value);
-    fetchWithAllFilters({ filters: value });
+    setPagination(prev => ({ ...prev, current: 1 }));
+    // Thêm debounce để tránh gọi API quá nhiều
+    const timeoutId = setTimeout(() => {
+      fetchWithAllFilters({ 
+        filters: value,
+        status_id: statusFilter // Giữ nguyên trạng thái khi tìm kiếm
+      });
+    }, 500);
+    return () => clearTimeout(timeoutId);
   };
 
   const handleLevelChange = (value) => {
     setLevelFilter(value);
+    setPagination(prev => ({ ...prev, current: 1 }));
     fetchWithAllFilters({ level: value });
   };
 
   const handleCategoryChange = (value) => {
     setCategoryFilter(value);
+    setPagination(prev => ({ ...prev, current: 1 }));
     fetchWithAllFilters({ category: value });
   };
 
   const handleStatusChange = (value) => {
     setStatusFilter(value);
-    fetchWithAllFilters({ status_id: value });
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchWithAllFilters({ 
+      status_id: value,
+      filters: searchText // Giữ nguyên từ khóa tìm kiếm khi thay đổi trạng thái
+    });
+  };
+
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
+  };
+
+  // Thêm hàm xử lý khi clear filter
+  const handleClearFilters = () => {
+    setSearchText('');
+    setStatusFilter(null);
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchWithAllFilters({
+      filters: '',
+      status_id: null
+    });
   };
 
   const columns = [
@@ -143,7 +178,10 @@ const LessonList = () => {
               placeholder="Tìm kiếm bài học..."
               prefix={<SearchOutlined />}
               onChange={(e) => handleSearch(e.target.value)}
+              value={searchText}
               style={{ width: 300 }}
+              allowClear
+              onClear={handleClearFilters}
             />
             <Select
               placeholder="Cấp độ"
@@ -173,6 +211,7 @@ const LessonList = () => {
               style={{ width: 150 }}
               onChange={handleStatusChange}
               value={statusFilter}
+              onClear={handleClearFilters}
             >
               <Option value={1}>Hoạt động</Option>
               <Option value={2}>Đã ẩn</Option>
@@ -194,10 +233,11 @@ const LessonList = () => {
             rowKey="id"
             loading={loading}
             pagination={{
-              pageSize: 10,
+              ...pagination,
               showSizeChanger: true,
               showTotal: (total) => `Tổng số ${total} bài học`,
             }}
+            onChange={handleTableChange}
           />
         </div>
       </div>
