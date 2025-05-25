@@ -1,0 +1,46 @@
+.container {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  max-width: 100%;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.errorText {
+  color: red;
+  margin-bottom: 16px;
+}
+
+.optionItem {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.optionInput {
+  flex-grow: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  .formActions {
+    flex-direction: column;
+  }
+  .optionItem {
+    /* Có thể cần điều chỉnh thêm cho mobile nếu phức tạp */
+  }
+}

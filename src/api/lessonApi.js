@@ -56,4 +56,8 @@ export const updateLesson = (id, data) =>
 export const deleteLesson = (id) => 
   api.post('/delete_lesson', null, { params: { id } });
 
+export const restoreLesson = (id) => {
+  return axios.post('/v1/lesson/restore_lesson', null, { params: { id } });
+};
+
 export default api;

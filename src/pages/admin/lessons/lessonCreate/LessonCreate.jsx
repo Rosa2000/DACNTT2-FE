@@ -5,6 +5,7 @@ import { Form, Input, Select, Button, message, Space } from 'antd';
 import Layout from '../../../../components/layout/Layout';
 import styles from './LessonCreate.module.css';
 import MarkdownEditor from '../../../../components/editor/MarkdownEditor';
+import MarkdownViewer from '../../../../components/markdownViewer/MarkdownViewer';
 import { createLesson } from '../../../../slices/lessonSlice';
 
 const { Option } = Select;
@@ -35,6 +36,7 @@ const LessonCreate = () => {
   const [form] = Form.useForm();
   const loading = useSelector(state => state.lessons.loading);
   const error = useSelector(state => state.lessons.error);
+  const [content, setContent] = useState(CONTENT_TEMPLATE);
 
   const handleSubmit = async (values) => {
     try {
@@ -57,6 +59,11 @@ const LessonCreate = () => {
 
   const handleCancel = () => {
     navigate('/admin/lessons');
+  };
+
+  const handleContentChange = (value) => {
+    setContent(value);
+    form.setFieldsValue({ content: value });
   };
 
   return (
@@ -102,14 +109,24 @@ const LessonCreate = () => {
               </Select>
             </Form.Item>
 
+            <div className={styles.editorContainer}>
+              <div className={styles.editor}>
             <Form.Item
               name="content"
               label="Nội dung bài học"
               initialValue={CONTENT_TEMPLATE}
               rules={[{ required: true, message: 'Vui lòng nhập nội dung bài học!' }]}
             >
-              <MarkdownEditor />
+                  <MarkdownEditor onChange={handleContentChange} placeholder="Nhập nội dung bài học..." />
             </Form.Item>
+              </div>
+              <div className={styles.preview}>
+                <h3>Xem trước</h3>
+                <div className={styles.previewContent}>
+                  <MarkdownViewer content={content} />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className={styles.formActions}>

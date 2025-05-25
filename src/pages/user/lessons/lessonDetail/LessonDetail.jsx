@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import ReactMarkdown from 'react-markdown';
 import Layout from "../../../../components/layout/Layout";
+import MarkdownViewer from '../../../../components/markdownViewer/MarkdownViewer';
 import styles from './LessonDetail.module.css';
 import { fetchLessonById } from '../../../../slices/lessonSlice';
 
@@ -76,7 +76,7 @@ const LessonDetail = () => {
     >
       <div className={styles.container}>
         <div className={styles.content}>
-          <ReactMarkdown>{lesson.content}</ReactMarkdown>
+          <MarkdownViewer content={lesson.content} />
         </div>
         <div className={styles.actions}>
           <button className={styles.button} onClick={handleStartExercise}>

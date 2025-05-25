@@ -1,0 +1,69 @@
+.dashboardContainer{
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 48px;
+}
+
+/* Styles for statistics cards */
+.statisticCard {
+  margin-bottom: 16px;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .dashboardContainer {
+    max-width: 100%;
+    padding: 20px 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboardContainer {
+    padding: 16px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboardContainer {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 8px;
+  }
+}
+.statisticCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  border-radius: 16px;
+  /* box-shadow: 0 2px 12px rgba(0,0,0,0.06); */
+  /* transition: box-shadow 0.2s; */
+  background: #fff;
+}
+.statisticCard .ant-statistic-content {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 8px;
+}
+.statisticCard .anticon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  color: #1890ff;
+}
+.statisticCard .ant-statistic-title {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}

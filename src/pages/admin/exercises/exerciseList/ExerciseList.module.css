@@ -1,14 +1,8 @@
 .container {
   padding: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 24px;
 }
 
@@ -18,21 +12,41 @@
   align-items: center;
 }
 
-.tableContainer {
+.lessonList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lessonGrid {
+  margin-top: 24px;
+}
+
+.lessonCard {
+  height: 100%;
+  transition: all 0.3s;
+}
+
+.lessonCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.exerciseCounts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 16px;
-  width: 100%;
-  overflow-x: auto;
+}
+
+.exerciseCounts :global(.ant-typography) {
+  color: rgba(0, 0, 0, 0.65);
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
   .container {
     padding: 16px;
-  }
-
-  .header {
-    flex-direction: column;
-    gap: 16px;
   }
 
   .filters {
@@ -59,4 +73,4 @@
   .ant-table {
     font-size: 13px;
   }
-} 
+}

@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../../../../components/layout/Layout';
 import styles from './LessonList.module.css';
 import { fetchLessons } from '../../../../slices/lessonSlice';
-import { Button, Table, Input, Select, Space, Tag } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Table, Input, Select, Space, Tag, Modal, message } from 'antd';
+import { PlusOutlined, SearchOutlined, UndoOutlined } from '@ant-design/icons';
+import { deleteLesson, updateLesson, restoreLesson } from '../../../../api/lessonApi';
+import CommonTable from '../../../../components/commonTable/CommonTable';
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 const STATUS_MAP = {
   1: { text: 'Hoạt động', color: 'green' },
@@ -17,7 +20,7 @@ const STATUS_MAP = {
 const LessonList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { lessons, loading, error } = useSelector((state) => state.lessons);
+  const { lessons, loading, error, total } = useSelector((state) => state.lessons);
   const [searchText, setSearchText] = useState('');
   const [levelFilter, setLevelFilter] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
@@ -52,51 +55,77 @@ const LessonList = () => {
     navigate(`/admin/lessons/edit/${id}`);
   };
 
+  const handleDeleteLesson = (id) => {
+    confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa bài học này?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        try {
+          const response = await deleteLesson(id);
+          if (response.data.code === 0) {
+            message.success('Xóa bài học thành công!');
+            fetchWithAllFilters();
+          } else {
+            message.error(response.data.message || 'Có lỗi xảy ra khi xóa bài học!');
+          }
+        } catch (error) {
+          message.error(error.message || 'Có lỗi xảy ra khi xóa bài học!');
+        }
+      }
+    });
+  };
+
+  const handleRestoreLesson = async (id) => {
+    try {
+      const res = await restoreLesson(id);
+      if (res.data.code === 0) {
+        message.success('Khôi phục bài học thành công!');
+        fetchWithAllFilters();
+      } else {
+        message.error(res.data.message || 'Khôi phục thất bại!');
+      }
+    } catch (err) {
+      message.error('Có lỗi xảy ra!');
+    }
+  };
+
   const handleSearch = (value) => {
     setSearchText(value);
-    setPagination(prev => ({ ...prev, current: 1 }));
-    // Thêm debounce để tránh gọi API quá nhiều
-    const timeoutId = setTimeout(() => {
-      fetchWithAllFilters({ 
-        filters: value,
-        status_id: statusFilter // Giữ nguyên trạng thái khi tìm kiếm
-      });
-    }, 500);
-    return () => clearTimeout(timeoutId);
+    setPagination({ ...pagination, current: 1 });
+    fetchWithAllFilters({ filters: value });
   };
 
   const handleLevelChange = (value) => {
     setLevelFilter(value);
-    setPagination(prev => ({ ...prev, current: 1 }));
+    setPagination({ ...pagination, current: 1 });
     fetchWithAllFilters({ level: value });
   };
 
   const handleCategoryChange = (value) => {
     setCategoryFilter(value);
-    setPagination(prev => ({ ...prev, current: 1 }));
+    setPagination({ ...pagination, current: 1 });
     fetchWithAllFilters({ category: value });
   };
 
   const handleStatusChange = (value) => {
     setStatusFilter(value);
-    setPagination(prev => ({ ...prev, current: 1 }));
-    fetchWithAllFilters({ 
-      status_id: value,
-      filters: searchText // Giữ nguyên từ khóa tìm kiếm khi thay đổi trạng thái
-    });
+    setPagination({ ...pagination, current: 1 });
+    fetchWithAllFilters({ status_id: value });
   };
 
-  const handleTableChange = (pagination) => {
-    setPagination(pagination);
-  };
-
-  // Thêm hàm xử lý khi clear filter
   const handleClearFilters = () => {
     setSearchText('');
+    setLevelFilter(null);
+    setCategoryFilter(null);
     setStatusFilter(null);
-    setPagination(prev => ({ ...prev, current: 1 }));
+    setPagination({ ...pagination, current: 1 });
     fetchWithAllFilters({
       filters: '',
+      level: null,
+      category: null,
       status_id: null
     });
   };
@@ -118,7 +147,6 @@ const LessonList = () => {
       title: 'Cấp độ',
       dataIndex: 'level',
       key: 'level',
-      width: 120,
       render: (level) => {
         const levelMap = {
           1: { text: 'Cơ bản', color: 'green' },
@@ -133,13 +161,11 @@ const LessonList = () => {
       title: 'Danh mục',
       dataIndex: 'category',
       key: 'category',
-      width: 150,
     },
     {
       title: 'Trạng thái',
       dataIndex: 'status_id',
       key: 'status_id',
-      width: 120,
       render: (status_id) => {
         const { text, color } = STATUS_MAP[status_id] || { text: 'Không xác định', color: 'default' };
         return <Tag color={color}>{text}</Tag>;
@@ -149,21 +175,26 @@ const LessonList = () => {
       title: 'Ngày tạo',
       dataIndex: 'created_date',
       key: 'created_date',
-      width: 150,
       render: (date) => new Date(date).toLocaleDateString('vi-VN'),
     },
     {
       title: 'Thao tác',
       key: 'action',
-      width: 150,
+      width: 220,
       render: (_, record) => (
         <Space size="middle">
           <Button type="link" onClick={() => handleEditLesson(record.id)}>
-            Sửa
+            <span>Sửa</span>
           </Button>
-          <Button type="link" danger>
-            Xóa
-          </Button>
+          {record.status_id === 1 ? (
+            <Button type="link" danger onClick={() => handleDeleteLesson(record.id)}>
+              <span>Xóa</span>
+            </Button>
+          ) : (
+            <Button type="link" icon={<UndoOutlined />} onClick={() => handleRestoreLesson(record.id)}>
+              <span>Khôi phục</span>
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -227,17 +258,22 @@ const LessonList = () => {
         </div>
 
         <div className={styles.tableContainer}>
-          <Table
+          <CommonTable
             columns={columns}
             dataSource={lessons}
-            rowKey="id"
             loading={loading}
             pagination={{
-              ...pagination,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: total,
               showSizeChanger: true,
-              showTotal: (total) => `Tổng số ${total} bài học`,
+              showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} bài học`,
             }}
-            onChange={handleTableChange}
+            onChange={(pagination) => setPagination({
+              current: pagination.current,
+              pageSize: pagination.pageSize
+            })}
+            scroll={{ x: 900 }}
           />
         </div>
       </div>

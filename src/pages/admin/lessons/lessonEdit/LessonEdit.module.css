@@ -59,6 +59,13 @@
   border: 1px solid #e5e7eb;
 }
 
+.error {
+  color: #dc2626;
+  text-align: center;
+  padding: 24px;
+  font-size: 1.1rem;
+}
+
 /* Responsive styles */
 @media (max-width: 1024px) {
   .editorContainer {
@@ -78,9 +85,5 @@
   
   .formActions {
     flex-direction: column;
-  }
-  
-  .formActions button {
-    width: 100%;
   }
 } 

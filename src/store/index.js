@@ -3,6 +3,8 @@ import authReducer from '../slices/authSlice';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import lessonReducer from '../slices/lessonSlice';
+import exerciseReducer from '../slices/exerciseSlice';
+
 const persistConfig = {
   key: 'root',
   storage,
@@ -15,6 +17,7 @@ const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     lessons: lessonReducer,
+    exercises: exerciseReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
