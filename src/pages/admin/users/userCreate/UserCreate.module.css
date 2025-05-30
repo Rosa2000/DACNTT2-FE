@@ -1,0 +1,33 @@
+.container {
+  padding: 24px;
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 48px;
+}
+
+.container h1 {
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.form {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form :global(.ant-form-item) {
+  margin-bottom: 16px;
+}
+
+.form :global(.ant-input),
+.form :global(.ant-select-selector) {
+  border-radius: 4px;
+}
+
+.form :global(.ant-btn) {
+  border-radius: 4px;
+  height: 40px;
+  padding: 0 24px;
+} 

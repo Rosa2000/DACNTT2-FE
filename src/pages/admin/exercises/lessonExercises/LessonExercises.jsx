@@ -50,7 +50,7 @@ const LessonExercises = () => {
     dispatch(fetchExercises({
       page: pagination.current,
       pageSize: pagination.pageSize,
-      lesson_id: lessonId,
+      lessonId: parseInt(lessonId),
       filters: searchText,
       type: typeFilter,
       status_id: statusFilter,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { forgotPasswordAsync } from '../../slices';
+import { forgotPasswordAsync } from '../../slices/authSlice';
 import styles from './AuthPage.module.css';
 
 const ForgotPassword = () => {

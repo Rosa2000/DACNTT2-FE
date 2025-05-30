@@ -10,10 +10,14 @@ import ExerciseList from '../pages/admin/exercises/exerciseList/ExerciseList';
 import LessonExercises from '../pages/admin/exercises/lessonExercises/LessonExercises';
 import ExerciseCreate from '../pages/admin/exercises/exerciseCreate/ExerciseCreate';
 import ExerciseEdit from '../pages/admin/exercises/exerciseEdit/ExerciseEdit';
+import UserList from '../pages/admin/users/userList/UserList';
+import UserCreate from '../pages/admin/users/userCreate/UserCreate';
+import UserEdit from '../pages/admin/users/userEdit/UserEdit';
 
 const AdminRoutes = () => {
   return (
     <Routes>
+      {/* Dashboard */}
       <Route
         path="dashboard"
         element={
@@ -22,6 +26,8 @@ const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* Lessons */}
       <Route
         path="lessons"
         element={
@@ -46,6 +52,8 @@ const AdminRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* Exercises */}
       <Route
         path="exercises"
         element={
@@ -75,6 +83,32 @@ const AdminRoutes = () => {
         element={
           <ProtectedRoute isAdmin>
             <ExerciseEdit />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Users */}
+      <Route
+        path="users"
+        element={
+          <ProtectedRoute isAdmin>
+            <UserList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="users/create"
+        element={
+          <ProtectedRoute isAdmin>
+            <UserCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="users/edit/:id"
+        element={
+          <ProtectedRoute isAdmin>
+            <UserEdit />
           </ProtectedRoute>
         }
       />

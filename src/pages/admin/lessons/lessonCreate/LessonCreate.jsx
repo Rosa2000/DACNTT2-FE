@@ -58,7 +58,7 @@ const LessonCreate = () => {
   };
 
   const handleCancel = () => {
-    navigate('/admin/lessons');
+    navigate('/admin/lessons/');
   };
 
   const handleContentChange = (value) => {

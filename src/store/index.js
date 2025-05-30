@@ -4,6 +4,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import lessonReducer from '../slices/lessonSlice';
 import exerciseReducer from '../slices/exerciseSlice';
+import userManagementReducer from '../slices/userSlice';
+import statisticsReducer from '../slices/statisticsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -18,6 +20,8 @@ const store = configureStore({
     auth: persistedAuthReducer,
     lessons: lessonReducer,
     exercises: exerciseReducer,
+    userManagement: userManagementReducer,
+    statistics: statisticsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

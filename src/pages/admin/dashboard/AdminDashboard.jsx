@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Statistic } from 'antd';
+import { Row, Col, Card, Statistic, Table, Spin } from 'antd';
 import { UserOutlined, BookOutlined, CheckCircleOutlined, LineChartOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../../../components/layout/Layout';
 import TimeSeriesChart from '../../../components/timeSeriesChart/TimeSeriesChart';
 import GroupedColumnChart from '../../../components/groupedColumnChart/GroupedColumnChart';
 import styles from './AdminDashboard.module.css';
 import PageTitle from '../../../components/pageTitle/PageTitle';
-import { getUsers } from '../../../api/userManagementApi';
 import { getLessons } from '../../../api/lessonApi';
+import { fetchDashboardStatistics } from '../../../slices/statisticsSlice';
 
 const title = 'Admin Dashboard';
 const description = 'Chào mừng đến với bảng điều khiển dành cho Admin.';
+
 const AdminDashboard = () => {
-  const [totalUsers, setTotalUsers] = useState(0);
+  const dispatch = useDispatch();
+  const { dashboardData, loading } = useSelector((state) => state.statistics);
   const [totalLessons, setTotalLessons] = useState(0);
+  const [selectedMonths, setSelectedMonths] = useState(3);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Lấy tổng số người dùng
-        const userResponse = await getUsers();
-        if (userResponse.data.code === 0) {
-          setTotalUsers(userResponse.data.total);
-        }
-
         // Lấy tổng số bài học
         const lessonResponse = await getLessons({
           page: 1,
@@ -36,23 +34,25 @@ const AdminDashboard = () => {
         if (lessonResponse.data.code === 0) {
           setTotalLessons(lessonResponse.data.data.total);
         }
+
+        // Lấy dữ liệu thống kê
+        dispatch(fetchDashboardStatistics({
+          page: 1,
+          pageSize: 5,
+          sort: 'created_date_desc',
+          selectedMonths
+        }));
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [dispatch, selectedMonths]);
 
-  // Dữ liệu mẫu cho biểu đồ tăng trưởng người dùng
-  const userGrowthData = [
-    { date: '2024-01', value: 100 },
-    { date: '2024-02', value: 150 },
-    { date: '2024-03', value: 200 },
-    { date: '2024-04', value: 280 },
-    { date: '2024-05', value: 350 },
-    { date: '2024-06', value: 420 },
-  ];
+  const handleMonthsChange = (value) => {
+    setSelectedMonths(value);
+  };
 
   // Dữ liệu mẫu cho biểu đồ tiến độ học tập
   const learningProgressData = [
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
               <Card className={styles.statisticCard}>
                 <Statistic
                   title="Tổng số người dùng"
-                  value={totalUsers}
+                  value={dashboardData.totalUsers}
                   prefix={<UserOutlined />}
                 />
               </Card>
@@ -113,25 +113,31 @@ const AdminDashboard = () => {
           {/* Biểu đồ thống kê */}
           <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
             <Col xs={24} lg={12}>
-              <Card>
-                <TimeSeriesChart
-                  title="Tăng trưởng người dùng"
-                  data={userGrowthData}
-                  yField="value"
-                />
-              </Card>
+              {/* <Card> */}
+                <Spin spinning={loading}>
+                  <TimeSeriesChart
+                    title="Tăng trưởng người dùng"
+                    data={dashboardData.userGrowth}
+                    yField="value"
+                    selectedMonths={selectedMonths}
+                    onMonthsChange={handleMonthsChange}
+                  />
+                </Spin>
+              {/* </Card> */}
             </Col>
             <Col xs={24} lg={12}>
-              <Card>
-                <GroupedColumnChart
-                  title="Tiến độ học tập"
-                  data={learningProgressData}
-                  xField="category"
-                  yField="value"
-                  seriesField="type"
-                  colors={['#58cc02']}
-                />
-              </Card>
+              {/* <Card> */}
+                <Spin spinning={loading}>
+                  <GroupedColumnChart
+                    title="Tiến độ học tập"
+                    data={learningProgressData}
+                    xField="category"
+                    yField="value"
+                    seriesField="type"
+                    colors={['#58cc02']}
+                  />
+                </Spin>
+              {/* </Card> */}
             </Col>
           </Row>
 
@@ -139,7 +145,40 @@ const AdminDashboard = () => {
           <Row style={{ marginTop: 16 }}>
             <Col span={24}>
               <Card title="Người dùng mới nhất">
-                {/* Component hiển thị danh sách người dùng */}
+                <Table
+                  dataSource={dashboardData.latestUsers}
+                  rowKey="id"
+                  pagination={false}
+                  size="small"
+                  bordered={false}
+                  style={{ background: 'transparent' }}
+                  columns={[
+                    {
+                      title: 'Tên đăng nhập',
+                      dataIndex: 'username',
+                      key: 'username',
+                      align: 'left',
+                      render: (text) => <span style={{ fontWeight: 500 }}>{text}</span>
+                    },
+                    {
+                      title: 'Họ tên',
+                      dataIndex: 'fullname',
+                      key: 'fullname',
+                      align: 'left',
+                      render: (text) => <span>{text || 'Chưa cập nhật'}</span>
+                    },
+                    {
+                      title: 'Ngày tạo',
+                      dataIndex: 'created_date',
+                      key: 'created_date',
+                      align: 'center',
+                      render: (date) =>
+                        date
+                          ? <span style={{ color: '#888' }}>{new Date(date).toLocaleDateString('vi-VN')}</span>
+                          : <span style={{ color: '#aaa' }}>Không có</span>
+                    }
+                  ]}
+                />
               </Card>
             </Col>
           </Row>

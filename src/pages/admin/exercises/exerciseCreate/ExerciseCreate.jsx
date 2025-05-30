@@ -7,6 +7,7 @@ import Layout from '../../../../components/layout/Layout';
 import styles from './ExerciseCreate.module.css';
 import { createExercise } from '../../../../slices/exerciseSlice';
 import { fetchLessons } from '../../../../slices/lessonSlice';
+import { useLocation } from 'react-router-dom';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -26,6 +27,9 @@ const ExerciseCreate = () => {
 
   const optionInputRefs = useRef([]);
   const prevOptionsLengthRef = useRef(options.length);
+
+  const location = useLocation();
+  const lessonId = location.state?.lessonId;
 
   useEffect(() => {
     dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
@@ -68,7 +72,7 @@ const ExerciseCreate = () => {
       const resultAction = await dispatch(createExercise(exerciseData));
       if (createExercise.fulfilled.match(resultAction)) {
         message.success('Thêm bài tập thành công!');
-        navigate('/admin/exercises');
+        navigate(`/admin/exercises/lesson/${lessonId}`);
       } else {
         message.error(resultAction.payload || 'Có lỗi xảy ra khi thêm bài tập!');
       }
@@ -168,7 +172,7 @@ const ExerciseCreate = () => {
           <Form.Item name="duration" label="Thời gian làm bài (ví dụ: 30 minutes, 1 hour)"> <Input placeholder="Không bắt buộc" /> </Form.Item>
 
           <Space className={styles.formActions}>
-            <Button onClick={() => navigate('/admin/exercises')}>Hủy</Button>
+            <Button onClick={() => navigate(`/admin/exercises/lesson/${lessonId}`)}>Hủy</Button>
             <Button type="primary" htmlType="submit" loading={loading}> Thêm bài tập </Button>
           </Space>
         </Form>

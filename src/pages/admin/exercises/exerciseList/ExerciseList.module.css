@@ -3,6 +3,9 @@
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
 }
 
@@ -41,6 +44,23 @@
 
 .exerciseCounts :global(.ant-typography) {
   color: rgba(0, 0, 0, 0.65);
+}
+
+.exerciseList {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.exerciseItem {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.exerciseItem:last-child {
+  border-bottom: none;
 }
 
 /* Responsive styles */

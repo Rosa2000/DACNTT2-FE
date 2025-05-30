@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = `${process.env.REACT_APP_BASE_URL}/user_management`;
+const API_URL = `${process.env.REACT_APP_BASE_URL}/users`;
+console.log(API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
@@ -31,11 +32,22 @@ api.interceptors.response.use(
 );
 
 export const getUsers = (params) =>
-  api.get('/data_user', { params });
+  api.get('/', { params });
 
 export const getUserById = (id) =>
-  api.get(`/data_users/${id}`);
+  api.get(`/${id}`);
 
 export const createUser = (data) =>
-  api.post('/add_user', data);
+  api.post('/', data);
+
+export const updateUser = (id, data) =>
+  api.put(`/${id}`, data);
+
+export const deleteUser = (id) =>
+  api.delete(`/${id}`);
+
+export const restoreUser = (id) =>
+  api.put(`/${id}/restore`);
+
+export default api;
 

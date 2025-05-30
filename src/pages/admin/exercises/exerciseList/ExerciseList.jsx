@@ -6,7 +6,7 @@ import { fetchLessons } from '../../../../slices/lessonSlice';
 import { Button, Space, Input, Select, Row, Col, Typography } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styles from './ExerciseList.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import LessonHorizontalCard from '../../../../components/lessonHorizontalCard/LessonHorizontalCard';
 
 const { Option } = Select;
@@ -25,17 +25,22 @@ const LEVEL_MAP = {
 
 const ExerciseList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { lessonId } = useParams();
   const { exercises, loading } = useSelector((state) => state.exercises);
   const { lessons } = useSelector((state) => state.lessons);
   const [searchText, setSearchText] = useState('');
   const [typeFilter, setTypeFilter] = useState(undefined);
-  const navigate = useNavigate();
 
   // Lấy danh sách bài học và bài tập
   useEffect(() => {
     dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
-    dispatch(fetchExercises({ page: 1, pageSize: 1000 }));
-  }, [dispatch]);
+    dispatch(fetchExercises({ 
+      page: 1, 
+      pageSize: 1000,
+      lessonId: lessonId ? parseInt(lessonId) : undefined 
+    }));
+  }, [dispatch, lessonId]);
 
   // Tính toán số lượng bài tập theo loại cho mỗi bài học
   const getExerciseCounts = (lessonId) => {
@@ -77,17 +82,18 @@ const ExerciseList = () => {
               <Option value="multiple_choice">Trắc nghiệm</Option>
               <Option value="fill_in">Điền từ</Option>
             </Select>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => navigate('/admin/exercises/create')}
-            >
-              Thêm bài tập mới
-            </Button>
           </Space>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/admin/exercises/create', { state: { lessonId: lessonId } })}
+          >
+            Thêm bài tập mới
+          </Button>
         </div>
 
         <div className={styles.lessonList}>
+          
           {filteredLessons.map(lesson => {
             const counts = getExerciseCounts(lesson.id);
             return (

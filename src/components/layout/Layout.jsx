@@ -66,10 +66,11 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
   };
 
   const menuItems = role === 'admin' ? [
+    { path: '/admin/dashboard', icon: <HomeOutlined />, label: 'Dashboard' },
     { path: '/admin/lessons', icon: <BookOutlined />, label: 'Quản lý bài học' },
     { path: '/admin/exercises', icon: <FileTextOutlined />, label: 'Quản lý bài tập' },
     { path: '/admin/users', icon: <TeamOutlined />, label: 'Quản lý người dùng' },
-    { path: '/admin/statistics', icon: <BarChartOutlined />, label: 'Thống kê' },
+    // { path: '/admin/statistics', icon: <BarChartOutlined />, label: 'Thống kê' },
   ] : [
     { path: '/', icon: <HomeOutlined />, label: 'Trang Chủ' },
     { path: '/user/lessons', icon: <BookOutlined />, label: 'Học Ngữ Pháp' },

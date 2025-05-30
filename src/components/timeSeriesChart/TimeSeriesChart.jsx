@@ -1,7 +1,9 @@
 import React from 'react';
 import { Line } from '@ant-design/charts';
-import { Card } from 'antd';
+import { Card, Select } from 'antd';
 import styles from './TimeSeriesChart.module.css';
+
+const { Option } = Select;
 
 const TimeSeriesChart = ({
   title,
@@ -13,6 +15,8 @@ const TimeSeriesChart = ({
   pointShape = 'diamond',
   smooth = true,
   animationDuration = 1000,
+  selectedMonths,
+  onMonthsChange,
 }) => {
   const config = {
     data,
@@ -41,7 +45,17 @@ const TimeSeriesChart = ({
     <div className={styles.chartContainer}>
       <Card 
         title={<div className={styles.chartTitle}>{title}</div>}
-        bordered={false}
+        extra={
+          <Select 
+            value={selectedMonths} 
+            style={{ width: 120 }} 
+            onChange={onMonthsChange}
+          >
+            <Option value={3}>3 tháng</Option>
+            <Option value={6}>6 tháng</Option>
+            <Option value={12}>12 tháng</Option>
+          </Select>
+        }
       >
         <div className={styles.chartWrapper}>
           <Line {...config} />
