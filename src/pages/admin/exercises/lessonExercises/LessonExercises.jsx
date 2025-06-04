@@ -122,7 +122,12 @@ const LessonExercises = () => {
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
+    { 
+      title: 'STT', 
+      key: 'index',
+      width: 80,
+      render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1
+    },
     { title: 'Tiêu đề', dataIndex: 'title', key: 'title', ellipsis: true },
     { title: 'Loại', dataIndex: 'type', key: 'type', render: (type) => TYPE_MAP[type] || type },
     { title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', render: (status_id) => {
@@ -133,7 +138,7 @@ const LessonExercises = () => {
     { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
     { title: 'Thao tác', key: 'action', width: 180, render: (_, record) => (
         <Space size="middle">
-          <Button type="link" onClick={e => { e.stopPropagation(); navigate(`/admin/exercises/edit/${record.id}`); }}>
+          <Button type="link" onClick={e => { e.stopPropagation(); navigate(`/admin/exercises/edit/${lessonId}`); }}>
             <span>Sửa</span>
           </Button>
           {record.status_id === 1 ? (
@@ -186,7 +191,7 @@ const LessonExercises = () => {
             <Button 
               type="primary" 
               icon={<PlusOutlined />} 
-              onClick={() => navigate(`/admin/exercises/create?lesson_id=${lessonId}`)}
+              onClick={() => navigate(`/admin/exercises/create/${lessonId}`)}
               className={styles.filterButton}
             >
               Thêm bài tập

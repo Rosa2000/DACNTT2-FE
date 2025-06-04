@@ -27,6 +27,9 @@ const ExerciseEdit = () => {
   const optionInputRefs = useRef([]);
   const prevOptionsLengthRef = useRef(options.length);
 
+  const { lessonId } = useParams();
+  console.log(lessonId);
+
   useEffect(() => {
     dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
     dispatch(fetchExerciseById(id));
@@ -91,7 +94,7 @@ const ExerciseEdit = () => {
       const response = await updateExercise(id, exerciseData);
       if (response.data.code === 0) {
         message.success('Cập nhật bài tập thành công!');
-        navigate('/admin/exercises');
+        navigate(`/admin/exercises/lesson/${lessonId}`);
       } else {
         message.error(response.data.message || 'Có lỗi xảy ra khi cập nhật bài tập!');
       }
@@ -231,7 +234,7 @@ const ExerciseEdit = () => {
           </Form.Item>
 
           <Space className={styles.formActions}>
-            <Button onClick={() => navigate('/admin/exercises')}>Hủy</Button>
+            <Button onClick={() => navigate(`/admin/exercises/lesson/${lessonId}`)}>Hủy</Button>
             <Button type="primary" htmlType="submit" loading={loading}>
               Cập nhật bài tập
             </Button>

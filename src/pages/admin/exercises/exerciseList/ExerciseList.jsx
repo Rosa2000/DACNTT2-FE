@@ -8,7 +8,7 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styles from './ExerciseList.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import LessonHorizontalCard from '../../../../components/lessonHorizontalCard/LessonHorizontalCard';
-
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 const { Option } = Select;
 const { Title, Text } = Typography;
 
@@ -61,6 +61,8 @@ const ExerciseList = () => {
   });
 
   return (
+    <>
+    <PageTitle title="Quản lý bài tập" />
     <Layout role="admin" pageHeaderTitle="Quản lý bài tập">
       <div className={styles.container}>
         <div className={styles.header}>
@@ -83,13 +85,6 @@ const ExerciseList = () => {
               <Option value="fill_in">Điền từ</Option>
             </Select>
           </Space>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate('/admin/exercises/create', { state: { lessonId: lessonId } })}
-          >
-            Thêm bài tập mới
-          </Button>
         </div>
 
         <div className={styles.lessonList}>
@@ -110,7 +105,8 @@ const ExerciseList = () => {
           })}
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 
