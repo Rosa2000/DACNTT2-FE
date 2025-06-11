@@ -34,14 +34,17 @@ api.interceptors.response.use(
 export const getUsers = (params) =>
   api.get('/', { params });
 
-export const getUserById = (id) =>
-  api.get(`/${id}`);
-
 export const createUser = (data) =>
   api.post('/', data);
 
+export const getUserById = (id) =>
+  api.get(`/${id}`);
+
 export const updateUser = (id, data) =>
   api.put(`/${id}`, data);
+
+export const updateUserPassword = (id, data) =>
+  api.put(`/${id}/password`, data);
 
 export const deleteUser = (id) =>
   api.delete(`/${id}`);

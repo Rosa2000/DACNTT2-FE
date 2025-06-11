@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getExercises, createExercise as createExerciseApi } from '../api/exerciseApi';
+// import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId } from '../api/exerciseApi';
+import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId, doExercise } from '../api/exerciseApi';
 
 export const fetchExercises = createAsyncThunk(
   'exercises/fetchExercises',
@@ -37,6 +38,26 @@ export const fetchExerciseById = createAsyncThunk(
       return response.data?.data?.data[0];
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchExercisesByLessonId = createAsyncThunk(
+  'exercises/fetchByLessonId',
+  async (lessonId) => {
+    const response = await getExercisesByLessonId(lessonId);
+    return response.data?.data?.data || [];
+  }
+);
+
+export const submitExerciseResults = createAsyncThunk(
+  'exercises/submitResults',
+  async ({ results, userId }, { rejectWithValue }) => {
+    try {
+      const response = await doExercise(results, userId);
+      return response.data?.data || [];
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -104,6 +125,27 @@ const exerciseSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.currentExercise = null;
+      })
+      .addCase(fetchExercisesByLessonId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchExercisesByLessonId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.exercises = action.payload;
+      })
+      .addCase(fetchExercisesByLessonId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(submitExerciseResults.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(submitExerciseResults.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(submitExerciseResults.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });

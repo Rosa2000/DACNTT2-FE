@@ -8,7 +8,7 @@ import UserDashboard from '../pages/user/dashboard/UserDashboard';
 import LessonList from '../pages/user/lessons/lessonList/LessonList';
 import LessonDetail from '../pages/user/lessons/lessonDetail/LessonDetail';
 import ExerciseList from '../pages/user/exercises/ExerciseList';
-import ExerciseDetail from '../pages/user/exercises/ExerciseDetail';
+import ExerciseDetail from '../pages/user/exercises/exerciseDetail/ExerciseDetail';
 import Categories from '../pages/user/lessons/categories/Categories';
 
 const UserRoutes = () => {
@@ -67,21 +67,21 @@ const UserRoutes = () => {
       />
       {/* Exercise Routes */}
       <Route
-        path="exercises"
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <ExerciseList />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="exercises/:id"
+        path="lessons/:lessonId/exercises"
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <ExerciseDetail />
           </ProtectedRoute>
         }
       />
+      {/* <Route
+        path="exercises/:id"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ExerciseDetail />
+          </ProtectedRoute>
+        }
+      /> */}
     </Routes>
   );
 };

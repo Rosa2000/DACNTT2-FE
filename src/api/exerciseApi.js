@@ -47,4 +47,17 @@ export const deleteExercise = (id) =>
 export const restoreExercise = (id) =>
   api.post('/restore_exercise', null, { params: { id } });
 
+export const getExercisesByLessonId = async (lessonId) => {
+  return api.get('/data_exercises', {
+    params: { lesson_id: lessonId }
+  });
+};
+
+// Gửi kết quả bài làm (1 hoặc nhiều)
+export const doExercise = (results, userId) => {
+  return api.post('/do_exercise', results, {
+    params: { user_id: userId } 
+  });
+};
+
 export default api;

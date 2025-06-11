@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getLessons, getLessonById, createLesson as createLessonApi } from '../api/lessonApi';
+import { 
+  getLessons, 
+  getLessonById, 
+  createLesson as createLessonApi,
+  studyLesson as studyLessonApi 
+} from '../api/lessonApi';
 
 // Async thunks
 export const fetchLessons = createAsyncThunk(
@@ -43,10 +48,22 @@ export const createLesson = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await createLessonApi(data);
-      // Trả về dữ liệu bài học mới (nếu backend trả về)
       return response.data?.data || data;
     } catch (error) {
       return rejectWithValue(error.message || 'Lỗi khi tạo bài học');
+    }
+  }
+);
+
+// Thunk đánh dấu bài học đã học
+export const studyLesson = createAsyncThunk(
+  'lessons/study',
+  async (studyData, { rejectWithValue }) => {
+    try {
+      const response = await studyLessonApi(studyData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Lỗi khi đánh dấu bài học');
     }
   }
 );
@@ -138,6 +155,16 @@ const lessonSlice = createSlice({
       .addCase(createLesson.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(studyLesson.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(studyLesson.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(studyLesson.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   }
 });

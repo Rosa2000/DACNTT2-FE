@@ -5,13 +5,14 @@ import Layout from "../../../../components/layout/Layout";
 import LessonHorizontalCard from "../../../../components/lessonHorizontalCard/LessonHorizontalCard";
 import Breadcrumb from "../../../../components/breadcrumb/Breadcrumb";
 import styles from './LessonList.module.css';
-import { fetchLessons } from '../../../../slices/lessonSlice';
+import { fetchLessons, studyLesson } from '../../../../slices/lessonSlice';
 
 const LessonList = () => {
   const { level, category } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { lessons, loading, error } = useSelector((state) => state.lessons);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     // Fetch lessons based on URL params
@@ -27,8 +28,8 @@ const LessonList = () => {
   // Get breadcrumb items based on current filter
   const getBreadcrumbItems = () => {
     const items = [
-      { label: 'Học tập', to: '/study' },
-      { label: 'Bài học', to: '/lessons' }
+      { title: 'Học tập', path: '/study' },
+      { title: 'Bài học', path: '/lessons' }
     ];
 
     if (level) {
@@ -37,9 +38,9 @@ const LessonList = () => {
         2: 'Trung bình',
         3: 'Nâng cao'
       }[level];
-      items.push({ label: levelText });
+      items.push({ title: levelText, path: `/lessons/${level}` });
     } else if (category) {
-      items.push({ label: category });
+      items.push({ title: category, path: `/lessons/${category}` });
     }
 
     return items;
@@ -62,7 +63,7 @@ const LessonList = () => {
 
   if (loading) {
     return (
-      <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={<Breadcrumb items={getBreadcrumbItems()} /> }>
+      <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
         <div className={styles.container}>
           <div className={styles.card}>
             <p>Đang tải...</p>
@@ -74,7 +75,7 @@ const LessonList = () => {
 
   if (error) {
     return (
-      <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={<Breadcrumb items={getBreadcrumbItems()} /> }>
+      <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
         <div className={styles.container}>
           <div className={styles.card}>
             <div className={styles.error}>{error}</div>
@@ -87,7 +88,7 @@ const LessonList = () => {
   const lessonList = lessons || [];
 
   return (
-    <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={<Breadcrumb items={getBreadcrumbItems()} /> }>
+    <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
       <div className={styles.container}>
         <div className={styles.card}>
           {lessonList.length === 0 ? (
@@ -102,7 +103,15 @@ const LessonList = () => {
                     type={lesson.type}
                     category={lesson.category}
                     buttonText="Bắt đầu học"
-                    onButtonClick={() => navigate(`/user/lessons/${lesson.id}`)}
+                    onButtonClick={async () => {
+                      await dispatch(studyLesson({
+                        lesson_id: lesson.id,
+                        status_id: 4,
+                        user_id: user.id
+                      })).unwrap();
+                    
+                      navigate(`/user/lessons/${lesson.id}`);
+                    }}
                   />
                 </div>
               ))}

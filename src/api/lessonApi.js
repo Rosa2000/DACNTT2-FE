@@ -51,13 +51,18 @@ export const createLesson = (data) =>
   api.post('/add_lesson', data);
 
 export const updateLesson = (id, data) => 
-  api.post('/edit_lesson', data, { params: { id } });
+  api.put('/edit_lesson', data, { params: { id } });
 
 export const deleteLesson = (id) => 
-  api.post('/delete_lesson', null, { params: { id } });
+  api.delete('/delete_lesson', { params: { id } });
 
 export const restoreLesson = (id) => {
-  return axios.post('/v1/lesson/restore_lesson', null, { params: { id } });
+  return api.post('/restore_lesson', null, { params: { id } });
+};
+
+export const studyLesson = (studyData) => {
+  const { user_id, lesson_id, status_id = 4 } = studyData;
+  return api.post(`/study`, { lesson_id, status_id}, {params: { user_id } });
 };
 
 export default api;

@@ -57,12 +57,18 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
     localStorage.removeItem('token');
     localStorage.removeItem('persist:root');
     navigate('/auth/login');
+    window.location.reload();
   };
 
   const username = user?.fullname || user?.username || 'Người dùng';
 
   const isActive = (path) => {
-    return location.pathname.startsWith(path) ? styles.active : '';
+    // Nếu là trang chủ
+    if (path === '/') {
+      return location.pathname === '/' ? styles.active : '';
+    }
+    // Các mục khác: chỉ active nếu path trùng hoàn toàn hoặc là prefix đúng (ví dụ: /user/lessons hoặc /user/lessons/abc)
+    return (location.pathname === path || location.pathname.startsWith(path + '/')) ? styles.active : '';
   };
 
   const menuItems = role === 'admin' ? [
@@ -74,7 +80,6 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
   ] : [
     { path: '/', icon: <HomeOutlined />, label: 'Trang Chủ' },
     { path: '/user/lessons', icon: <BookOutlined />, label: 'Học Ngữ Pháp' },
-    { path: '/user/exercises', icon: <FileTextOutlined />, label: 'Bài Tập' },
     { path: '/user/test', icon: <BarChartOutlined />, label: 'Kiểm Tra Trình Độ' },
   ];
 

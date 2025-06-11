@@ -1,0 +1,83 @@
+.card {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1rem;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1f2937;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    align-items: center;
+  }
+  
+  .option {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-size: 1rem;
+    color: #374151;
+    background-color: #f9fafb;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .option:hover {
+    border-color: #58cc02;
+  }
+  
+  .selected {
+    background-color: #d9f99d;
+    border-color: #58cc02;
+    font-weight: 600;
+  }
+  
+  .fillIn {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: #374151;
+    background-color: #f9fafb;
+    outline: none;
+  }
+  
+  .input:focus {
+    border-color: #58cc02;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px #58cc02;
+  }
+  
