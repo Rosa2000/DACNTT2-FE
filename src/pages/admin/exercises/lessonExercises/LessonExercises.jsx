@@ -138,7 +138,7 @@ const LessonExercises = () => {
     { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
     { title: 'Thao tác', key: 'action', width: 180, render: (_, record) => (
         <Space size="middle">
-          <Button type="link" onClick={e => { e.stopPropagation(); navigate(`/admin/exercises/edit/${lessonId}`); }}>
+          <Button type="link" onClick={e => { e.stopPropagation(); navigate(`/admin/exercises/edit/${lessonId}/${record.id}`); }}>
             <span>Sửa</span>
           </Button>
           {record.status_id === 1 ? (

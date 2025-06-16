@@ -90,6 +90,13 @@ const LessonList = () => {
   return (
     <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
       <div className={styles.container}>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate('/user/lessons')}
+          style={{ marginBottom: '16px', background: '#f3f4f6', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: 500, cursor: 'pointer', color: '#222' }}
+        >
+          ← Quay về danh mục
+        </button>
         <div className={styles.card}>
           {lessonList.length === 0 ? (
             <p>Không có bài học nào</p>
@@ -98,19 +105,29 @@ const LessonList = () => {
               {lessonList.map(lesson => (
                 <div className={styles.fullWidthCard} key={lesson.id}>
                   <LessonHorizontalCard
-                    title={lesson.title}
-                    level={lesson.level === 1 ? 'Cơ bản' : lesson.level === 2 ? 'Trung bình' : 'Nâng cao'}
-                    type={lesson.type}
-                    category={lesson.category}
-                    buttonText="Bắt đầu học"
-                    onButtonClick={async () => {
-                      await dispatch(studyLesson({
-                        lesson_id: lesson.id,
-                        status_id: 4,
-                        user_id: user.id
-                      })).unwrap();
-                    
-                      navigate(`/user/lessons/${lesson.id}`);
+                    lesson={lesson}
+                    onStart={async () => {
+                      try {
+                        // Chỉ cập nhật status khi bài học chưa học (status 3)
+                        const newStatusId = lesson.study_status_id === 3 ? 4 : lesson.study_status_id;
+                        
+                        await dispatch(studyLesson({
+                          lesson_id: lesson.id,
+                          status_id: newStatusId,
+                          user_id: user.id
+                        })).unwrap();
+                        
+                        // Navigate to lesson detail with state
+                        navigate(`/user/lessons/${lesson.id}`, {
+                          state: {
+                            from: level ? 'level' : category ? 'category' : 'all',
+                            level: level,
+                            category: category
+                          }
+                        });
+                      } catch (error) {
+                        console.error('Error starting lesson:', error);
+                      }
                     }}
                   />
                 </div>

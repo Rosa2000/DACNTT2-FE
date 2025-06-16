@@ -4,57 +4,54 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input, Select, Button, message, Space, Radio } from 'antd';
 import Layout from '../../../../components/layout/Layout';
 import styles from './ExerciseEdit.module.css';
-import { fetchExerciseById, clearCurrentExercise } from '../../../../slices/exerciseSlice';
-import { fetchLessons } from '../../../../slices/lessonSlice';
-import { updateExercise } from '../../../../api/exerciseApi';
+import { fetchExerciseById, clearCurrentExercise, updateExercise } from '../../../../slices/exerciseSlice';
+import { fetchLessonById } from '../../../../slices/lessonSlice';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 const ExerciseEdit = () => {
-  const { id } = useParams();
+  const { id, lessonId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { currentExercise, loading, error } = useSelector((state) => state.exercises);
-  const { lessons } = useSelector(state => state.lessons);
+  const currentLesson = useSelector(state => state.lessons.currentLesson);
 
   const [exerciseType, setExerciseType] = useState('multiple_choice');
   const [options, setOptions] = useState([{ id: '1', text: '' }]);
   const [correctAnswer, setCorrectAnswer] = useState(undefined);
-  const [content, setContent] = useState('');
 
   const optionInputRefs = useRef([]);
   const prevOptionsLengthRef = useRef(options.length);
 
-  const { lessonId } = useParams();
-  console.log(lessonId);
-
   useEffect(() => {
-    dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
+    if (lessonId) {
+      dispatch(fetchLessonById(lessonId));
+    }
     dispatch(fetchExerciseById(id));
     return () => {
       dispatch(clearCurrentExercise());
     };
-  }, [dispatch, id]);
+  }, [dispatch, id, lessonId]);
 
   useEffect(() => {
     if (currentExercise) {
       form.setFieldsValue({
         title: currentExercise.title,
         description: currentExercise.description,
-        lesson_id: currentExercise.lesson_id,
         type: currentExercise.type,
         duration: currentExercise.duration,
         content: currentExercise.content,
+        correct_answer: currentExercise.type === 'fill_in' ? currentExercise.correct_answer : undefined,
       });
       setExerciseType(currentExercise.type);
-      setContent(currentExercise.content);
       
       if (currentExercise.type === 'multiple_choice') {
         setOptions(currentExercise.options || [{ id: '1', text: '' }]);
-        setCorrectAnswer(currentExercise.correct_answer);
       }
+      setCorrectAnswer(currentExercise.correct_answer);
+      console.log('currentExercise:', currentExercise.correct_answer);
     }
   }, [currentExercise, form]);
 
@@ -71,10 +68,17 @@ const ExerciseEdit = () => {
     prevOptionsLengthRef.current = options.length;
   }, [options]);
 
+  useEffect(() => {
+    form.resetFields();
+    setOptions([{ id: '1', text: '' }]);
+    setCorrectAnswer(undefined);
+  }, [id]);
+
   const handleSubmit = async (values) => {
-    let exerciseData = {
+    const exerciseData = {
       ...values,
-      content: content,
+      status_id: 1,
+      lesson_id: lessonId,
     };
 
     if (exerciseType === 'multiple_choice') {
@@ -91,20 +95,22 @@ const ExerciseEdit = () => {
     }
 
     try {
-      const response = await updateExercise(id, exerciseData);
-      if (response.data.code === 0) {
+      console.log('exerciseData:', exerciseData);
+      const resultAction = await dispatch(updateExercise({ id, data: exerciseData }));
+      console.log('resultAction:', resultAction);
+      if (updateExercise.fulfilled.match(resultAction)) {
         message.success('Cập nhật bài tập thành công!');
         navigate(`/admin/exercises/lesson/${lessonId}`);
       } else {
-        message.error(response.data.message || 'Có lỗi xảy ra khi cập nhật bài tập!');
+        message.error(resultAction.payload || 'Có lỗi xảy ra khi cập nhật bài tập!');
       }
-    } catch (error) {
-      message.error(error.message || 'Có lỗi xảy ra khi cập nhật bài tập!');
+    } catch (err) {
+      message.error(err.message || 'Có lỗi xảy ra khi cập nhật bài tập!');
     }
   };
 
   const handleAddOption = () => {
-    setOptions(prevOptions => [...prevOptions, { id: String(prevOptions.length + 1), text: '' }]);
+    setOptions(prev => [...prev, { id: String(prev.length + 1), text: '' }]);
   };
 
   const handleRemoveOption = (id) => {
@@ -112,25 +118,17 @@ const ExerciseEdit = () => {
       message.warn('Phải có ít nhất một lựa chọn.');
       return;
     }
-    const newOptions = options.filter(option => option.id !== id);
-    setOptions(newOptions.map((opt, index) => ({ ...opt, id: String(index + 1) })));
-    if (correctAnswer === id) {
-      setCorrectAnswer(undefined);
-    }
+    const newOptions = options.filter(o => o.id !== id).map((opt, idx) => ({ ...opt, id: String(idx + 1) }));
+    setOptions(newOptions);
+    if (correctAnswer === id) setCorrectAnswer(undefined);
   };
 
   const handleOptionTextChange = (id, value) => {
-    setOptions(options.map(option => option.id === id ? { ...option, text: value } : option));
-  };
-
-  const handleContentChange = (e) => {
-    const { value } = e.target;
-    setContent(value);
-    form.setFieldsValue({ content: value });
+    setOptions(options.map(o => o.id === id ? { ...o, text: value } : o));
   };
 
   return (
-    <Layout role="admin" pageHeaderTitle="Chỉnh sửa bài tập">
+    <Layout role="admin" pageHeaderTitle={`Chỉnh sửa bài tập - ${currentLesson?.title || 'Bài học'}`}>
       <div className={styles.container}>
         <Form
           form={form}
@@ -140,104 +138,80 @@ const ExerciseEdit = () => {
         >
           {error && <div className={styles.errorText}>{error}</div>}
 
-          <Form.Item 
+          <Form.Item
             name="title" 
             label="Tiêu đề bài tập" 
             rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
-          >
-            <Input placeholder="Nhập tiêu đề bài tập" />
-          </Form.Item>
-
-          <Form.Item name="description" label="Mô tả">
-            <TextArea rows={3} placeholder="Nhập mô tả (không bắt buộc)" />
+          > 
+            <Input placeholder="Nhập tiêu đề bài tập" onChange={e => form.setFieldValue('title', e.target.value)}/>
           </Form.Item>
 
           <Form.Item 
-            name="lesson_id" 
-            label="Bài học liên quan" 
-            rules={[{ required: true, message: 'Vui lòng chọn bài học!' }]}
+            name="description" 
+            label="Mô tả"
           >
-            <Select placeholder="Chọn bài học" showSearch optionFilterProp="children">
-              {lessons && lessons.map(lesson => (
-                <Option key={lesson.id} value={lesson.id}>{lesson.title}</Option>
-              ))}
-            </Select>
+            <TextArea 
+              rows={3} 
+              placeholder="Nhập mô tả (không bắt buộc)" 
+              onChange={e => form.setFieldValue('description', e.target.value)}
+            />
           </Form.Item>
 
           <Form.Item 
-            name="type" 
+            name="type"
             label="Loại bài tập" 
             rules={[{ required: true, message: 'Vui lòng chọn loại bài tập!' }]}
           >
-            <Select 
-              placeholder="Chọn loại bài tập" 
-              onChange={value => setExerciseType(value)}
-            >
+            <Select onChange={value => {
+              setExerciseType(value);
+              form.setFieldValue('type', value);
+            }}>
               <Option value="multiple_choice">Trắc nghiệm</Option>
               <Option value="fill_in">Điền từ</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label="Nội dung bài tập (Câu hỏi)" required>
-            <Input.TextArea 
-              rows={3}
-              onChange={handleContentChange}
-              placeholder="Nhập nội dung bài tập..."
-              value={content}
-            />
-            <Form.Item name="content" rules={[{ required: true, message: 'Vui lòng nhập nội dung bài tập!'}]} noStyle>
-              <Input style={{ display: 'none' }} />
-            </Form.Item>
+          <Form.Item 
+            name="content"
+            label="Nội dung bài tập (Câu hỏi)" 
+            rules={[{ required: true, message: 'Vui lòng nhập nội dung bài tập!' }]}
+          >
+            <TextArea rows={3} placeholder="Nhập nội dung bài tập..." onChange={e => form.setFieldValue('content', e.target.value)}/>    
           </Form.Item>
 
           {exerciseType === 'multiple_choice' && (
             <Form.Item label="Các lựa chọn & Đáp án đúng" required>
               {options.map((option, index) => (
                 <Space key={option.id} className={styles.optionItem} align="baseline">
-                  <Radio 
-                    value={option.id} 
-                    checked={correctAnswer === option.id}
-                    onChange={e => setCorrectAnswer(e.target.value)}
-                  />
-                  <Input 
-                    placeholder={`Lựa chọn ${index + 1}`}
-                    value={option.text} 
-                    onChange={e => handleOptionTextChange(option.id, e.target.value)}
-                    className={styles.optionInput}
-                    ref={el => optionInputRefs.current[index] = el}
-                  />
-                  {options.length > 1 && (
-                    <Button type="link" danger onClick={() => handleRemoveOption(option.id)}>
-                      Xóa
-                    </Button>
-                  )}
+                  <Radio value={option.id} checked={correctAnswer === option.id} onChange={e => setCorrectAnswer(e.target.value)} />
+                  <Input placeholder={`Lựa chọn ${index + 1}`} value={option.text} onChange={e => handleOptionTextChange(option.id, e.target.value)} className={styles.optionInput} ref={el => optionInputRefs.current[index] = el} />
+                  {options.length > 1 && <Button type="link" danger onClick={() => handleRemoveOption(option.id)}>Xóa</Button>}
                 </Space>
               ))}
-              <Button type="dashed" onClick={handleAddOption} style={{ marginTop: '10px' }}>
-                Thêm lựa chọn
-              </Button>
+              <Button type="dashed" onClick={handleAddOption} style={{ marginTop: '10px' }}>Thêm lựa chọn</Button>
             </Form.Item>
           )}
 
           {exerciseType === 'fill_in' && (
-            <Form.Item 
-              name="correct_answer" 
-              label="Đáp án đúng (Điền từ)" 
-              rules={[{ required: true, message: 'Vui lòng nhập đáp án đúng!' }]}
-            >
-              <Input placeholder="Nhập đáp án cho câu hỏi điền từ" />
+            <Form.Item name="correct_answer" label="Đáp án đúng (Điền từ)" rules={[{ required: true, message: 'Vui lòng nhập đáp án đúng!' }]}> 
+              <Input 
+                placeholder="Nhập đáp án cho câu hỏi điền từ" 
+                value={form.getFieldValue('correct_answer')}
+                onChange={e => {
+                  form.setFieldValue('correct_answer', e.target.value);
+                  setCorrectAnswer(e.target.value);
+                }}
+              /> 
             </Form.Item>
           )}
 
-          <Form.Item name="duration" label="Thời gian làm bài (ví dụ: 30 minutes, 1 hour)">
+          <Form.Item name="duration" label="Thời gian làm bài (ví dụ: 30 minutes, 1 hour)"> 
             <Input placeholder="Không bắt buộc" />
           </Form.Item>
 
           <Space className={styles.formActions}>
             <Button onClick={() => navigate(`/admin/exercises/lesson/${lessonId}`)}>Hủy</Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Cập nhật bài tập
-            </Button>
+            <Button type="primary" htmlType="submit" loading={loading}>Cập nhật bài tập</Button>
           </Space>
         </Form>
       </div>

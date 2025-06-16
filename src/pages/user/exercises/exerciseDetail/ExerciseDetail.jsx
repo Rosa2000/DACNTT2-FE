@@ -5,9 +5,9 @@ import Layout from "../../../../components/layout/Layout";
 import PageHeader from "../../../../components/pageHeader/PageHeader";
 import styles from './ExerciseDetail.module.css';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
-import { fetchLessonById } from '../../../../slices/lessonSlice';
+import { fetchLessonById , clearCurrentLesson } from '../../../../slices/lessonSlice';
 import QuestionCard from '../../../../components/questionCard/QuestionCard';
-import { doExercise } from '../../../../api/exerciseApi';
+import { toast } from 'react-toastify';
 
 const ExerciseDetail = () => {
   const { lessonId } = useParams();
@@ -17,14 +17,17 @@ const ExerciseDetail = () => {
   const [userAnswers, setUserAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   const { exercises, loading, error } = useSelector((state) => state.exercises);
   const { currentLesson } = useSelector((state) => state.lessons);
 
   useEffect(() => {
     dispatch(fetchExercisesByLessonId(lessonId));
-    dispatch(fetchLessonById(lessonId));
-  }, [dispatch, lessonId]);
+    if (!currentLesson || String(currentLesson.id) !== String(lessonId)) {
+      dispatch(fetchLessonById(lessonId));
+    }
+  }, [dispatch, lessonId, currentLesson]);
 
   const getBreadcrumbItems = () => {
     if (!currentLesson) return [];
@@ -49,27 +52,23 @@ const ExerciseDetail = () => {
   };
 
   const handleNextQuestion = async () => {
-    const currentQuestion = exercises[currentQuestionIndex];
-    const userId = localStorage.getItem('userId');
-    const userAnswer = userAnswers[currentQuestion.id] || '';
+    if (currentQuestionIndex === exercises.length - 1) {
+      try {
+        const results = Object.entries(userAnswers).map(([exerciseId, answer]) => ({
+          exercise_id: Number(exerciseId),
+          user_answer: answer,
+          status_id: 5
+        }));
 
-    // Gửi request cập nhật câu trả lời cho câu hiện tại
-    try {
-      await doExercise([{
-        exercise_id: currentQuestion.id,
-        user_answer: userAnswer,
-        status_id: 5
-      }], userId);
-    } catch (err) {
-      console.error('Lỗi khi cập nhật câu trả lời:', err);
-      // Có thể hiện toast hoặc thông báo lỗi ở đây nếu muốn
-    }
+        await dispatch(submitExerciseResults({ results, userId: user.id })).unwrap();
 
-    if (currentQuestionIndex < exercises.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+        toast.success("Đã nộp bài thành công!");
+        setShowResults(true);
+      } catch (err) {
+        toast.error("Không thể nộp bài. Vui lòng thử lại.");
+      }
     } else {
-      // Gửi toàn bộ kết quả nếu muốn, hoặc chỉ hiện kết quả
-      setShowResults(true);
+      setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
 
@@ -123,13 +122,21 @@ const ExerciseDetail = () => {
               onInput={handleAnswerInput}
             />
             <div className={styles.navigation}>
-              <button
-                className={styles.secondaryButton}
-                onClick={handlePreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-              >
-                Câu trước
-              </button>
+              {currentQuestionIndex === 0 ? (
+                <button
+                  className={styles.secondaryButton}
+                  onClick={() => navigate(`/user/lessons/${lessonId}`)}
+                >
+                  Quay lại bài học
+                </button>
+              ) : (
+                <button
+                  className={styles.secondaryButton}
+                  onClick={handlePreviousQuestion}
+                >
+                  Câu trước
+                </button>
+              )}
               <button
                 onClick={handleNextQuestion}
                 disabled={
@@ -157,7 +164,6 @@ const ExerciseDetail = () => {
                 setUserAnswers({});
                 setShowDetail(false);
               }}>Làm lại</button>
-              
             </div>
             {showDetail && (
               <div className={styles.detailResult}>
@@ -166,10 +172,42 @@ const ExerciseDetail = () => {
                   {exercises.map((q, idx) => (
                     <li key={q.id} style={{marginBottom: 16}}>
                       <div><b>Câu {idx + 1}:</b> {q.content}</div>
-                      <div>Đáp án đúng: <b>{q.type === 'multiple_choice' ? (q.options?.find(opt => opt.id === q.correct_answer)?.text || q.correct_answer) : q.correct_answer}</b></div>
-                      <div>Đáp án của bạn: <span style={{color: userAnswers[q.id]?.toLowerCase() === q.correct_answer?.toLowerCase() ? '#2196f3' : '#f44336'}}>
-                        {q.type === 'multiple_choice' ? (q.options?.find(opt => opt.id === userAnswers[q.id])?.text || userAnswers[q.id] || <i>Chưa trả lời</i>) : (userAnswers[q.id] || <i>Chưa trả lời</i>)}
-                      </span></div>
+                      {q.type === 'multiple_choice' && q.options && (
+                        <ul style={{margin: '8px 0 8px 16px'}}>
+                          {q.options.map(opt => (
+                            <li
+                              key={opt.id}
+                              style={{
+                                fontWeight: opt.id === q.correct_answer ? 'bold' : 'normal',
+                                color:
+                                  opt.id === q.correct_answer
+                                    ? '#58cc02'
+                                    : opt.id === userAnswers[q.id]
+                                    ? '#f44336'
+                                    : 'inherit'
+                              }}
+                            >
+                              {opt.text}
+                              {opt.id === q.correct_answer && ' (Đáp án đúng)'}
+                              {opt.id === userAnswers[q.id] && opt.id !== q.correct_answer && ' (Bạn chọn)'}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {q.type !== 'multiple_choice' && (
+                        <>
+                          <div>
+                            Đáp án đúng: <b>{q.correct_answer}</b>
+                          </div>
+                          <div>
+                            Đáp án của bạn: <span style={{
+                              color: userAnswers[q.id]?.toLowerCase() === q.correct_answer?.toLowerCase() ? '#58cc02' : '#f44336'
+                            }}>
+                              {userAnswers[q.id] || <i>Chưa trả lời</i>}
+                            </span>
+                          </div>
+                        </>
+                      )}
                     </li>
                   ))}
                 </ul>

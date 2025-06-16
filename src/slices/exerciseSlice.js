@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId } from '../api/exerciseApi';
-import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId, doExercise } from '../api/exerciseApi';
+import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId, doExercise, updateExercise as updateExerciseApi } from '../api/exerciseApi';
 
 export const fetchExercises = createAsyncThunk(
   'exercises/fetchExercises',
@@ -47,6 +47,18 @@ export const fetchExercisesByLessonId = createAsyncThunk(
   async (lessonId) => {
     const response = await getExercisesByLessonId(lessonId);
     return response.data?.data?.data || [];
+  }
+);
+
+export const updateExercise = createAsyncThunk(
+  'exercises/updateExercise',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await updateExerciseApi(id, data);
+      return response.data?.data || data;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Lỗi khi cập nhật bài tập');
+    }
   }
 );
 

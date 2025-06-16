@@ -3,7 +3,8 @@ import {
   getLessons, 
   getLessonById, 
   createLesson as createLessonApi,
-  studyLesson as studyLessonApi 
+  studyLesson as studyLessonApi,
+  getUserLessons
 } from '../api/lessonApi';
 
 // Async thunks
@@ -68,9 +69,23 @@ export const studyLesson = createAsyncThunk(
   }
 );
 
+export const fetchUserLessons = createAsyncThunk(
+  'lessons/fetchUserLessons',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getUserLessons();
+      return response.data?.data || [];
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   lessons: [],
   currentLesson: null,
+  lastLesson: null,
+  userLessons: [],
   loading: false,
   error: null,
   total: 0,
@@ -105,6 +120,9 @@ const lessonSlice = createSlice({
     filterByLevel: (state, action) => {
       state.filters.level = action.payload;
       state.filters.page = 0;
+    },
+    setLastLesson: (state, action) => {
+      state.lastLesson = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -119,6 +137,13 @@ const lessonSlice = createSlice({
         state.lessons = action.payload.data;
         state.total = action.payload.total;
         state.totalPages = action.payload.totalPages;
+        
+        if (action.payload.data && action.payload.data.length > 0) {
+          const sortedLessons = [...action.payload.data].sort(
+            (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+          );
+          state.lastLesson = sortedLessons[0];
+        }
       })
       .addCase(fetchLessons.rejected, (state, action) => {
         state.loading = false;
@@ -165,6 +190,9 @@ const lessonSlice = createSlice({
       .addCase(studyLesson.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchUserLessons.fulfilled, (state, action) => {
+        state.userLessons = action.payload;
       });
   }
 });
@@ -174,7 +202,8 @@ export const {
   clearFilters, 
   clearCurrentLesson,
   filterByCategory,
-  filterByLevel 
+  filterByLevel,
+  setLastLesson
 } = lessonSlice.actions;
 
 export default lessonSlice.reducer;

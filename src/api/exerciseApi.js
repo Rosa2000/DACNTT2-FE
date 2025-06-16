@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 
 // Lấy danh sách bài tập
 export const getExercises = (params) =>
-  api.get('/data_exercises', {
+  api.get('/', {
     params: {
       page: params.page || 1,
       pageSize: params.pageSize || 10,
@@ -31,24 +31,24 @@ export const getExercises = (params) =>
     }
   });
 
-// Khôi phục/cập nhật bài tập
+// cập nhật bài tập
 export const updateExercise = (id, data) =>
-  api.post('/edit_exercise', data, { params: { id } });
+  api.put(`/${id}`, data);
 
 // Tạo bài tập mới
 export const createExercise = (data) =>
-  api.post('/add_exercise', data);
+  api.post('/', data);
 
 // Xóa mềm bài tập
 export const deleteExercise = (id) =>
-  api.post('/delete_exercise', null, { params: { id } });
+  api.delete(`/${id}`);
 
 // Khôi phục bài tập
 export const restoreExercise = (id) =>
-  api.post('/restore_exercise', null, { params: { id } });
+  api.patch(`/${id}/restore`);
 
 export const getExercisesByLessonId = async (lessonId) => {
-  return api.get('/data_exercises', {
+  return api.get('', {
     params: { lesson_id: lessonId }
   });
 };
@@ -59,5 +59,13 @@ export const doExercise = (results, userId) => {
     params: { user_id: userId } 
   });
 };
+
+// Lấy danh sách xếp hạng
+export const getRankingList = () =>
+  api.get('/ranking_list');
+
+// Lấy danh sách xếp hạng của người dùng
+export const getRankingListUser = () =>
+  api.get('/ranking_list_user');
 
 export default api;

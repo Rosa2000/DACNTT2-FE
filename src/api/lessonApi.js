@@ -65,4 +65,8 @@ export const studyLesson = (studyData) => {
   return api.post(`/study`, { lesson_id, status_id}, {params: { user_id } });
 };
 
+export const getUserLessons = (params) => {
+  return api.get('/user_lessons', { params });
+};
+
 export default api;

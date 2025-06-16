@@ -79,7 +79,7 @@ const AdminRoutes = () => {
         }
       />
       <Route
-        path="exercises/edit/:lessonId"
+        path="exercises/edit/:lessonId/:id"
         element={
           <ProtectedRoute isAdmin>
             <ExerciseEdit />
