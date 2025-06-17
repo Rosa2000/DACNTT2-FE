@@ -63,7 +63,113 @@
   border-bottom: none;
 }
 
+/* Accordion Panel Header */
+.ant-collapse-header {
+  background: #f7f8fa !important;
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+  padding: 16px 24px !important;
+  display: flex !important;
+  align-items: center;
+}
+
+.ant-collapse-item {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.ant-collapse-content-box {
+  background: #fff;
+  padding: 24px 16px 16px 16px;
+}
+
+/* Số lượng bài tập */
+.lesson-counts {
+  font-size: 15px;
+  color: #555;
+  margin-left: 24px;
+  display: flex;
+  gap: 18px;
+}
+
+/* Bảng bài tập */
+.ant-table-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  margin-bottom: 0;
+}
+
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 15px;
+  color: #222;
+  padding: 12px 8px;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 15px;
+  padding: 10px 8px;
+}
+
+/* Nút Thêm bài tập */
+.ant-btn-primary {
+  background: #1677ff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 6px 18px;
+}
+
+.ant-btn-primary:hover {
+  background: #0958d9;
+}
+
+/* Nút thao tác */
+.ant-btn-link {
+  color: #1677ff;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 0 8px;
+}
+
+.ant-btn-link[danger] {
+  color: #ff4d4f;
+}
+
 /* Responsive styles */
+@media (max-width: 900px) {
+  .container {
+    padding: 12px;
+  }
+  .ant-collapse-header {
+    font-size: 15px;
+    padding: 12px 10px !important;
+  }
+  .ant-collapse-content-box {
+    padding: 12px 4px 8px 4px;
+  }
+  .lesson-counts {
+    font-size: 13px;
+    gap: 10px;
+    margin-left: 8px;
+  }
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    font-size: 13px;
+    padding: 7px 4px;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 16px;
@@ -93,4 +199,43 @@
   .ant-table {
     font-size: 13px;
   }
+}
+
+/* Highlight panel đang mở */
+.ant-collapse-item-active > .ant-collapse-header {
+  background: #e6f4ff !important;
+  border-left: 4px solid #1677ff;
+  color: #1677ff;
+}
+
+/* Panel Header Styles */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.lessonTitle {
+  font-weight: 600;
+}
+
+.lessonInfo {
+  margin-left: 12px;
+  color: #888;
+}
+
+.exerciseCount {
+  margin-right: 16px;
+}
+
+/* Button Styles */
+.addButton {
+  margin-bottom: 16px;
+}
+
+/* Modal Styles */
+.correctAnswer {
+  font-weight: bold;
+  color: green;
 }

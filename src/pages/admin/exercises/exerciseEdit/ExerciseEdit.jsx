@@ -93,7 +93,7 @@ const ExerciseEdit = () => {
       exerciseData.options = options;
       exerciseData.correct_answer = correctAnswer;
     }
-
+    console.log('exerciseData:', exerciseData);
     try {
       console.log('exerciseData:', exerciseData);
       const resultAction = await dispatch(updateExercise({ id, data: exerciseData }));

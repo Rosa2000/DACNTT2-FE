@@ -7,6 +7,7 @@ import Layout from '../../../../components/layout/Layout';
 import styles from './ExerciseCreate.module.css';
 import { createExercise } from '../../../../slices/exerciseSlice';
 import { fetchLessonById } from '../../../../slices/lessonSlice';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -59,19 +60,26 @@ const ExerciseCreate = () => {
         message.error('Vui lòng nhập ít nhất 2 lựa chọn và không để trống.');
         return;
       }
-      if (correctAnswer === undefined) {
+      if (!correctAnswer) {
         message.error('Vui lòng chọn đáp án đúng.');
         return;
       }
+  
+      // Gán thủ công vào exerciseData vì Form không quản lý 2 giá trị này
       exerciseData.options = options;
       exerciseData.correct_answer = correctAnswer;
+    }
+  
+    if (exerciseType === 'fill_in') {
+      // Với dạng điền từ, correct_answer đã nằm trong values
+      exerciseData.correct_answer = values.correct_answer;
     }
 
     try {
       const resultAction = await dispatch(createExercise(exerciseData));
       if (createExercise.fulfilled.match(resultAction)) {
         message.success('Thêm bài tập thành công!');
-        navigate(`/admin/exercises/lesson/${lessonId}`);
+        navigate('/admin/exercises');
       } else {
         message.error(resultAction.payload || 'Có lỗi xảy ra khi thêm bài tập!');
       }
@@ -99,6 +107,8 @@ const ExerciseCreate = () => {
   };
 
   return (
+    <>
+    <PageTitle title="Thêm bài tập mới" />
     <Layout role="admin" pageHeaderTitle={`Thêm bài tập mới - ${currentLesson?.title || 'Bài học'}`}>
       <div className={styles.container}>
         <Form
@@ -106,8 +116,7 @@ const ExerciseCreate = () => {
           layout="vertical"
           onFinish={handleSubmit}
           className={styles.form}
-          // validateTrigger="onSubmit"
-                  >
+        >
           {error && <div className={styles.errorText}>{error}</div>}
 
           <Form.Item
@@ -115,7 +124,7 @@ const ExerciseCreate = () => {
             label="Tiêu đề bài tập" 
             rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
           > 
-          <Input placeholder="Nhập tiêu đề bài tập" onChange={e => form.setFieldValue('title', e.target.value)}/>
+            <Input placeholder="Nhập tiêu đề bài tập" onChange={e => form.setFieldValue('title', e.target.value)} />
           </Form.Item>
 
           <Form.Item 
@@ -136,7 +145,16 @@ const ExerciseCreate = () => {
             rules={[{ required: true, message: 'Vui lòng chọn loại bài tập!' }]}
             initialValue="multiple_choice"
           >
-            <Select onChange={e => form.setFieldValue('type', e.target.value)}>
+            <Select onChange={(value) => {
+              form.setFieldValue('type', value);
+              setExerciseType(value);
+              if (value === 'fill_in') {
+                setCorrectAnswer(undefined);
+                form.setFieldValue('correct_answer', '');
+              } else {
+                form.setFieldValue('correct_answer', undefined);
+              }
+            }}>
               <Option value="multiple_choice">Trắc nghiệm</Option>
               <Option value="fill_in">Điền từ</Option>
             </Select>
@@ -147,36 +165,53 @@ const ExerciseCreate = () => {
             label="Nội dung bài tập (Câu hỏi)" 
             rules={[{ required: true, message: 'Vui lòng nhập nội dung bài tập!' }]}
           >
-            <TextArea rows={3} placeholder="Nhập nội dung bài tập..." onChange={e => form.setFieldValue('content', e.target.value)}/>    
+            <TextArea rows={3} placeholder="Nhập nội dung bài tập..." onChange={e => form.setFieldValue('content', e.target.value)} />    
           </Form.Item>
 
           {exerciseType === 'multiple_choice' && (
-            <Form.Item label="Các lựa chọn & Đáp án đúng" required>
+            <>
+              <div className={styles.formLabel}>Các lựa chọn & Đáp án đúng <span style={{ color: 'red' }}>*</span></div>
               {options.map((option, index) => (
                 <Space key={option.id} className={styles.optionItem} align="baseline">
-                  <Radio value={option.id} checked={correctAnswer === option.id} onChange={e => setCorrectAnswer(e.target.value)} />
-                  <Input placeholder={`Lựa chọn ${index + 1}`} value={option.text} onChange={e => handleOptionTextChange(option.id, e.target.value)} className={styles.optionInput} ref={el => optionInputRefs.current[index] = el} />
-                  {options.length > 1 && <Button type="link" danger onClick={() => handleRemoveOption(option.id)}>Xóa</Button>}
+                  <Radio
+                    value={option.id}
+                    checked={correctAnswer === option.id}
+                    onChange={e => {
+                      const selected = e.target.value;
+                      setCorrectAnswer(selected);
+                      form.setFieldValue('correct_answer', selected);
+                    }}
+                  />
+                  <Input
+                    placeholder={`Lựa chọn ${index + 1}`}
+                    value={option.text}
+                    onChange={e => handleOptionTextChange(option.id, e.target.value)}
+                    className={styles.optionInput}
+                    ref={el => optionInputRefs.current[index] = el}
+                  />
+                  {options.length > 1 && (
+                    <Button type="link" danger onClick={() => handleRemoveOption(option.id)}>Xóa</Button>
+                  )}
                 </Space>
               ))}
               <Button type="dashed" onClick={handleAddOption} style={{ marginTop: '10px' }}>Thêm lựa chọn</Button>
-            </Form.Item>
+            </>
           )}
 
           {exerciseType === 'fill_in' && (
-            <Form.Item name="correct_answer" label="Đáp án đúng (Điền từ)" rules={[{ required: true, message: 'Vui lòng nhập đáp án đúng!' }]}> <Input placeholder="Nhập đáp án cho câu hỏi điền từ" /> </Form.Item>
+            <Form.Item name="correct_answer" label="Đáp án đúng (Điền từ)" rules={[{ required: true, message: 'Vui lòng nhập đáp án đúng!' }]}>
+              <Input placeholder="Nhập đáp án cho câu hỏi điền từ" />
+            </Form.Item>
           )}
 
-          <Form.Item name="duration" label="Thời gian làm bài (ví dụ: 30 minutes, 1 hour)"> <Input placeholder="Không bắt buộc" /></Form.Item>
-
           <Space className={styles.formActions}>
-            <Button onClick={() => navigate(`/admin/exercises/lesson/${lessonId}`)}>Hủy</Button>
+            <Button onClick={() => navigate('/admin/exercises')}>Hủy</Button>
             <Button type="primary" htmlType="submit" loading={loading}>Thêm bài tập</Button>
           </Space>
-          
         </Form>
       </div>
     </Layout>
+    </>
   );
 };
 

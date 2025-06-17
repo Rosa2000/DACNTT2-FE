@@ -18,7 +18,7 @@ const LessonHorizontalCard = ({ lesson, onStart }) => {
   };
 
   const getButtonText = () => {
-    switch (lesson.study_status_id) {
+    switch (lesson?.study_status_id) {
       case 3: return 'Bắt đầu học';
       case 4: return 'Tiếp tục học';
       case 5: return 'Học lại';
@@ -27,15 +27,15 @@ const LessonHorizontalCard = ({ lesson, onStart }) => {
   };
 
   const getScoreDisplay = () => {
-    if (!lesson.study_status_id || lesson.study_status_id === 3) {
+    if (lesson?.study_status_id == null || lesson?.study_status_id === 3) {
       return {
         text: 'Điểm tối đa: 100',
         className: styles.grayScore
       };
     }
     return {
-      text: `Điểm: ${lesson.score ?? 0}/100`,
-      className: lesson.study_status_id === 5 ? styles.score : styles.grayScore
+      text: lesson?.score != null ? `Điểm: ${lesson.score}/100` : 'Điểm tối đa: 100',
+      className: lesson?.study_status_id === 5 ? styles.score : styles.grayScore
     };
   };
 
@@ -44,17 +44,17 @@ const LessonHorizontalCard = ({ lesson, onStart }) => {
   return (
     <div className={styles.card}>
       <div className={styles.left}>
-        {lesson.study_status_id === 5 ? (
+        {lesson?.study_status_id === 5 ? (
           <FaStar className={`${styles.star} ${styles.active}`} />
         ) : (
           <FaRegStar className={`${styles.star} ${styles.inactive}`} />
         )}
-        <span className={styles.level}>{levelMap[lesson.level] || 'Không rõ'}</span>
-        {lesson.category && <span className={styles.category}>{lesson.category}</span>}
+        <span className={styles.level}>{levelMap[lesson?.level] || 'Không rõ'}</span>
+        {lesson?.category && <span className={styles.category}>{lesson.category}</span>}
       </div>
 
       <div className={styles.center}>
-        <div className={styles.title}>{lesson.title}</div>
+        <div className={styles.title}>{lesson?.title}</div>
         <div className={`${scoreDisplay.className} ${styles.visible}`}>
           {scoreDisplay.text}
         </div>
