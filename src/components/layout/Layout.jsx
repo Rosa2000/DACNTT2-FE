@@ -124,7 +124,7 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
             {isDropdownOpen && (
               <div className={styles.dropdown}>
                 <Link
-                  to="/user/profile"
+                  to="/profile"
                   className={styles['dropdown-item']}
                   onClick={() => setIsDropdownOpen(false)}
                 >

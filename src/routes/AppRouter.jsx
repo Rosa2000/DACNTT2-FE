@@ -7,6 +7,8 @@ import NotAuthorized from '../components/notAuthorized/NotAuthorized';
 import AdminRoutes from './adminRoutes';
 import DashboardRedirect from '../components/DashboardRedirect';
 import UserRoutes from './userRoutes';
+import ProtectedRoute from '../components/ProtectedRoute';
+import UserProfile from '../pages/profile/UserProfile';
 
 const AppRouter = () => {
   const { isAuthenticated, status, user } = useSelector((state) => state.auth);
@@ -27,6 +29,16 @@ const AppRouter = () => {
 
       {/* Các route cho auth */}
       <Route path="/auth/*" element={<AuthPage />} />
+
+      {/* Profile route - shared between admin and user */}
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Admin routes */}
       <Route path="/admin/*" element={<AdminRoutes />} />

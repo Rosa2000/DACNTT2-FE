@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input, Select, Button, message, Space, Radio } from 'antd';
@@ -51,7 +51,6 @@ const ExerciseEdit = () => {
         setOptions(currentExercise.options || [{ id: '1', text: '' }]);
       }
       setCorrectAnswer(currentExercise.correct_answer);
-      console.log('currentExercise:', currentExercise.correct_answer);
     }
   }, [currentExercise, form]);
 
@@ -74,6 +73,47 @@ const ExerciseEdit = () => {
     setCorrectAnswer(undefined);
   }, [id]);
 
+  // Tách validation ra thành hàm riêng
+  const validateExerciseData = useCallback((type, options, correctAnswer) => {
+    if (type === 'multiple_choice') {
+      if (!options.every(opt => opt.text.trim() !== '')) {
+        message.error('Vui lòng không để trống lựa chọn.');
+        return false;
+      }
+      if (options.length < 2) {
+        message.error('Vui lòng nhập ít nhất 2 lựa chọn.');
+        return false;
+      }
+      if (options.length > 6) {
+        message.error('Chỉ được nhập tối đa 6 lựa chọn.');
+        return false;
+      }
+      if (correctAnswer === undefined) {
+        message.error('Vui lòng chọn đáp án đúng.');
+        return false;
+      }
+    }
+    return true;
+  }, []);
+
+  // Tối ưu effect cho options
+  useEffect(() => {
+    if (options.length > prevOptionsLengthRef.current) {
+      const lastInputEl = optionInputRefs.current[options.length - 1];
+      if (lastInputEl) {
+        requestAnimationFrame(() => {
+          lastInputEl.focus({ preventScroll: true });
+        });
+      }
+    }
+    prevOptionsLengthRef.current = options.length;
+
+    return () => {
+      // Cleanup function
+      optionInputRefs.current = [];
+    };
+  }, [options.length]);
+
   const handleSubmit = async (values) => {
     const exerciseData = {
       ...values,
@@ -81,26 +121,20 @@ const ExerciseEdit = () => {
       lesson_id: lessonId,
     };
 
+    if (!validateExerciseData(exerciseType, options, correctAnswer)) {
+      return;
+    }
+
     if (exerciseType === 'multiple_choice') {
-      if (!options.every(opt => opt.text.trim() !== '') || options.length < 2) {
-        message.error('Vui lòng nhập ít nhất 2 lựa chọn và không để trống.');
-        return;
-      }
-      if (correctAnswer === undefined) {
-        message.error('Vui lòng chọn đáp án đúng.');
-        return;
-      }
       exerciseData.options = options;
       exerciseData.correct_answer = correctAnswer;
     }
-    console.log('exerciseData:', exerciseData);
+
     try {
-      console.log('exerciseData:', exerciseData);
       const resultAction = await dispatch(updateExercise({ id, data: exerciseData }));
-      console.log('resultAction:', resultAction);
       if (updateExercise.fulfilled.match(resultAction)) {
         message.success('Cập nhật bài tập thành công!');
-        navigate(`/admin/exercises/lesson/${lessonId}`);
+        navigate(`/admin/exercises`);
       } else {
         message.error(resultAction.payload || 'Có lỗi xảy ra khi cập nhật bài tập!');
       }
@@ -135,6 +169,7 @@ const ExerciseEdit = () => {
           layout="vertical"
           onFinish={handleSubmit}
           className={styles.form}
+          validateTrigger={['onChange', 'onBlur']}
         >
           {error && <div className={styles.errorText}>{error}</div>}
 
@@ -180,15 +215,46 @@ const ExerciseEdit = () => {
           </Form.Item>
 
           {exerciseType === 'multiple_choice' && (
-            <Form.Item label="Các lựa chọn & Đáp án đúng" required>
+            <Form.Item 
+              label="Các lựa chọn & Đáp án đúng" 
+              required
+              extra="Tối đa 6 lựa chọn"
+            >
               {options.map((option, index) => (
                 <Space key={option.id} className={styles.optionItem} align="baseline">
-                  <Radio value={option.id} checked={correctAnswer === option.id} onChange={e => setCorrectAnswer(e.target.value)} />
-                  <Input placeholder={`Lựa chọn ${index + 1}`} value={option.text} onChange={e => handleOptionTextChange(option.id, e.target.value)} className={styles.optionInput} ref={el => optionInputRefs.current[index] = el} />
-                  {options.length > 1 && <Button type="link" danger onClick={() => handleRemoveOption(option.id)}>Xóa</Button>}
+                  <Radio 
+                    value={option.id} 
+                    checked={correctAnswer === option.id} 
+                    onChange={e => setCorrectAnswer(e.target.value)}
+                  />
+                  <Input
+                    placeholder={`Lựa chọn ${index + 1}`}
+                    value={option.text}
+                    onChange={e => handleOptionTextChange(option.id, e.target.value)}
+                    className={styles.optionInput}
+                    ref={el => optionInputRefs.current[index] = el}
+                    maxLength={200}
+                  />
+                  {options.length > 1 && (
+                    <Button 
+                      type="link" 
+                      danger 
+                      onClick={() => handleRemoveOption(option.id)}
+                      className={styles.removeButton}
+                    >
+                      Xóa
+                    </Button>
+                  )}
                 </Space>
               ))}
-              <Button type="dashed" onClick={handleAddOption} style={{ marginTop: '10px' }}>Thêm lựa chọn</Button>
+              <Button 
+                type="dashed" 
+                onClick={handleAddOption} 
+                className={styles.addOptionButton}
+                disabled={options.length >= 6}
+              >
+                Thêm lựa chọn
+              </Button>
             </Form.Item>
           )}
 
@@ -210,7 +276,7 @@ const ExerciseEdit = () => {
           </Form.Item>
 
           <Space className={styles.formActions}>
-            <Button onClick={() => navigate(`/admin/exercises/lesson/${lessonId}`)}>Hủy</Button>
+            <Button onClick={() => navigate(`/admin/exercises`)}>Hủy</Button>
             <Button type="primary" htmlType="submit" loading={loading}>Cập nhật bài tập</Button>
           </Space>
         </Form>

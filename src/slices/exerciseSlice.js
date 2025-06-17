@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId } from '../api/exerciseApi';
 import { getExercises, createExercise as createExerciseApi, getExercisesByLessonId, doExercise, updateExercise as updateExerciseApi } from '../api/exerciseApi';
 
 export const fetchExercises = createAsyncThunk(

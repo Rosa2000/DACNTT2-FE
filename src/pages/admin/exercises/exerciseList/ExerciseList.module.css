@@ -123,7 +123,7 @@
 
 /* Nút Thêm bài tập */
 .ant-btn-primary {
-  background: #1677ff;
+  background: #52c41a;
   border: none;
   border-radius: 6px;
   font-weight: 500;
@@ -132,7 +132,7 @@
 }
 
 .ant-btn-primary:hover {
-  background: #0958d9;
+  background: #389e0d;
 }
 
 /* Nút thao tác */

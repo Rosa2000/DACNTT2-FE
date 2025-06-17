@@ -3,11 +3,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from '../components/ProtectedRoute';
-import UserProfile from '../pages/user/profile/UserProfile';
 import UserDashboard from '../pages/user/dashboard/UserDashboard';
 import LessonList from '../pages/user/lessons/lessonList/LessonList';
 import LessonDetail from '../pages/user/lessons/lessonDetail/LessonDetail';
-import ExerciseList from '../pages/user/exercises/ExerciseList';
 import ExerciseDetail from '../pages/user/exercises/exerciseDetail/ExerciseDetail';
 import Categories from '../pages/user/lessons/categories/Categories';
 
@@ -16,14 +14,14 @@ const UserRoutes = () => {
 
   return (
     <Routes>
-      <Route
+      {/* <Route
         path="profile"
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <UserProfile />
           </ProtectedRoute>
         }
-      />
+      /> */}
       <Route
         path="dashboard"
         element={
@@ -74,14 +72,7 @@ const UserRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* <Route
-        path="exercises/:id"
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <ExerciseDetail />
-          </ProtectedRoute>
-        }
-      /> */}
+
     </Routes>
   );
 };

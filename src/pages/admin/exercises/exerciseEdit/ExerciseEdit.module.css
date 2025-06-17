@@ -16,19 +16,50 @@
 }
 
 .optionItem {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   width: 100%;
+  display: flex;
+  align-items: flex-start;
 }
 
 .optionInput {
   flex: 1;
+  margin: 0 8px;
+}
+
+.optionInput:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.removeButton {
+  padding: 4px 8px;
+  min-width: 60px;
+}
+
+.addOptionButton {
+  width: 100%;
+  margin-top: 16px;
 }
 
 .formActions {
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 12px;
+}
+
+/* Radio button styles */
+.optionItem :global(.ant-radio-wrapper) {
+  margin-right: 8px;
+  padding-top: 4px;
+}
+
+/* Form item styles */
+:global(.ant-form-item-extra) {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
 }
 
 /* Responsive styles */
@@ -39,5 +70,40 @@
 
   .form {
     max-width: 100%;
+  }
+
+  .formActions {
+    margin-top: 20px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .optionItem {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .optionInput {
+    margin: 8px 0;
+    width: 100%;
+  }
+  
+  .removeButton {
+    align-self: flex-end;
+  }
+  
+  .formActions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  
+  .formActions button {
+    width: 100%;
   }
 }

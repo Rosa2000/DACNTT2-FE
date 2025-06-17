@@ -7,7 +7,6 @@ import LessonCreate from '../pages/admin/lessons/lessonCreate/LessonCreate';
 import LessonEdit from '../pages/admin/lessons/lessonEdit/LessonEdit';
 import LessonList from '../pages/admin/lessons/lessonList/LessonList';
 import ExerciseList from '../pages/admin/exercises/exerciseList/ExerciseList';
-import LessonExercises from '../pages/admin/exercises/lessonExercises/LessonExercises';
 import ExerciseCreate from '../pages/admin/exercises/exerciseCreate/ExerciseCreate';
 import ExerciseEdit from '../pages/admin/exercises/exerciseEdit/ExerciseEdit';
 import UserList from '../pages/admin/users/userList/UserList';
@@ -59,14 +58,6 @@ const AdminRoutes = () => {
         element={
           <ProtectedRoute isAdmin>
             <ExerciseList />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="exercises/lesson/:lessonId"
-        element={
-          <ProtectedRoute isAdmin>
-            <LessonExercises />
           </ProtectedRoute>
         }
       />

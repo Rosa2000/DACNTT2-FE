@@ -21,7 +21,6 @@ const Login = ({ switchToForgotPassword }) => {
     setLoginError(null); // Xóa lỗi cũ trước khi gửi request
     dispatch(loginUserAsync({ username, password })).then((result) => {
       if (result.meta.requestStatus === 'fulfilled') {
-        console.log('Login successful:', result.payload);
         dispatch(verifyLoginAsync()).then((verifyResult) => {
           if (verifyResult.meta.requestStatus === 'fulfilled') {
             toast.success('Đăng nhập thành công!');

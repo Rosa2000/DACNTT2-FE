@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import Layout from '../../../components/layout/Layout';
+import Layout from '../../components/layout/Layout';
 import styles from './UserProfile.module.css';
 
 const UserProfile = () => {
@@ -35,9 +35,12 @@ const UserProfile = () => {
   };
 
   return (
-    <Layout>
+    <Layout 
+      pageHeaderTitle="Hồ sơ" 
+      pageHeaderSubtitle="Thông tin tài khoản" 
+      pageHeaderBreadcrumb={[{ label: 'Hồ sơ', path: '/profile' }]}
+    >
       <div className={styles.profileContainer}>
-        <h2>Thông tin tài khoản</h2>
         
         {/* Thông tin cơ bản */}
         <section className={styles.profileSection}>
