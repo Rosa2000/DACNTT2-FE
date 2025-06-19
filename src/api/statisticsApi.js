@@ -17,4 +17,4 @@ api.interceptors.request.use((config) => {
 });
 
 export const getUserGrowth = async (months = 3) => 
-    api.get('/user_growth', { params: { months } });
+    api.get('/user-growth', { params: { months } });

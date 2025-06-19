@@ -44,8 +44,8 @@ const ExerciseList = () => {
 
   useEffect(() => {
     dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
-    dispatch(fetchExercises({ 
-      page: 1, 
+    dispatch(fetchExercises({
+      page: 1,
       pageSize: 1000,
       lessonId: lessonId ? parseInt(lessonId) : undefined,
       level: levelFilter,
@@ -73,7 +73,7 @@ const ExerciseList = () => {
     // Nếu có type filter, chỉ lấy bài tập theo loại
     // Nếu không có type filter, lấy tất cả bài tập của bài học
     filteredExercisesMap.set(
-      lesson.id, 
+      lesson.id,
       typeFilter ? lessonExercises.filter(ex => ex.type === typeFilter) : lessonExercises
     );
   });
@@ -95,13 +95,15 @@ const ExerciseList = () => {
     },
     { title: 'Tiêu đề', dataIndex: 'title', key: 'title', ellipsis: true },
     { title: 'Loại', dataIndex: 'type', key: 'type', render: (type) => TYPE_MAP[type] || type },
-    { title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', render: (status_id) => {
+    {
+      title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', render: (status_id) => {
         const { text, color } = STATUS_MAP[status_id] || { text: 'Không xác định', color: 'default' };
         return <Tag color={color}>{text}</Tag>;
       }
     },
     { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
-    { title: 'Thao tác', key: 'action', width: 180, render: (_, record) => (
+    {
+      title: 'Thao tác', key: 'action', width: 180, render: (_, record) => (
         <Space size="middle">
           <Button type="link" onClick={e => { e.stopPropagation(); navigate(`/admin/exercises/edit/${record.lesson_id}/${record.id}`); }}>
             <span>Sửa</span>
@@ -160,148 +162,148 @@ const ExerciseList = () => {
 
   return (
     <>
-    <PageTitle title="Quản lý bài tập" />
-    <Layout role="admin" pageHeaderTitle="Quản lý bài tập">
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <Space className={styles.filters}>
-            <Input
-              placeholder="Tìm kiếm bài học..."
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 220 }}
-              allowClear
-              onClear={handleClearFilters}
-            />
-            <Select
-              placeholder="Loại bài tập"
-              allowClear
-              style={{ width: 160 }}
-              value={typeFilter}
-              onChange={setTypeFilter}
-              onClear={handleClearFilters}
-            >
-              <Option value="multiple_choice">Trắc nghiệm</Option>
-              <Option value="fill_in">Điền từ</Option>
-            </Select>
-            <Select
-              placeholder="Cấp độ"
-              allowClear
-              style={{ width: 150 }}
-              onChange={setLevelFilter}
-              value={levelFilter}
-              onClear={handleClearFilters}
-            >
-              <Option value={1}>Cơ bản</Option>
-              <Option value={2}>Trung bình</Option>
-              <Option value={3}>Nâng cao</Option>
-            </Select>
-            <Select
-              placeholder="Danh mục"
-              allowClear
-              style={{ width: 200 }}
-              onChange={setCategoryFilter}
-              value={categoryFilter}
-              onClear={handleClearFilters}
-            >
-              <Option value="Thì hiện tại">Thì hiện tại</Option>
-              <Option value="Thì quá khứ">Thì quá khứ</Option>
-              <Option value="Thì tương lai">Thì tương lai</Option>
-            </Select>
-          </Space>
-        </div>
-
-        <Collapse 
-          accordion
-          activeKey={activeKey}
-          onChange={(key) => setActiveKey(key)}
-        >
-          {filteredLessons.map(lesson => {
-            return (
-              <Panel
-                header={
-                  <div className={styles.panelHeader}>
-                    <div>
-                      <span className={styles.lessonTitle}>{lesson.title}</span>
-                      <span className={styles.lessonInfo}>{LEVEL_MAP[lesson.level] || 'Chưa phân loại'}</span>
-                      {lesson.category && <span className={styles.lessonInfo}>{lesson.category}</span>}
-                    </div>
-                    <div>
-                      <span className={styles.exerciseCount}>
-                        Trắc nghiệm: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'multiple_choice').length}
-                      </span>
-                      <span>
-                        Điền từ: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'fill_in').length}
-                      </span>
-                    </div>
-                  </div>
-                }
-                key={lesson.id}
+      <PageTitle title="Quản lý bài tập" />
+      <Layout role="admin" pageHeaderTitle="Quản lý bài tập">
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <Space className={styles.filters}>
+              <Input
+                placeholder="Tìm kiếm bài học..."
+                prefix={<SearchOutlined />}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 220 }}
+                allowClear
+                onClear={handleClearFilters}
+              />
+              <Select
+                placeholder="Loại bài tập"
+                allowClear
+                style={{ width: 160 }}
+                value={typeFilter}
+                onChange={setTypeFilter}
+                onClear={handleClearFilters}
               >
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  className={styles.addButton}
-                  onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
+                <Option value="multiple_choice">Trắc nghiệm</Option>
+                <Option value="fill_in">Điền từ</Option>
+              </Select>
+              <Select
+                placeholder="Cấp độ"
+                allowClear
+                style={{ width: 150 }}
+                onChange={setLevelFilter}
+                value={levelFilter}
+                onClear={handleClearFilters}
+              >
+                <Option value={1}>Cơ bản</Option>
+                <Option value={2}>Trung bình</Option>
+                <Option value={3}>Nâng cao</Option>
+              </Select>
+              <Select
+                placeholder="Danh mục"
+                allowClear
+                style={{ width: 200 }}
+                onChange={setCategoryFilter}
+                value={categoryFilter}
+                onClear={handleClearFilters}
+              >
+                <Option value="Thì hiện tại">Thì hiện tại</Option>
+                <Option value="Thì quá khứ">Thì quá khứ</Option>
+                <Option value="Thì tương lai">Thì tương lai</Option>
+              </Select>
+            </Space>
+          </div>
+
+          <Collapse
+            accordion
+            activeKey={activeKey}
+            onChange={(key) => setActiveKey(key)}
+          >
+            {filteredLessons.map(lesson => {
+              return (
+                <Panel
+                  header={
+                    <div className={styles.panelHeader}>
+                      <div>
+                        <span className={styles.lessonTitle}>{lesson.title}</span>
+                        <span className={styles.lessonInfo}>{LEVEL_MAP[lesson.level] || 'Chưa phân loại'}</span>
+                        {lesson.category && <span className={styles.lessonInfo}>{lesson.category}</span>}
+                      </div>
+                      <div>
+                        <span className={styles.exerciseCount}>
+                          Trắc nghiệm: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'multiple_choice').length}
+                        </span>
+                        <span>
+                          Điền từ: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'fill_in').length}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                  key={lesson.id}
                 >
-                  Thêm bài tập
-                </Button>
-                <Table
-                  columns={exerciseColumns}
-                  dataSource={filteredExercisesMap.get(lesson.id)}
-                  rowKey="id"
-                  pagination={false}
-                  size="small"
-                  locale={{ emptyText: 'Không có bài tập nào' }}
-                  onRow={(record) => ({
-                    onClick: () => {
-                      setSelectedExercise(record);
-                      setIsModalVisible(true);
-                    }
-                  })}
-                  scroll={{ x: 'max-content' }}
-                />
-              </Panel>
-            );
-          })}
-        </Collapse>
-        <Modal
-          open={isModalVisible}
-          title="Chi tiết bài tập"
-          footer={null}
-          onCancel={() => setIsModalVisible(false)}
-        >
-          {selectedExercise && (
-            <div>
-              <p><b>Tiêu đề:</b> {selectedExercise.title}</p>
-              <p><b>Câu hỏi:</b> {selectedExercise.content}</p>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    className={styles.addButton}
+                    onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
+                  >
+                    Thêm bài tập
+                  </Button>
+                  <Table
+                    columns={exerciseColumns}
+                    dataSource={filteredExercisesMap.get(lesson.id)}
+                    rowKey="id"
+                    pagination={false}
+                    size="small"
+                    locale={{ emptyText: 'Không có bài tập nào' }}
+                    onRow={(record) => ({
+                      onClick: () => {
+                        setSelectedExercise(record);
+                        setIsModalVisible(true);
+                      }
+                    })}
+                    scroll={{ x: 'max-content' }}
+                  />
+                </Panel>
+              );
+            })}
+          </Collapse>
+          <Modal
+            open={isModalVisible}
+            title="Chi tiết bài tập"
+            footer={null}
+            onCancel={() => setIsModalVisible(false)}
+          >
+            {selectedExercise && (
               <div>
-                <b>Đáp án:</b>
-                {selectedExercise.type === 'multiple_choice' ? (
-                  <ul>
-                    {selectedExercise.options?.map((opt, idx) => (
-                      <li
-                        key={opt.id || idx}
-                        className={
-                          (opt.id && opt.id === selectedExercise.correct_answer) ||
-                          (opt.text && opt.text === selectedExercise.correct_answer)
-                            ? styles.correctAnswer
-                            : ''
-                        }
-                      >
-                        {opt.text || opt}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className={styles.correctAnswer}>{selectedExercise.correct_answer}</div>
-                )}
+                <p><b>Tiêu đề:</b> {selectedExercise.title}</p>
+                <p><b>Câu hỏi:</b> {selectedExercise.content}</p>
+                <div>
+                  <b>Đáp án:</b>
+                  {selectedExercise.type === 'multiple_choice' ? (
+                    <ul>
+                      {selectedExercise.options?.map((opt, idx) => (
+                        <li
+                          key={opt.id || idx}
+                          className={
+                            (opt.id && opt.id === selectedExercise.correct_answer) ||
+                              (opt.text && opt.text === selectedExercise.correct_answer)
+                              ? styles.correctAnswer
+                              : ''
+                          }
+                        >
+                          {opt.text || opt}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className={styles.correctAnswer}>{selectedExercise.correct_answer}</div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </Modal>
-      </div>
+            )}
+          </Modal>
+        </div>
       </Layout>
     </>
   );

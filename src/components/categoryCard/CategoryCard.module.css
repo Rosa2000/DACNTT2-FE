@@ -9,6 +9,12 @@
   transition: all 0.3s ease;
 }
 
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(88, 204, 2, 0.1), 0 4px 6px -2px rgba(88, 204, 2, 0.05);
+  border-color: #58cc02;
+}
+
 .outlined {
   border: 1px solid #e5e7eb;
 }

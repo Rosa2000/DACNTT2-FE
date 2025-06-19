@@ -26,26 +26,40 @@ const ForgotPassword = () => {
   }, [status, error, successMessage, navigate]);
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', textAlign: 'center' }}>
-      <h2>Quên mật khẩu</h2>
+    <div className={styles['form-content']}>
+      <h2 className={styles['form-title']}>Quên mật khẩu</h2>
+      <p className={styles['form-description']}>
+        Vui lòng nhập địa chỉ email đã đăng ký. Chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu vào email của bạn.
+      </p>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
+        {error && <div className={styles['error-message']}>{error}</div>}
+        <div className={styles['form-group']}>
+          <label className={styles.label} htmlFor="email">
+            Email
+          </label>
           <input
             type="email"
+            id="email"
+            className={styles.input}
+            placeholder="Nhập email của bạn"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', margin: '8px 0' }}
           />
         </div>
-        <button type="submit" disabled={status === 'loading'} style={{ width: '100%', padding: '10px' }}>
+        <button
+          type="submit"
+          className={styles['submit-button']}
+          disabled={status === 'loading'}
+        >
           {status === 'loading' ? 'Đang gửi...' : 'Gửi yêu cầu'}
         </button>
+        <div className={styles['back-to-login']}>
+          <a href="#" onClick={() => navigate('/auth')}>
+            Quay lại đăng nhập
+          </a>
+        </div>
       </form>
-      <button onClick={() => navigate('/auth')} style={{ marginTop: '10px' }}>
-        Quay lại đăng nhập
-      </button>
     </div>
   );
 };

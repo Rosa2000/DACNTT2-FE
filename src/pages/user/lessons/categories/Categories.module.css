@@ -41,10 +41,6 @@
   transition: transform 0.2s ease-in-out;
 }
 
-.section:hover {
-  transform: translateY(-4px);
-}
-
 .section h2 {
   font-size: 1.75rem;
   color: #1f2937;

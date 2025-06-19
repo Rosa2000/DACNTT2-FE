@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = `${process.env.REACT_APP_BASE_URL}/lesson`;
+const API_URL = `${process.env.REACT_APP_BASE_URL}/lessons`;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -32,8 +32,8 @@ api.interceptors.response.use(
   }
 );
 
-export const getLessons = (params) => 
-  api.get('/data_lessons', { 
+export const getLessons = (params) =>
+  api.get('/', {
     params: {
       page: params.page || 1,
       pageSize: params.pageSize || 10,
@@ -44,29 +44,33 @@ export const getLessons = (params) =>
     }
   });
 
-export const getLessonById = (id) => 
-  api.get('/data_lessons', { params: { id } });
+// Lấy chi tiết 1 bài học
+export const getLessonById = (id) =>
+  api.get('/', { params: { id } });
 
-export const createLesson = (data) => 
-  api.post('/add_lesson', data);
+// Tạo bài học mới
+export const createLesson = (data) =>
+  api.post('/', data);
 
-export const updateLesson = (id, data) => 
-  api.put('/edit_lesson', data, { params: { id } });
+// Cập nhật bài học
+export const updateLesson = (id, data) =>
+  api.put(`/${id}`, data);
 
-export const deleteLesson = (id) => 
-  api.delete('/delete_lesson', { params: { id } });
+// Xoá mềm bài học
+export const deleteLesson = (id) =>
+  api.delete(`/${id}`);
 
-export const restoreLesson = (id) => {
-  return api.post('/restore_lesson', null, { params: { id } });
-};
+// Khôi phục bài học
+export const restoreLesson = (id) =>
+  api.patch(`/restore/${id}`);
 
-export const studyLesson = (studyData) => {
-  const { user_id, lesson_id, status_id = 4 } = studyData;
-  return api.post(`/study`, { lesson_id, status_id}, {params: { user_id } });
-};
+// Học bài
+export const studyLesson = ({ user_id, lesson_id, status_id = 4 }) =>
+  api.post('/study', { lesson_id, status_id }, { params: { user_id } });
 
-export const getUserLessons = (params) => {
-  return api.get('/user_lessons', { params });
-};
+// Lấy danh sách bài học đã học của user
+export const getUserLessons = (params) =>
+  api.get('/user-lessons', { params });
+
 
 export default api;

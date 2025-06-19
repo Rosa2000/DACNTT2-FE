@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = `${process.env.REACT_APP_BASE_URL}/auth_management`;
+const API_URL = `${process.env.REACT_APP_BASE_URL}/auth`;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -40,16 +40,19 @@ export const loginWithGoogle = (email) =>
 export const logout = () =>
   api.post('/logout');
 
-export const forgotPassword = (data) =>
-  api.post('/forgot-password', data);
+export const forgotPassword = (email) =>
+  api.post('/forgot-password', { email });
 
 export const register = (data) =>
   api.post('/register', data);
 
 export const verifyLogin = () =>
-  api.get('/verify_login');
+  api.get('/verify-login');
 
-export const verifyEmail = (token) =>
-  api.get(`/verify-email?token=${token}`);
+export const verifyEmail = (email) =>
+  api.get(`/verify-email?email=${email}`);
+
+export const resetPasswordByToken = (token, newPassword) =>
+  api.post('/reset-password-token', { token, newPassword });
 
 export default api;

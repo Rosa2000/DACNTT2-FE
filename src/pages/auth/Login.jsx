@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 const Login = ({ switchToForgotPassword }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { status } = useSelector((state) => state.auth);
+  const { status, error: reduxError } = useSelector((state) => state.auth);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
@@ -35,7 +35,8 @@ const Login = ({ switchToForgotPassword }) => {
           }
         });
       } else {
-        setLoginError('Tên đăng nhập hoặc mật khẩu không đúng');
+        // Ưu tiên lấy message từ redux (nếu có)
+        setLoginError(result.payload || reduxError || 'Tên đăng nhập hoặc mật khẩu không đúng');
       }
     });
   };
@@ -70,7 +71,12 @@ const Login = ({ switchToForgotPassword }) => {
     <div className={styles['form-content']}>
       <h2 className={styles['form-title']}>Đăng Nhập</h2>
       <form onSubmit={handleSubmit}>
-          {loginError && <div className={styles['error-message']}>{loginError}</div>}        <div className={styles['form-group']}>
+        {(loginError || reduxError) && (
+          <div className={styles['error-message']}>
+            {loginError || reduxError}
+          </div>
+        )}
+        <div className={styles['form-group']}>
           <label className={styles.label} htmlFor="username">
             Tên đăng nhập
           </label>
