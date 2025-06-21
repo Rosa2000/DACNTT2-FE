@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { message } from 'antd';
 import Layout from "../../../../components/layout/Layout";
 import MarkdownViewer from '../../../../components/markdownViewer/MarkdownViewer';
 import styles from './LessonDetail.module.css';
 import { fetchLessonById, studyLesson, clearCurrentLesson } from '../../../../slices/lessonSlice';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
-import { toast } from 'react-toastify';
 
 const LessonDetail = () => {
   const { id } = useParams();
@@ -52,13 +52,13 @@ const LessonDetail = () => {
     } catch (error) {
       const errorMessage = error?.message || error?.response?.data?.message || 'Có lỗi xảy ra khi bắt đầu bài tập';
       if (errorMessage.includes('Không tìm thấy bài học')) {
-        toast.error('Không tìm thấy bài học');
+        message.error('Không tìm thấy bài học');
       } else if (errorMessage.includes('Bài học đã kết thúc')) {
-        toast.error('Bài học này đã hoàn thành');
+        message.error('Bài học này đã hoàn thành');
       } else if (errorMessage.includes('Người dùng chưa bắt đầu học')) {
-        toast.error('Vui lòng bắt đầu học bài học này');
+        message.error('Vui lòng bắt đầu học bài học này');
       } else {
-        toast.error(errorMessage);
+        message.error(errorMessage);
       }
       console.error('Error starting exercise:', error);
     }

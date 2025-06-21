@@ -4,6 +4,7 @@ import styles from './AuthPage.module.css';
 import Login from './Login';
 import Register from './Register';
 import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const AuthPage = () => {
     const path = location.pathname;
     if (path.includes('register')) setActiveTab('register');
     else if (path.includes('login')) setActiveTab('login');
-    else if (path.includes('forgot-password')) setActiveTab(null);
+    else if (path.includes('forgot-password') || path.includes('reset-password')) setActiveTab(null);
   }, [location.pathname, navigate]);
 
   const switchToLogin = () => {
@@ -35,7 +36,7 @@ const AuthPage = () => {
   return (
     <div className={styles.auth}>
       <div className={styles['auth-container']}>
-        {!location.pathname.includes('forgot-password') && (
+        {!location.pathname.includes('forgot-password') && !location.pathname.includes('reset-password') && (
           <div className={styles.tabs}>
             <Link
               to="/auth/login"
@@ -64,6 +65,7 @@ const AuthPage = () => {
             element={<Register switchToLogin={switchToLogin} />}
           />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
     </div>

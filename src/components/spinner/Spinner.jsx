@@ -1,11 +1,13 @@
-// import { LiaSpinnerSolid } from "react-icons/lia";
+import React from 'react';
+import { LiaSpinnerSolid } from "react-icons/lia";
+import styles from './Spinner.module.css'; // Let's create a css module for it
 
-// export const Spinning = () => {
-//   return (
-//     <div className="spinning">
-//       <div className="spinning-icon">
-//         <ImSpinner2 className="spinner" />
-//       </div>
-//     </div>
-//   );
-// }
+const Spinner = () => {
+  return (
+    <div className={styles.spinnerContainer}>
+      <LiaSpinnerSolid className={styles.spinner} />
+    </div>
+  );
+};
+
+export default Spinner;

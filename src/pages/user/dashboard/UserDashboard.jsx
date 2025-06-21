@@ -65,6 +65,16 @@ const Dashboard = () => {
   }
   const heatmapValues = Object.entries(heatmapDateCountMap).map(([date, count]) => ({ date, count }));
 
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Chưa có';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <>
       <PageTitle title="Trang chủ" />
@@ -82,7 +92,7 @@ const Dashboard = () => {
 
           <div className={styles['stats-grid']}>
             <div className={styles['stat-card']}>
-              <h4>Tổng số bài học</h4>
+              <h4>Tổng bài học</h4>
               <p className={styles['stat-number']}>{totalLessons}</p>
             </div>
             <div className={styles['stat-card']}>
@@ -116,11 +126,12 @@ const Dashboard = () => {
                   lastLesson.study_status_id === 4 ? 'Đang học' :
                   lastLesson.study_status_id === 5 ? 'Đã hoàn thành' : 'Không xác định'
                 }</p>
+                <p>Ngày học: {formatDate(lastLesson.modified_date ?? lastLesson.created_date)}</p>
                 {lastLesson.score !== null && (
                   <p>Điểm số: {lastLesson.score}/100</p>
                 )}
                 <Link 
-                  to={`/user/lessons/${lastLesson.id}`} 
+                  to={`/user/lessons/${lastLesson.id}`}
                   className={styles['view-button']}
                 >
                   {lastLesson.study_status_id === 3 ? 'Bắt đầu học' :

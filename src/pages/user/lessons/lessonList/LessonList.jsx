@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { message } from 'antd';
 import Layout from "../../../../components/layout/Layout";
 import LessonHorizontalCard from "../../../../components/lessonHorizontalCard/LessonHorizontalCard";
-import Breadcrumb from "../../../../components/breadcrumb/Breadcrumb";
 import styles from './LessonList.module.css';
 import { fetchLessons, studyLesson } from '../../../../slices/lessonSlice';
 
@@ -113,7 +113,7 @@ const LessonList = () => {
                         
                         await dispatch(studyLesson({
                           lesson_id: lesson.id,
-                          status_id: newStatusId,
+                          status_id: newStatusId ?? 3,
                           user_id: user.id
                         })).unwrap();
                         
@@ -126,7 +126,7 @@ const LessonList = () => {
                           }
                         });
                       } catch (error) {
-                        console.error('Error starting lesson:', error);
+                        message.error('Không thể bắt đầu bài học. Vui lòng thử lại!');
                       }
                     }}
                   />

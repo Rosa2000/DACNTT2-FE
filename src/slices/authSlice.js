@@ -6,6 +6,7 @@ import {
   forgotPassword,
   register,
   verifyLogin,
+  resetPasswordByToken,
 } from '../api/authApi';
 
 // const getRoleFromUserGroup = (user) => {
@@ -88,6 +89,24 @@ export const verifyLoginAsync = createAsyncThunk(
         return rejectWithValue('Phiên đăng nhập hết hạn hoặc không có quyền');
       }
       return rejectWithValue(error.response?.data?.message || 'Lỗi kết nối đến server');
+    }
+  }
+);
+
+export const resetPasswordAsync = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ token, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await resetPasswordByToken(token, newPassword);
+      return response.data.message || 'Đặt lại mật khẩu thành công!';
+    } catch (error) {
+      if (error.response?.status === 400) {
+        return rejectWithValue(error.response.data.message || 'Token không hợp lệ hoặc đã hết hạn');
+      }
+      if (error.response?.status === 500) {
+        return rejectWithValue(error.response.data.message || 'Lỗi server, vui lòng thử lại sau');
+      }
+      return rejectWithValue(error.message || 'Lỗi kết nối đến server');
     }
   }
 );
@@ -185,9 +204,28 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.isAuthenticated = false;
         state.user = null;
+      })
+      // Xử lý đặt lại mật khẩu
+      .addCase(resetPasswordAsync.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(resetPasswordAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.successMessage = action.payload;
+        state.error = null;
+      })
+      .addCase(resetPasswordAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+        state.successMessage = null;
       });
   },
 });
 
 export const { logout, clearMessages } = authSlice.actions;
+
+export const selectUser = (state) => state.auth.user;
+
 export default authSlice.reducer;

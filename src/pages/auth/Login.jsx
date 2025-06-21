@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { message } from 'antd';
 import { loginUserAsync, verifyLoginAsync } from '../../slices/authSlice';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import styles from './AuthPage.module.css';
 import { loginWithGoogle } from '../../api/authApi';
-import { toast } from 'react-toastify';
 
 const Login = ({ switchToForgotPassword }) => {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const Login = ({ switchToForgotPassword }) => {
       if (result.meta.requestStatus === 'fulfilled') {
         dispatch(verifyLoginAsync()).then((verifyResult) => {
           if (verifyResult.meta.requestStatus === 'fulfilled') {
-            toast.success('Đăng nhập thành công!');
+            message.success('Đăng nhập thành công!');
             const groupId = verifyResult.payload?.user_group?.[0]?.group_id;
             if (groupId === 1) {
               navigate('/admin/dashboard');
@@ -51,20 +51,20 @@ const Login = ({ switchToForgotPassword }) => {
         localStorage.setItem('token', response.data.token);
         dispatch(loginUserAsync({ username: email, password: '' })).then((result) => {
           if (result.meta.requestStatus === 'fulfilled') {
-            toast.success('Đăng nhập Google thành công!');
+            message.success('Đăng nhập Google thành công!');
             navigate('/dashboard');
           }
         });
       } else {
-        toast.error(response.data.message || 'Đăng nhập Google thất bại!');
+        message.error(response.data.message || 'Đăng nhập Google thất bại!');
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Đăng nhập Google thất bại!');
+      message.error(error.response?.data?.message || 'Đăng nhập Google thất bại!');
     }
   };
 
   const handleGoogleError = () => {
-    toast.error('Đăng nhập Google thất bại!');
+    message.error('Đăng nhập Google thất bại!');
   };
 
   return (

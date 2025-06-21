@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { message } from 'antd';
 import { registerUserAsync } from '../../slices/authSlice';
-import { toast } from 'react-toastify';
 import styles from './AuthPage.module.css';
 
 const Register = ({ switchToLogin }) => {
@@ -31,11 +31,11 @@ const Register = ({ switchToLogin }) => {
     setRegisterError(null); // Xóa lỗi cũ
     dispatch(registerUserAsync(formData)).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
-        toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+        message.success("Đăng ký thành công! Vui lòng đăng nhập.");
         switchToLogin();
       } else {
         setRegisterError(result.payload || "Đăng ký thất bại");
-        toast.error(result.payload || "Đăng ký thất bại");
+        message.error(result.payload || "Đăng ký thất bại");
       }
     });
   };

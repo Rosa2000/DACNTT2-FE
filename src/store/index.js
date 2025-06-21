@@ -6,6 +6,7 @@ import lessonReducer from '../slices/lessonSlice';
 import exerciseReducer from '../slices/exerciseSlice';
 import userManagementReducer from '../slices/userSlice';
 import statisticsReducer from '../slices/statisticsSlice';
+import profileReducer from '../slices/profileSlice';
 
 const persistConfig = {
   key: 'root',
@@ -21,12 +22,14 @@ const store = configureStore({
     lessons: lessonReducer,
     exercises: exerciseReducer,
     userManagement: userManagementReducer,
-    statistics: statisticsReducer
+    statistics: statisticsReducer,
+    profile: profileReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // Bỏ qua kiểm tra tính tuần tự cho redux-persist
     }),
+  // devTools: process.env.NODE_ENV !== 'production',
 });
 
 let persistor = persistStore(store);

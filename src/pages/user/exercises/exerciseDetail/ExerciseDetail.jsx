@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { message } from 'antd';
 import Layout from "../../../../components/layout/Layout";
 import PageHeader from "../../../../components/pageHeader/PageHeader";
 import styles from './ExerciseDetail.module.css';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
 import { fetchLessonById , clearCurrentLesson } from '../../../../slices/lessonSlice';
 import QuestionCard from '../../../../components/questionCard/QuestionCard';
-import { toast } from 'react-toastify';
 
 const ExerciseDetail = () => {
   const { lessonId } = useParams();
@@ -62,10 +62,10 @@ const ExerciseDetail = () => {
 
         await dispatch(submitExerciseResults({ results, userId: user.id })).unwrap();
 
-        toast.success("Đã nộp bài thành công!");
+        message.success("Đã nộp bài thành công!");
         setShowResults(true);
       } catch (err) {
-        toast.error("Không thể nộp bài. Vui lòng thử lại.");
+        message.error("Không thể nộp bài. Vui lòng thử lại.");
       }
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);

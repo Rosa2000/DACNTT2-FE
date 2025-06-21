@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { message } from 'antd';
 import { forgotPasswordAsync } from '../../slices/authSlice';
 import styles from './AuthPage.module.css';
 
@@ -18,10 +18,10 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     if (status === 'succeeded' && successMessage) {
-      toast.success(successMessage);
+      message.success(successMessage);
       navigate('/auth');
     } else if (status === 'failed' && error) {
-      toast.error(error);
+      message.error(error);
     }
   }, [status, error, successMessage, navigate]);
 

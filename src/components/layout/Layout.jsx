@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { message } from 'antd';
 import { logout } from '../../slices/authSlice';
 import {
   UserOutlined,
@@ -31,7 +31,7 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
 
   useEffect(() => {
     if (!isAuthenticated) {
-      toast.error('Vui lòng đăng nhập để truy cập!');
+      message.error('Vui lòng đăng nhập để truy cập!');
       navigate('/auth/login');
     }
   }, [isAuthenticated, navigate]);
@@ -59,7 +59,7 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
 
   const handleLogout = () => {
     dispatch(logout());
-    toast.success('Đăng xuất thành công!');
+    message.success('Đăng xuất thành công!');
     setIsDropdownOpen(false);
     persistor.purge();
     localStorage.removeItem('user');
@@ -99,16 +99,16 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
   return (
     <div className={styles.layout}>
       {isMobile && (
-        <Button
-          variant="text"
-          onClick={() => setIsMobileSidebarOpen(true)}
-          className={styles['hamburger-button']}
-          icon={<MenuOutlined />}
-        />
+      <Button
+        variant="text"
+        onClick={() => setIsMobileSidebarOpen(true)}
+        className={styles['hamburger-button']}
+        icon={<MenuOutlined />}
+      />
       )}
       {isMobile && isMobileSidebarOpen && (
         <>
-          <div className={styles.overlay} onClick={() => setIsMobileSidebarOpen(false)}></div>
+        <div className={styles.overlay} onClick={() => setIsMobileSidebarOpen(false)}></div>
           <nav className={styles['mobile-menu']}>
             <div className={styles['mobile-menu-header']}>
               <Link to="/" className={styles.logo} onClick={() => setIsMobileSidebarOpen(false)}>
@@ -169,65 +169,65 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
         </>
       )}
       {!isMobile && (
-        <aside className={
+      <aside className={
           `${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`
-        }>
-          <div className={styles['sidebar-header']}>
-            <Link to="/" className={styles.logo}>
-              EZ English
+      }>
+        <div className={styles['sidebar-header']}>
+          <Link to="/" className={styles.logo}>
+            EZ English
+          </Link>
+          <Button
+            variant="text"
+            onClick={toggleSidebar}
+            className={styles['collapse-button']}
+            icon={<MenuOutlined />}
+          />
+        </div>
+        <nav className={styles['sidebar-nav']}>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`${styles['nav-item']} ${isActive(item.path)}`}
+              onClick={handleMenuClick}
+            >
+              <span className={styles['nav-icon']}>{item.icon}</span>
+              {!isSidebarCollapsed && <span className={styles['nav-label']}>{item.label}</span>}
             </Link>
+          ))}
+        </nav>
+        <div className={styles['sidebar-footer']}>
+          <div className={styles['user-menu']}>
             <Button
               variant="text"
-              onClick={toggleSidebar}
-              className={styles['collapse-button']}
-              icon={<MenuOutlined />}
-            />
+              onClick={toggleDropdown}
+              className={styles['user-button']}
+              icon={<UserOutlined className={styles['user-icon']} />}
+            >
+              {!isSidebarCollapsed && <span className={styles['username']}>{username}</span>}
+            </Button>
+            {isDropdownOpen && (
+              <div className={styles.dropdown}>
+                <Link
+                  to="/profile"
+                  className={styles['dropdown-item']}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <UserOutlined /> Hồ sơ
+                </Link>
+                <Button
+                  variant="text"
+                  onClick={handleLogout}
+                  className={styles['dropdown-item']}
+                  icon={<LogoutOutlined />}
+                >
+                  Đăng xuất
+                </Button>
+              </div>
+            )}
           </div>
-          <nav className={styles['sidebar-nav']}>
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`${styles['nav-item']} ${isActive(item.path)}`}
-                onClick={handleMenuClick}
-              >
-                <span className={styles['nav-icon']}>{item.icon}</span>
-                {!isSidebarCollapsed && <span className={styles['nav-label']}>{item.label}</span>}
-              </Link>
-            ))}
-          </nav>
-          <div className={styles['sidebar-footer']}>
-            <div className={styles['user-menu']}>
-              <Button
-                variant="text"
-                onClick={toggleDropdown}
-                className={styles['user-button']}
-                icon={<UserOutlined className={styles['user-icon']} />}
-              >
-                {!isSidebarCollapsed && <span className={styles['username']}>{username}</span>}
-              </Button>
-              {isDropdownOpen && (
-                <div className={styles.dropdown}>
-                  <Link
-                    to="/profile"
-                    className={styles['dropdown-item']}
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <UserOutlined /> Hồ sơ
-                  </Link>
-                  <Button
-                    variant="text"
-                    onClick={handleLogout}
-                    className={styles['dropdown-item']}
-                    icon={<LogoutOutlined />}
-                  >
-                    Đăng xuất
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </aside>
+        </div>
+      </aside>
       )}
       <div className={`${styles['main-container']} ${isSidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
         {pageHeaderTitle && (

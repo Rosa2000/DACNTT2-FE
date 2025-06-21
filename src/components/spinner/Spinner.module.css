@@ -1,0 +1,22 @@
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 2rem; /* Adjust size as needed */
+  color: #007bff; /* Adjust color as needed */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

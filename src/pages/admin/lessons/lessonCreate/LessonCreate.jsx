@@ -106,6 +106,9 @@ const LessonCreate = () => {
                 <Option value="Thì hiện tại">Thì hiện tại</Option>
                 <Option value="Thì quá khứ">Thì quá khứ</Option>
                 <Option value="Thì tương lai">Thì tương lai</Option>
+                <Option value="Cấu trúc câu">Cấu trúc câu</Option>
+                <Option value="Từ loại">Từ loại</Option>
+                <Option value="Khác">Khác</Option>
               </Select>
             </Form.Item>
 
