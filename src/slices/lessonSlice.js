@@ -10,7 +10,7 @@ import {
 // Async thunks
 export const fetchLessons = createAsyncThunk(
   'lessons/fetchLessons',
-  async ({ page = 1, pageSize = 10, filters = '', level, category, status_id }, { rejectWithValue }) => {
+  async ({ page = 1, pageSize = 10, filters = '', level, category, status_id, type }, { rejectWithValue }) => {
     try {
       const response = await getLessons({ 
         page, 
@@ -18,7 +18,8 @@ export const fetchLessons = createAsyncThunk(
         filters, 
         level, 
         category, 
-        status_id 
+        status_id,
+        type 
       });
       return {
         data: Array.isArray(response?.data?.data?.data) ? response?.data?.data?.data : [],

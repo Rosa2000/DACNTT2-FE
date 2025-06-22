@@ -8,6 +8,8 @@ import LessonList from '../pages/user/lessons/lessonList/LessonList';
 import LessonDetail from '../pages/user/lessons/lessonDetail/LessonDetail';
 import ExerciseDetail from '../pages/user/exercises/exerciseDetail/ExerciseDetail';
 import Categories from '../pages/user/lessons/categories/Categories';
+import TestList from '../pages/user/tests/TestList';
+import TestDetail from '../pages/user/tests/TestDetail';
 
 const UserRoutes = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -69,6 +71,23 @@ const UserRoutes = () => {
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <ExerciseDetail />
+          </ProtectedRoute>
+        }
+      />
+      {/* Test Routes */}
+      <Route
+        path="tests"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <TestList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="tests/:id"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <TestDetail />
           </ProtectedRoute>
         }
       />

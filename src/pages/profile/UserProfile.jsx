@@ -91,7 +91,7 @@ const UserProfile = () => {
       }));
     }
   }, [profile]);
-  
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -134,7 +134,7 @@ const UserProfile = () => {
       onConfirm: () => confirmUpdatePassword(),
     });
   };
-  
+
   const confirmUpdatePassword = () => {
     const passwordData = {
       email: profile?.email,
@@ -159,8 +159,8 @@ const UserProfile = () => {
   }
 
   return (
-    <Layout
-      pageHeaderTitle="Hồ sơ"
+    <Layout 
+      pageHeaderTitle="Hồ sơ" 
       pageHeaderSubtitle="Quản lý thông tin cá nhân và bảo mật tài khoản của bạn"
     >
       <Modal 
@@ -168,7 +168,7 @@ const UserProfile = () => {
         onClose={closeModal}
         onConfirm={modalState.onConfirm}
         title={modalState.title}
-      >
+    >
         <p>{modalState.message}</p>
       </Modal>
 
@@ -192,11 +192,11 @@ const UserProfile = () => {
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="fullname">Họ và tên</label>
             <div className={styles.inputGroup}><input id="fullname" name="fullname" value={formData.fullname} onChange={handleChange} /></div>
-          </div>
+            </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="phone_number">Số điện thoại</label>
             <div className={styles.inputGroup}><input id="phone_number" name="phone_number" value={formData.phone_number} onChange={handleChange} /></div>
-          </div>
+            </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="gender">Giới tính</label>
             <div className={styles.inputGroup}>
@@ -215,19 +215,19 @@ const UserProfile = () => {
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="district">Quận/Huyện</label>
             <div className={styles.inputGroup}><input id="district" name="district" value={formData.district} onChange={handleChange} /></div>
-          </div>
+            </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="province">Tỉnh/Thành phố</label>
             <div className={styles.inputGroup}><input id="province" name="province" value={formData.province} onChange={handleChange} /></div>
-          </div>
+            </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="country">Quốc gia</label>
             <div className={styles.inputGroup}><input id="country" name="country" value={formData.country} onChange={handleChange} /></div>
-          </div>
+            </div>
           <div className={styles.buttonGroup}>
             <Button onClick={handleUpdateProfile} category="success">Lưu thay đổi</Button>
-          </div>
-        </div>
+            </div>
+            </div>
 
         {/* Card 3: Change Password Form */}
         <div className={styles.infoCard}>
@@ -235,21 +235,21 @@ const UserProfile = () => {
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="currentPassword">Mật khẩu hiện tại</label>
             <div className={styles.inputGroup}><input type="password" id="currentPassword" name="currentPassword" value={formData.currentPassword} onChange={handleChange} /></div>
-          </div>
+                </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="newPassword">Mật khẩu mới</label>
             <div className={styles.inputGroup}><input type="password" id="newPassword" name="newPassword" value={formData.newPassword} onChange={handleChange} /></div>
-          </div>
+                </div>
           <div className={styles.fieldRow}>
             <label className={styles.label} htmlFor="confirmPassword">Xác nhận mật khẩu mới</label>
             <div className={styles.inputGroup}><input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} /></div>
-          </div>
-          <div className={styles.buttonGroup}>
+                </div>
+            <div className={styles.buttonGroup}>
              <Button onClick={handleUpdatePassword} category="primary">
                Cập nhật mật khẩu
              </Button>
           </div>
-        </div>
+            </div>
       </div>
     </Layout>
   );

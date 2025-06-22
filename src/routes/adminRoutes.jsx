@@ -6,6 +6,9 @@ import AdminDashboard from '../pages/admin/dashboard/AdminDashboard';
 import LessonCreate from '../pages/admin/lessons/lessonCreate/LessonCreate';
 import LessonEdit from '../pages/admin/lessons/lessonEdit/LessonEdit';
 import LessonList from '../pages/admin/lessons/lessonList/LessonList';
+import AdminTestList from '../pages/admin/tests/testList/AdminTestList';
+import TestCreate from '../pages/admin/tests/testCreate/TestCreate';
+import TestQuestions from '../pages/admin/tests/testQuestions/TestQuestions';
 import ExerciseList from '../pages/admin/exercises/exerciseList/ExerciseList';
 import ExerciseCreate from '../pages/admin/exercises/exerciseCreate/ExerciseCreate';
 import ExerciseEdit from '../pages/admin/exercises/exerciseEdit/ExerciseEdit';
@@ -48,6 +51,32 @@ const AdminRoutes = () => {
         element={
           <ProtectedRoute isAdmin>
             <LessonEdit />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Tests */}
+      <Route
+        path="tests"
+        element={
+          <ProtectedRoute isAdmin>
+            <AdminTestList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="tests/create"
+        element={
+          <ProtectedRoute isAdmin>
+            <TestCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="test-questions"
+        element={
+          <ProtectedRoute isAdmin>
+            <TestQuestions />
           </ProtectedRoute>
         }
       />

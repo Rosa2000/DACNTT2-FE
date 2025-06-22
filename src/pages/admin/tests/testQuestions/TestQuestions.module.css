@@ -1,0 +1,17 @@
+.container {
+    padding: 24px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.correctAnswer {
+    color: #52c41a;
+    font-weight: bold;
+} 

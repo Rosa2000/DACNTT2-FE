@@ -8,10 +8,22 @@ const CommonTable = ({
   loading,
   pagination,
   onChange,
+  onSearch,
+  onFilterChange,
+  onDelete,
+  onRestore,
+  onStatusChange,
+  onEdit,
+  onView,
+  searchPlaceholder = 'Tìm kiếm...',
   scroll,
   rowKey = 'id',
   ...rest
 }) => {
+  const handleTableChange = (pagination, filters, sorter) => {
+    onChange(pagination, filters, sorter);
+  };
+
   return (
     <div className={styles.tableContainer}>
       <Table
@@ -19,7 +31,7 @@ const CommonTable = ({
         dataSource={dataSource}
         loading={loading}
         pagination={pagination}
-        onChange={onChange}
+        onChange={handleTableChange}
         scroll={scroll}
         rowKey={rowKey}
         {...rest}

@@ -1,0 +1,205 @@
+.container {
+  padding: 24px;
+  max-width: 100%;
+  margin: 0;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+.error {
+  color: #ff4d4f;
+}
+
+/* Start Test Card */
+.startCard {
+  text-align: center;
+  padding: 40px;
+}
+
+.testInfo {
+  margin-bottom: 40px;
+}
+
+.description {
+  color: #666;
+  font-size: 16px;
+  margin: 16px 0 24px 0;
+  line-height: 1.6;
+}
+
+.testDetails {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  margin: 24px 0;
+  text-align: left;
+}
+
+.detailItem {
+  margin: 12px 0;
+  font-size: 16px;
+}
+
+.instructions {
+  text-align: left;
+  margin: 24px 0;
+}
+
+.instructions ul {
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.startActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Test Header */
+.testHeader {
+  margin-bottom: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.progressSection {
+  flex: 1;
+  min-width: 200px;
+}
+
+.timerSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff2e8;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ffd591;
+}
+
+.timerIcon {
+  color: #fa8c16;
+  font-size: 16px;
+}
+
+.timerText {
+  color: #fa8c16;
+  font-size: 16px;
+}
+
+/* Question Card */
+.questionCard {
+  margin-bottom: 16px;
+}
+
+/* Navigation Card */
+.navigationCard {
+  text-align: center;
+}
+
+.navigationButtons {
+  display: flex;
+  justify-content: center;
+}
+
+/* Result Card */
+.resultCard {
+  text-align: center;
+  padding: 40px;
+}
+
+.resultHeader {
+  margin-bottom: 40px;
+}
+
+.scoreDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.scoreCircle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #58cc02, #4caf50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(88, 204, 2, 0.3);
+}
+
+.scoreNumber {
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.scoreDetails {
+  text-align: center;
+}
+
+.scoreDetails p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #666;
+}
+
+.resultActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .startCard {
+    padding: 24px 16px;
+  }
+  
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .timerSection {
+    justify-content: center;
+  }
+  
+  .scoreCircle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .scoreNumber {
+    font-size: 28px;
+  }
+  
+  .resultActions {
+    flex-direction: column;
+  }
+} 

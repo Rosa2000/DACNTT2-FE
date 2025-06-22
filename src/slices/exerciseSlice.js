@@ -43,9 +43,13 @@ export const fetchExerciseById = createAsyncThunk(
 
 export const fetchExercisesByLessonId = createAsyncThunk(
   'exercises/fetchByLessonId',
-  async (lessonId) => {
-    const response = await getExercisesByLessonId(lessonId);
-    return response.data?.data?.data || [];
+  async (lessonId, { rejectWithValue }) => {
+    try {
+      const response = await getExercises({ lessonId: lessonId, pageSize: 1000 });
+      return response.data?.data?.data || [];
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
@@ -139,6 +143,7 @@ const exerciseSlice = createSlice({
       })
       .addCase(fetchExercisesByLessonId.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchExercisesByLessonId.fulfilled, (state, action) => {
         state.loading = false;
@@ -146,7 +151,8 @@ const exerciseSlice = createSlice({
       })
       .addCase(fetchExercisesByLessonId.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
+        state.exercises = [];
       })
       .addCase(submitExerciseResults.pending, (state) => {
         state.loading = true;

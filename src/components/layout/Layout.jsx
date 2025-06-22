@@ -13,6 +13,7 @@ import {
   BarChartOutlined,
   TeamOutlined,
   SettingOutlined,
+  FileDoneOutlined,
 } from '@ant-design/icons';
 import Button from '../button/Button';
 import styles from './Layout.module.css';
@@ -84,12 +85,13 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
     { path: '/admin/dashboard', icon: <HomeOutlined />, label: 'Dashboard' },
     { path: '/admin/lessons', icon: <BookOutlined />, label: 'Quản lý bài học' },
     { path: '/admin/exercises', icon: <FileTextOutlined />, label: 'Quản lý bài tập' },
+    { path: '/admin/tests', icon: <BarChartOutlined />, label: 'Quản lý bài kiểm tra' },
     { path: '/admin/users', icon: <TeamOutlined />, label: 'Quản lý người dùng' },
     // { path: '/admin/statistics', icon: <BarChartOutlined />, label: 'Thống kê' },
   ] : [
-    { path: '/', icon: <HomeOutlined />, label: 'Trang Chủ' },
+    { path: '/user/dashboard', icon: <HomeOutlined />, label: 'Trang Chủ' },
     { path: '/user/lessons', icon: <BookOutlined />, label: 'Học Ngữ Pháp' },
-    { path: '/user/test', icon: <BarChartOutlined />, label: 'Kiểm Tra Trình Độ' },
+    { path: '/user/tests', icon: <BarChartOutlined />, label: 'Bài Kiểm Tra' },
   ];
 
   const handleMenuClick = () => {

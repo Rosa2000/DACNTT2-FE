@@ -40,7 +40,8 @@ export const getLessons = (params) =>
       filters: params.filters || '',
       level: params.level,
       category: params.category,
-      status_id: params.status_id
+      status_id: params.status_id,
+      type: params.type
     }
   });
 
