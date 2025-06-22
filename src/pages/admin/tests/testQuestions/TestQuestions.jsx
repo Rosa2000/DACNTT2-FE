@@ -13,7 +13,7 @@ const { Title } = Typography;
 
 const TYPE_MAP = {
   multiple_choice: 'Trắc nghiệm',
-  fill_in_the_blank: 'Điền vào chỗ trống',
+  fill_in: 'Điền từ',
 };
 
 const STATUS_MAP = {
@@ -34,6 +34,7 @@ const TestQuestions = () => {
   
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
   
   useEffect(() => {
     if (testId) {
@@ -62,8 +63,13 @@ const TestQuestions = () => {
   };
   
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-    { title: 'Câu hỏi', dataIndex: 'question', key: 'question', ellipsis: true },
+    { 
+      title: 'STT', 
+      key: 'stt', 
+      width: 80,
+      render: (text, record, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
+    },
+    { title: 'Câu hỏi', dataIndex: 'content', key: 'content', ellipsis: true },
     { title: 'Loại', dataIndex: 'type', key: 'type', render: (type) => TYPE_MAP[type] || type },
     { title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', render: (status) => <Tag color={STATUS_MAP[status]?.color}>{STATUS_MAP[status]?.text}</Tag> },
     { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
@@ -103,7 +109,8 @@ const TestQuestions = () => {
             dataSource={exercises}
             loading={exerciseLoading}
             rowKey="id"
-            pagination={{ pageSize: 10 }}
+            pagination={pagination}
+            onChange={setPagination}
             onRow={(record) => ({
               onClick: () => {
                 setSelectedQuestion(record);
@@ -123,7 +130,7 @@ const TestQuestions = () => {
         {selectedQuestion && (
           <div>
             <p><b>Câu hỏi:</b></p>
-            <p>{selectedQuestion.question}</p>
+            <p>{selectedQuestion.content}</p>
             <p><b>Đáp án:</b></p>
             {selectedQuestion.type === 'multiple_choice' && Array.isArray(selectedQuestion.options) ? (
               <ul>
