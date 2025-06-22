@@ -113,25 +113,30 @@ const AdminTestList = () => {
   };
 
   const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
-    { title: 'Tiêu đề', dataIndex: 'title', key: 'title', ellipsis: true },
-    { title: 'Cấp độ', dataIndex: 'level', key: 'level', render: (level) => <Tag color={LEVEL_MAP[level]?.color}>{LEVEL_MAP[level]?.text || `Cấp ${level}`}</Tag> },
-    { title: 'Thời gian', dataIndex: 'duration', key: 'duration', render: (duration) => duration ? `${duration} phút` : 'N/A' },
-    { title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', render: (status) => <Tag color={STATUS_MAP[status]?.color}>{STATUS_MAP[status]?.text}</Tag> },
-    { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
+    {
+      title: 'STT',
+      key: 'stt',
+      width: '5%',
+      render: (text, record, index) => (pagination.current - 1) * pagination.pageSize + index + 1,
+    },
+    { title: 'Tiêu đề', dataIndex: 'title', key: 'title', width: '30%', ellipsis: true },
+    { title: 'Cấp độ', dataIndex: 'level', key: 'level', width: '10%', render: (level) => <Tag color={LEVEL_MAP[level]?.color}>{LEVEL_MAP[level]?.text || `Cấp ${level}`}</Tag> },
+    { title: 'Thời gian', dataIndex: 'duration', key: 'duration', width: '10%', render: (duration) => duration ? `${duration} phút` : 'N/A' },
+    { title: 'Trạng thái', dataIndex: 'status_id', key: 'status_id', width: '10%', render: (status) => <Tag color={STATUS_MAP[status]?.color}>{STATUS_MAP[status]?.text}</Tag> },
+    { title: 'Ngày tạo', dataIndex: 'created_date', key: 'created_date', width: '15%', render: (date) => new Date(date).toLocaleDateString('vi-VN') },
     {
       title: 'Thao tác',
       key: 'action',
-      width: 220,
+      width: '20%',
       render: (_, record) => (
         <Space size="middle">
+          <Button type="link" onClick={() => navigate(`/admin/test-questions?testId=${record.id}`)}>Xem câu hỏi</Button>
           <Button type="link" onClick={() => handleEdit(record.id)}>Sửa</Button>
           {record.status_id === 1 ? (
             <Button type="link" danger onClick={() => handleDelete(record.id)}>Xóa</Button>
           ) : (
             <Button type="link" icon={<UndoOutlined />} onClick={() => handleRestore(record.id)}>Khôi phục</Button>
           )}
-          <Button type="link" onClick={() => navigate(`/admin/test-questions?testId=${record.id}`)}>Xem câu hỏi</Button>
         </Space>
       ),
     },

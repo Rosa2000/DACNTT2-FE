@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { message } from 'antd';
+import { message, Progress } from 'antd';
 import { loginUserAsync, verifyLoginAsync } from '../../slices/authSlice';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
@@ -15,6 +15,32 @@ const Login = ({ switchToForgotPassword }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (status === 'loading') {
+      // Bắt đầu animation
+      setProgress(0);
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(interval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 200);
+    } else {
+      // Hoàn thành và ẩn đi
+      setProgress(100);
+      setTimeout(() => setProgress(0), 500);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [status]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,6 +95,15 @@ const Login = ({ switchToForgotPassword }) => {
 
   return (
     <div className={styles['form-content']}>
+      {status === 'loading' && progress > 0 && (
+        <Progress
+          percent={progress}
+          status="active"
+          showInfo={false}
+          strokeColor="#58cc02"
+          className={styles.progressBar}
+        />
+      )}
       <h2 className={styles['form-title']}>Đăng Nhập</h2>
       <form onSubmit={handleSubmit}>
         {(loginError || reduxError) && (

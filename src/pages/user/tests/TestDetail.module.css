@@ -25,10 +25,9 @@
 }
 
 .description {
-  color: #666;
+  margin-bottom: 24px;
   font-size: 16px;
-  margin: 16px 0 24px 0;
-  line-height: 1.6;
+  color: #666;
 }
 
 .testDetails {
@@ -45,8 +44,7 @@
 }
 
 .instructions {
-  text-align: left;
-  margin: 24px 0;
+  margin-bottom: 24px;
 }
 
 .instructions ul {
@@ -202,4 +200,116 @@
   .resultActions {
     flex-direction: column;
   }
+}
+
+.questionList {
+  margin-bottom: 24px;
+}
+
+.questionListItem {
+  margin-bottom: 16px;
+}
+
+.detailResult {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.detailItem {
+  list-style: none;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.detailOptions {
+  list-style: none;
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+.detailFillIn {
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.correctAnswer, .correctAnswerText {
+  color: #58cc02;
+  font-weight: bold;
+}
+
+.wrongAnswer, .wrongAnswerText {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.resultsContainer {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.resultsTitle {
+  margin-bottom: 16px !important;
+}
+
+.score {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1890ff;
+  margin-bottom: 24px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.actionButton {
+  background-color: #58cc02 !important;
+  color: white !important;
+  border-color: #58cc02 !important;
+}
+
+.startTestButton {
+  background-color: #58cc02 !important;
+  border-color: #58cc02 !important;
+}
+
+.detailCard {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.detailTitle {
+  color: #1890ff !important;
+  margin-bottom: 16px !important;
+}
+
+.detailItem {
+  list-style: none;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailOptions {
+  list-style: none;
+  padding-left: 16px;
+  margin-top: 8px;
 } 

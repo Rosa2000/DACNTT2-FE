@@ -7,6 +7,7 @@ import PageHeader from '../../../components/pageHeader/PageHeader';
 import { fetchLessons } from '../../../slices/lessonSlice';
 import { fetchExercises } from '../../../slices/exerciseSlice';
 import styles from './TestList.module.css';
+import CustomSpinner from '../../../components/spinner/Spinner';
 
 const { Option } = Select;
 
@@ -23,18 +24,22 @@ const STATUS_MAP = {
 
 const TestList = () => {
   const dispatch = useDispatch();
-  const { lessons } = useSelector((state) => state.lessons);
-  const { exercises } = useSelector((state) => state.exercises);
+  const { lessons, loading: lessonsLoading } = useSelector((state) => state.lessons);
+  const { exercises, loading: exercisesLoading } = useSelector((state) => state.exercises);
   const [searchText, setSearchText] = useState('');
   const [levelFilter, setLevelFilter] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
+    dispatch(fetchLessons({ 
+      page: 1, 
+      pageSize: 1000,
+      type: 'test' 
+    }));
     dispatch(fetchExercises({
       page: 1,
       pageSize: 1000,
-      type: 'test' // Chỉ lấy bài kiểm tra
+      // type: 'test' // Chỉ lấy bài kiểm tra
     }));
   }, [dispatch]);
 
@@ -97,76 +102,58 @@ const TestList = () => {
                 <Option value={3}>Nâng cao</Option>
               </Select>
             </Col>
-            <Col xs={12} sm={4}>
-              <Select
-                placeholder="Danh mục"
-                allowClear
-                value={categoryFilter}
-                onChange={setCategoryFilter}
-                style={{ width: '100%' }}
-              >
-                <Option value="Thì hiện tại">Thì hiện tại</Option>
-                <Option value="Thì quá khứ">Thì quá khứ</Option>
-                <Option value="Thì tương lai">Thì tương lai</Option>
-              </Select>
-            </Col>
-            <Col xs={24} sm={8}>
-              <Button onClick={handleClearFilters}>
-                Xóa bộ lọc
-              </Button>
-            </Col>
           </Row>
         </div>
 
-        {/* Danh sách bài kiểm tra */}
-        <Row gutter={[16, 16]}>
-          {filteredTests.map((test) => {
-            const testExercises = exercises.filter(ex => ex.lesson_id === test.id);
-            const questionCount = testExercises.length;
-            
-            return (
-              <Col xs={24} sm={12} lg={8} key={test.id}>
-                <Card
-                  className={styles.testCard}
-                  hoverable
-                  actions={[
-                    <Button 
-                      type="primary" 
-                      onClick={() => handleStartTest(test.id)}
-                      disabled={test.status_id !== 1}
-                    >
-                      Bắt đầu kiểm tra
-                    </Button>
-                  ]}
-                >
-                  <div className={styles.testInfo}>
-                    <h3 className={styles.testTitle}>{test.title}</h3>
-                    <p className={styles.testDescription}>{test.description}</p>
-                    
-                    <div className={styles.testMeta}>
-                      <Tag color="blue">{LEVEL_MAP[test.level] || 'Chưa phân loại'}</Tag>
-                      {test.category && <Tag color="green">{test.category}</Tag>}
-                      <Tag color={STATUS_MAP[test.status_id]?.color || 'default'}>
-                        {STATUS_MAP[test.status_id]?.text || 'Không xác định'}
-                      </Tag>
+        <CustomSpinner spinning={lessonsLoading || exercisesLoading}>
+          {/* Danh sách bài kiểm tra */}
+          <Row gutter={[16, 16]}>
+            {filteredTests.map((test) => {
+              const testExercises = exercises.filter(ex => ex.lesson_id === test.id);
+              const questionCount = testExercises.length;
+              
+              return (
+                <Col xs={24} sm={12} lg={8} key={test.id}>
+                  <Card
+                    className={styles.testCard}
+                    hoverable
+                    actions={[
+                      <Button 
+                        type="primary" 
+                        onClick={() => handleStartTest(test.id)}
+                        disabled={test.status_id !== 1}
+                        className={styles.startTestButton}
+                      >
+                        Xem chi tiết
+                      </Button>
+                    ]}
+                  >
+                    <div className={styles.testInfo}>
+                      <h3 className={styles.testTitle}>{test.title}</h3>
+                      <p className={styles.testDescription}>{test.description}</p>
+                      
+                      <div className={styles.testMeta}>
+                        <Tag color="blue">{LEVEL_MAP[test.level] || 'Chưa phân loại'}</Tag>
+                        {test.category && <Tag color="green">{test.category}</Tag>}
+                      </div>
+                      
+                      <div className={styles.testStats}>
+                        <span>Số câu hỏi: {questionCount}</span>
+                        <span>Thời gian: {test.duration || 'Không giới hạn'} phút</span>
+                      </div>
                     </div>
-                    
-                    <div className={styles.testStats}>
-                      <span>Số câu hỏi: {questionCount}</span>
-                      <span>Thời gian: {test.duration || 'Không giới hạn'} phút</span>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
 
-        {filteredTests.length === 0 && (
-          <div className={styles.emptyState}>
-            <p>Không có bài kiểm tra nào phù hợp với bộ lọc.</p>
-          </div>
-        )}
+          {!lessonsLoading && !exercisesLoading && filteredTests.length === 0 && (
+            <div className={styles.emptyState}>
+              <p>Không có bài kiểm tra nào phù hợp với bộ lọc.</p>
+            </div>
+          )}
+        </CustomSpinner>
       </div>
     </Layout>
   );

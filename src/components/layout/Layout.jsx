@@ -252,13 +252,13 @@ const Layout = ({ children, pageHeaderTitle, pageHeaderSubtitle, pageHeaderBread
             <div className={styles['footer-section']}>
               <h4>Liên Hệ</h4>
               <p>
-                <strong>Email:</strong> support@ezenglish.com
+                <strong>Email:</strong> support@ezenglish.io.vn
               </p>
               <p>
-                <strong>Hotline:</strong> 0123 456 789
+                <strong>Hotline:</strong> 028 3775 5052
               </p>
               <p>
-                <strong>Địa chỉ:</strong> 123 Đường ABC, Quận XYZ, TP.HCM
+                <strong>Địa chỉ:</strong> 19 Đ. Nguyễn Hữu Thọ, Tân Phong, Quận 7, Hồ Chí Minh
               </p>
             </div>
             <div className={styles['footer-section']}>

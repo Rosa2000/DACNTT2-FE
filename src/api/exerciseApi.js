@@ -25,7 +25,7 @@ export const getExercises = (params) =>
       filters: params.filters || '',
       status_id: params.status_id,
       type: params.type,
-      lessonId: params.lessonId,
+      lesson_id: params.lesson_id,
       id: params.id,
     }
   });

@@ -13,10 +13,6 @@ import UserProfile from '../pages/profile/UserProfile';
 const AppRouter = () => {
   const { isAuthenticated, status, user } = useSelector((state) => state.auth);
 
-  if (status === 'loading') {
-    return <div>Đang kiểm tra đăng nhập...</div>;
-  }
-
   return (
     <Routes>
       {/* Trang chủ: nếu đã login thành công, chuyển hướng tới dashboard phù hợp */}

@@ -57,18 +57,19 @@
 .testStats {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  margin-top: 16px;
   color: #888;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+}
+
+.startTestButton {
+  background-color: #58cc02 !important;
+  border-color: #58cc02 !important;
 }
 
 .emptyState {
   text-align: center;
-  padding: 60px 20px;
-  color: #666;
-  font-size: 16px;
+  padding: 40px;
+  color: #888;
 }
 
 /* Responsive */

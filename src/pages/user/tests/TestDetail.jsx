@@ -9,6 +9,7 @@ import styles from './TestDetail.module.css';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../slices/exerciseSlice';
 import { fetchLessonById, studyLesson, clearCurrentLesson } from '../../../slices/lessonSlice';
 import QuestionCard from '../../../components/questionCard/QuestionCard';
+import CustomSpinner from '../../../components/spinner/Spinner';
 
 const { Title, Text } = Typography;
 const { confirm } = Modal;
@@ -17,14 +18,14 @@ const TestDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [timeLeft, setTimeLeft] = useState(null);
   const [isTestStarted, setIsTestStarted] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  const { exercises, loading, error } = useSelector((state) => state.exercises);
-  const { currentLesson } = useSelector((state) => state.lessons);
+  const { exercises, loading: exercisesLoading, error } = useSelector((state) => state.exercises);
+  const { currentLesson, loading: lessonLoading } = useSelector((state) => state.lessons);
 
   useEffect(() => {
     dispatch(fetchExercisesByLessonId(id));
@@ -38,7 +39,8 @@ const TestDetail = () => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
-          handleSubmitTest();
+          clearInterval(timer);
+          handleAutoSubmit(); 
           return 0;
         }
         return prev - 1;
@@ -51,7 +53,7 @@ const TestDetail = () => {
   const handleStartTest = async () => {
     try {
       const lesson_id = parseInt(id);
-      const status_id = 5; // Trạng thái đang làm bài kiểm tra
+      const status_id = 3; // Trạng thái đang làm bài kiểm tra
 
       await dispatch(studyLesson({ lesson_id, status_id, user_id: user.id })).unwrap();
       const exerciseData = await dispatch(fetchExercisesByLessonId(id)).unwrap();
@@ -68,9 +70,8 @@ const TestDetail = () => {
       })).unwrap();
 
       setIsTestStarted(true);
-      // Set timer nếu có duration
       if (currentLesson?.duration) {
-        setTimeLeft(currentLesson.duration * 60); // Convert to seconds
+        setTimeLeft(currentLesson.duration * 60);
       }
       message.success('Bắt đầu bài kiểm tra!');
     } catch (error) {
@@ -86,47 +87,45 @@ const TestDetail = () => {
     }));
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < exercises.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+  const performSubmit = async (isAutoSubmit = false) => {
+    try {
+      const results = exercises.map((q) => ({
+        exercise_id: q.id,
+        user_answer: userAnswers[q.id] || '',
+        status_id: 5 // Hoàn thành
+      }));
+
+      dispatch(submitExerciseResults({
+        results,
+        userId: user.id
+      })).unwrap();
+
+      setShowResults(true);
+      setIsTestStarted(false);
+      setTimeLeft(null);
+      if (isAutoSubmit) {
+        message.success('Hết giờ! Bài kiểm tra đã được nộp tự động.');
+      } else {
+        message.success('Nộp bài thành công!');
+      }
+    } catch (error) {
+      message.error('Có lỗi xảy ra khi nộp bài');
+      console.error('Error submitting test:', error);
     }
   };
 
-  const handlePrevQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const handleSubmitTest = async () => {
+  const handleManualSubmit = () => {
     confirm({
       title: 'Xác nhận nộp bài',
-      content: 'Bạn có chắc chắn muốn nộp bài kiểm tra? Không thể thay đổi sau khi nộp.',
+      content: 'Bạn có chắc chắn muốn nộp bài kiểm tra? Bạn sẽ không thể thay đổi câu trả lời sau khi nộp.',
       okText: 'Nộp bài',
-      cancelText: 'Tiếp tục làm',
-      onOk: async () => {
-        try {
-          const results = exercises.map((q) => ({
-            exercise_id: q.id,
-            user_answer: userAnswers[q.id] || '',
-            status_id: 4 // Hoàn thành
-          }));
-
-          await dispatch(submitExerciseResults({
-            results,
-            userId: user.id
-          })).unwrap();
-
-          setShowResults(true);
-          setIsTestStarted(false);
-          setTimeLeft(null);
-          message.success('Nộp bài thành công!');
-        } catch (error) {
-          message.error('Có lỗi xảy ra khi nộp bài');
-          console.error('Error submitting test:', error);
-        }
-      }
+      cancelText: 'Hủy',
+      onOk: () => performSubmit(false)
     });
+  };
+  
+  const handleAutoSubmit = () => {
+    performSubmit(true);
   };
 
   const calculateScore = () => {
@@ -155,10 +154,12 @@ const TestDetail = () => {
     { title: currentLesson?.title || 'Chi tiết', path: `/user/tests/${id}` }
   ];
 
-  if (loading) {
+  if (exercisesLoading || lessonLoading) {
     return (
       <Layout role="user">
-        <div className={styles.loading}>Đang tải...</div>
+        <div className={styles.spinnerContainer}>
+          <CustomSpinner spinning={true} />
+        </div>
       </Layout>
     );
   }
@@ -198,181 +199,184 @@ const TestDetail = () => {
           title={`Kết quả: ${currentLesson.title}`}
           breadcrumb={getBreadcrumbItems()}
         />
-        <div className={styles.container}>
-          <Card className={styles.resultCard}>
-            <div className={styles.resultHeader}>
-              <Title level={2}>Kết quả bài kiểm tra</Title>
-              <div className={styles.scoreDisplay}>
-                <div className={styles.scoreCircle}>
-                  <span className={styles.scoreNumber}>{score}%</span>
-                </div>
-                <div className={styles.scoreDetails}>
-                  <p>Đúng: {correctAnswers}/{exercises.length} câu</p>
-                  <p>Sai: {exercises.length - correctAnswers} câu</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className={styles.resultActions}>
-              <Button 
-                type="primary" 
-                onClick={() => navigate('/user/tests')}
-              >
-                Quay lại danh sách
-              </Button>
-              <Button 
-                onClick={() => {
-                  setShowResults(false);
-                  setCurrentQuestionIndex(0);
-                  setUserAnswers({});
-                }}
-              >
-                Xem lại bài làm
-              </Button>
-            </div>
-          </Card>
+        <div className={styles.resultsContainer}>
+          <Title level={2} className={styles.resultsTitle}>Kết quả bài kiểm tra</Title>
+          <div className={styles.score}>Điểm số: {score}%</div>
+
+          <div className={styles.actions}>
+            <Button
+              className={styles.actionButton}
+              onClick={() => navigate('/user/tests')}
+            >
+              Quay lại danh sách
+            </Button>
+            <Button
+              className={styles.actionButton}
+              onClick={() => setShowDetail((prev) => !prev)}
+            >
+              {showDetail ? 'Ẩn chi tiết' : 'Xem chi tiết'}
+            </Button>
+            <Button
+              className={styles.actionButton}
+              onClick={() => {
+                setShowResults(false);
+                setUserAnswers({});
+                setShowDetail(false);
+                if (currentLesson?.duration) {
+                  setTimeLeft(currentLesson.duration * 60);
+                }
+                setIsTestStarted(true);
+              }}
+            >
+              Làm lại
+            </Button>
+          </div>
+
+          {showDetail && (
+            <Card className={styles.detailCard}>
+              <Title level={4} className={styles.detailTitle}>Chi tiết kết quả</Title>
+              <ul>
+                {exercises.map((q, idx) => (
+                  <li key={q.id} className={styles.detailItem}>
+                    <div><b>Câu {idx + 1}:</b> {q.content}</div>
+                    {q.type === 'multiple_choice' && q.options && (
+                      <ul className={styles.detailOptions}>
+                        {q.options.map(opt => (
+                          <li
+                            key={opt.id}
+                            className={
+                              opt.id === q.correct_answer
+                                ? styles.correctAnswer
+                                : opt.id === userAnswers[q.id]
+                                ? styles.wrongAnswer
+                                : ''
+                            }
+                          >
+                            {opt.text}
+                            {opt.id === q.correct_answer && ' (Đáp án đúng)'}
+                            {opt.id === userAnswers[q.id] && opt.id !== q.correct_answer && ' (Bạn chọn)'}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {q.type === 'fill_in' && (
+                      <div className={styles.detailFillIn}>
+                        <div>
+                          Đáp án đúng: <b>{q.correct_answer}</b>
+                        </div>
+                        <div>
+                          Câu trả lời của bạn: <span className={
+                            userAnswers[q.id]?.toLowerCase() === q.correct_answer?.toLowerCase() 
+                            ? styles.correctAnswerText 
+                            : styles.wrongAnswerText
+                          }>
+                            {userAnswers[q.id] || <i>Chưa trả lời</i>}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
         </div>
       </Layout>
     );
   }
 
-  if (!isTestStarted) {
+  if (isTestStarted) {
     return (
       <Layout role="user">
-        <PageHeader 
-          title={currentLesson.title}
+        <PageHeader
+          title={`Làm bài kiểm tra: ${currentLesson.title}`}
           breadcrumb={getBreadcrumbItems()}
         />
         <div className={styles.container}>
-          <Card className={styles.startCard}>
-            <div className={styles.testInfo}>
-              <Title level={2}>{currentLesson.title}</Title>
-              <p className={styles.description}>{currentLesson.description}</p>
-              
-              <div className={styles.testDetails}>
-                <div className={styles.detailItem}>
-                  <Text strong>Số câu hỏi:</Text> {exercises.length}
-                </div>
-                {currentLesson.duration && (
-                  <div className={styles.detailItem}>
-                    <Text strong>Thời gian:</Text> {currentLesson.duration} phút
-                  </div>
-                )}
-                <div className={styles.detailItem}>
-                  <Text strong>Loại câu hỏi:</Text> Trắc nghiệm & Điền từ
-                </div>
+          <div className={styles.testHeader}>
+            <Progress
+              percent={((currentLesson.duration * 60 - timeLeft) / (currentLesson.duration * 60)) * 100}
+              showInfo={false}
+              strokeColor="#58cc02"
+            />
+            {timeLeft !== null && (
+              <div className={styles.timer}>
+                <ClockCircleOutlined /> {formatTime(timeLeft)}
               </div>
+            )}
+          </div>
 
-              <div className={styles.instructions}>
-                <Title level={4}>Hướng dẫn:</Title>
-                <ul>
-                  <li>Đọc kỹ câu hỏi trước khi trả lời</li>
-                  <li>Bạn có thể quay lại sửa câu trả lời trước khi nộp bài</li>
-                  <li>Nộp bài khi đã hoàn thành tất cả câu hỏi</li>
-                  {currentLesson.duration && (
-                    <li>Bài kiểm tra sẽ tự động nộp khi hết thời gian</li>
-                  )}
-                </ul>
-              </div>
-            </div>
+          <div className={styles.questionList}>
+            {exercises.map((question, index) => (
+              <Card key={question.id} className={styles.questionListItem}>
+                <Title level={5}>Câu {index + 1}</Title>
+                <QuestionCard
+                  question={question}
+                  userAnswer={userAnswers[question.id]}
+                  onSelect={handleAnswerChange}
+                  onInput={handleAnswerChange}
+                />
+              </Card>
+            ))}
+          </div>
 
-            <div className={styles.startActions}>
-              <Button 
-                type="primary" 
-                size="large"
-                onClick={handleStartTest}
-                disabled={exercises.length === 0}
-              >
-                Bắt đầu kiểm tra
-              </Button>
-              <Button 
-                size="large"
-                onClick={() => navigate('/user/tests')}
-              >
-                Quay lại
-              </Button>
-            </div>
-          </Card>
+          <div className={styles.navigation}>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleManualSubmit}
+            >
+              Nộp bài
+            </Button>
+          </div>
         </div>
       </Layout>
     );
   }
 
-  const currentQuestion = exercises[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / exercises.length) * 100;
-
+  // Giao diện bắt đầu bài kiểm tra
   return (
     <Layout role="user">
-      <PageHeader 
-        title={`Bài kiểm tra: ${currentLesson.title}`}
+      <PageHeader
+        title={currentLesson.title}
         breadcrumb={getBreadcrumbItems()}
       />
-      
       <div className={styles.container}>
-        {/* Header với timer và progress */}
-        <Card className={styles.testHeader}>
-          <div className={styles.headerContent}>
-            <div className={styles.progressSection}>
-              <Text strong>Câu hỏi {currentQuestionIndex + 1}/{exercises.length}</Text>
-              <Progress 
-                percent={progress} 
-                size="small" 
-                showInfo={false}
-                strokeColor="#58cc02"
-              />
-            </div>
+        <Card className={styles.startCard}>
+          <div className={styles.testInfo}>
+            <Title level={2}>{currentLesson.title}</Title>
+            <p className={styles.description}>{currentLesson.description}</p>
             
-            {timeLeft !== null && (
-              <div className={styles.timerSection}>
-                <ClockCircleOutlined className={styles.timerIcon} />
-                <Text strong className={styles.timerText}>
-                  {formatTime(timeLeft)}
-                </Text>
+            <div className={styles.testDetails}>
+              <div className={styles.detailItem}>
+                <Text strong>Số câu hỏi:</Text> {exercises.length}
               </div>
-            )}
-          </div>
-        </Card>
-
-        {/* Câu hỏi hiện tại */}
-        {currentQuestion && (
-          <Card className={styles.questionCard}>
-            <QuestionCard
-              question={currentQuestion}
-              questionIndex={currentQuestionIndex}
-              userAnswer={userAnswers[currentQuestion.id]}
-              onAnswerChange={(answer) => handleAnswerChange(currentQuestion.id, answer)}
-              isTestMode={true}
-            />
-          </Card>
-        )}
-
-        {/* Navigation buttons */}
-        <Card className={styles.navigationCard}>
-          <div className={styles.navigationButtons}>
-            <Space>
-              <Button 
-                onClick={handlePrevQuestion}
-                disabled={currentQuestionIndex === 0}
-              >
-                Câu trước
-              </Button>
-              
-              {currentQuestionIndex < exercises.length - 1 ? (
-                <Button 
-                  type="primary"
-                  onClick={handleNextQuestion}
-                >
-                  Câu tiếp
-                </Button>
-              ) : (
-                <Button 
-                  type="primary"
-                  onClick={handleSubmitTest}
-                >
-                  Nộp bài
-                </Button>
+              {currentLesson.duration && (
+                <div className={styles.detailItem}>
+                  <Text strong>Thời gian:</Text> {currentLesson.duration} phút
+                </div>
               )}
-            </Space>
+              <div className={styles.detailItem}>
+                <Text strong>Loại câu hỏi:</Text> Trắc nghiệm & Điền từ
+              </div>
+            </div>
+
+            <div className={styles.instructions}>
+              <Title level={4}>Hướng dẫn:</Title>
+              <ul>
+                <li>Đọc kỹ câu hỏi trước khi trả lời</li>
+                <li>Bạn có thể quay lại sửa câu trả lời trước khi nộp bài</li>
+                <li>Nộp bài khi đã hoàn thành tất cả câu hỏi</li>
+                {currentLesson.duration && (
+                  <li>Bài kiểm tra sẽ tự động nộp khi hết thời gian</li>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          <div className={styles.startActions}>
+            <Button type="primary" size="large" onClick={handleStartTest} className={styles.startTestButton}>Bắt đầu kiểm tra</Button>
+            <Button size="large" onClick={() => navigate('/user/tests')}>Quay lại</Button>
           </div>
         </Card>
       </div>

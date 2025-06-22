@@ -139,8 +139,6 @@ const TestQuestions = () => {
             ) : (
               <div className={styles.correctAnswer}>{selectedQuestion.correct_answer}</div>
             )}
-             <p><b>Giải thích:</b></p>
-             <p>{selectedQuestion.explanation || 'Chưa có giải thích.'}</p>
           </div>
         )}
       </Modal>

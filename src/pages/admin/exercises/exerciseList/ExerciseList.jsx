@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../../../../components/layout/Layout';
 import { fetchExercises } from '../../../../slices/exerciseSlice';
 import { fetchLessons } from '../../../../slices/lessonSlice';
-import { Button, Space, Input, Select, Collapse, Table, Typography, Modal, Tag } from 'antd';
+import { Button, Space, Input, Select, Collapse, Table, Typography, Modal, Tag, Spin } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styles from './ExerciseList.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -32,8 +32,8 @@ const ExerciseList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { lessonId } = useParams();
-  const { exercises, loading } = useSelector((state) => state.exercises);
-  const { lessons } = useSelector((state) => state.lessons);
+  const { exercises, loading: exercisesLoading } = useSelector((state) => state.exercises);
+  const { lessons, loading: lessonsLoading } = useSelector((state) => state.lessons);
   const [searchText, setSearchText] = useState('');
   const [typeFilter, setTypeFilter] = useState(undefined);
   const [levelFilter, setLevelFilter] = useState(null);
@@ -43,7 +43,7 @@ const ExerciseList = () => {
   const [activeKey, setActiveKey] = useState(undefined);
 
   useEffect(() => {
-    dispatch(fetchLessons({ page: 1, pageSize: 1000 }));
+    dispatch(fetchLessons({ page: 1, pageSize: 1000, type: 'grammar' }));
     dispatch(fetchExercises({
       page: 1,
       pageSize: 1000,
@@ -214,60 +214,62 @@ const ExerciseList = () => {
             </Space>
           </div>
 
-          <Collapse
-            accordion
-            activeKey={activeKey}
-            onChange={(key) => setActiveKey(key)}
-          >
-            {filteredLessons.map(lesson => {
-              return (
-                <Panel
-                  header={
-                    <div className={styles.panelHeader}>
-                      <div>
-                        <span className={styles.lessonTitle}>{lesson.title}</span>
-                        <span className={styles.lessonInfo}>{LEVEL_MAP[lesson.level] || 'Chưa phân loại'}</span>
-                        {lesson.category && <span className={styles.lessonInfo}>{lesson.category}</span>}
+          <Spin spinning={lessonsLoading || exercisesLoading}>
+            <Collapse
+              accordion
+              activeKey={activeKey}
+              onChange={(key) => setActiveKey(key)}
+            >
+              {filteredLessons.map(lesson => {
+                return (
+                  <Panel
+                    header={
+                      <div className={styles.panelHeader}>
+                        <div>
+                          <span className={styles.lessonTitle}>{lesson.title}</span>
+                          <span className={styles.lessonInfo}>{LEVEL_MAP[lesson.level] || 'Chưa phân loại'}</span>
+                          {lesson.category && <span className={styles.lessonInfo}>{lesson.category}</span>}
+                        </div>
+                        <div>
+                          <span className={styles.exerciseCount}>
+                            Trắc nghiệm: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'multiple_choice').length}
+                          </span>
+                          <span>
+                            Điền từ: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'fill_in').length}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className={styles.exerciseCount}>
-                          Trắc nghiệm: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'multiple_choice').length}
-                        </span>
-                        <span>
-                          Điền từ: {exercises.filter(ex => ex.lesson_id === lesson.id && ex.type === 'fill_in').length}
-                        </span>
-                      </div>
-                    </div>
-                  }
-                  key={lesson.id}
-                >
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    className={styles.addButton}
-                    onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
+                    }
+                    key={lesson.id}
                   >
-                    Thêm bài tập
-                  </Button>
-                  <Table
-                    columns={exerciseColumns}
-                    dataSource={filteredExercisesMap.get(lesson.id)}
-                    rowKey="id"
-                    pagination={false}
-                    size="small"
-                    locale={{ emptyText: 'Không có bài tập nào' }}
-                    onRow={(record) => ({
-                      onClick: () => {
-                        setSelectedExercise(record);
-                        setIsModalVisible(true);
-                      }
-                    })}
-                    scroll={{ x: 'max-content' }}
-                  />
-                </Panel>
-              );
-            })}
-          </Collapse>
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      className={styles.addButton}
+                      onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
+                    >
+                      Thêm bài tập
+                    </Button>
+                    <Table
+                      columns={exerciseColumns}
+                      dataSource={filteredExercisesMap.get(lesson.id)}
+                      rowKey="id"
+                      pagination={false}
+                      size="small"
+                      locale={{ emptyText: 'Không có bài tập nào' }}
+                      onRow={(record) => ({
+                        onClick: () => {
+                          setSelectedExercise(record);
+                          setIsModalVisible(true);
+                        }
+                      })}
+                      scroll={{ x: 'max-content' }}
+                    />
+                  </Panel>
+                );
+              })}
+            </Collapse>
+          </Spin>
           <Modal
             open={isModalVisible}
             title="Chi tiết bài tập"

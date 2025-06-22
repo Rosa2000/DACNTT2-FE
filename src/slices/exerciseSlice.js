@@ -45,7 +45,7 @@ export const fetchExercisesByLessonId = createAsyncThunk(
   'exercises/fetchByLessonId',
   async (lessonId, { rejectWithValue }) => {
     try {
-      const response = await getExercises({ lessonId: lessonId, pageSize: 1000 });
+      const response = await getExercises({ lesson_id: lessonId, pageSize: 1000 });
       return response.data?.data?.data || [];
     } catch (error) {
       return rejectWithValue(error.message);

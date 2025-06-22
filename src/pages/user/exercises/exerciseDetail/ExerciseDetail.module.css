@@ -284,3 +284,15 @@
   margin-bottom: 18px;
   color: #2196f3;
 }
+
+.selected {
+  border-color: #58cc02;
+  background-color: #f6ffed;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}

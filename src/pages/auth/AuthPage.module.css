@@ -143,6 +143,11 @@
     background-color: #16a34a;
   }
   
+  .submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
   .divider {
     display: flex;
     align-items: center;
@@ -187,4 +192,12 @@
     padding: 10px;
     margin-bottom: 16px;
     font-size: 14px;
+  }
+
+  .progressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
   }

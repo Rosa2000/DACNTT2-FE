@@ -8,6 +8,7 @@ import styles from './ExerciseDetail.module.css';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
 import { fetchLessonById , clearCurrentLesson } from '../../../../slices/lessonSlice';
 import QuestionCard from '../../../../components/questionCard/QuestionCard';
+import CustomSpinner from '../../../../components/spinner/Spinner';
 
 const ExerciseDetail = () => {
   const { lessonId } = useParams();
@@ -19,8 +20,8 @@ const ExerciseDetail = () => {
   const [showDetail, setShowDetail] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
-  const { exercises, loading, error } = useSelector((state) => state.exercises);
-  const { currentLesson } = useSelector((state) => state.lessons);
+  const { exercises, loading: exercisesLoading, error } = useSelector((state) => state.exercises);
+  const { currentLesson, loading: lessonLoading } = useSelector((state) => state.lessons);
 
   useEffect(() => {
     dispatch(fetchExercisesByLessonId(lessonId));
@@ -92,6 +93,16 @@ const ExerciseDetail = () => {
     return ((correct / exercises.length) * 100).toFixed(0);
   };
 
+  if (exercisesLoading || lessonLoading) {
+    return (
+      <Layout role="user">
+        <div className={styles.spinnerContainer}>
+          <CustomSpinner spinning={true} />
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout role="user">
       <PageHeader 
@@ -99,12 +110,11 @@ const ExerciseDetail = () => {
         breadcrumb={getBreadcrumbItems()}
       />
       <div className={styles.container}>
-        {loading && <div className={styles.loading}>Đang tải...</div>}
-        {!loading && error && <div className={styles.error}>{error}</div>}
-        {!loading && exercises.length === 0 && !error && (
+        {!error && exercises.length === 0 && (
           <div className={styles.error}>Không có dữ liệu bài tập cho bài học này.</div>
         )}
-        {!loading && exercises.length > 0 && !showResults && (
+        {error && <div className={styles.error}>{error}</div>}
+        {exercises.length > 0 && !showResults && (
           <div className={styles.questionContainer}>
             <div className={styles.progress}>
               Câu hỏi {currentQuestionIndex + 1}/{exercises.length}

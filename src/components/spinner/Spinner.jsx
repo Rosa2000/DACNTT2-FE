@@ -1,13 +1,16 @@
 import React from 'react';
-import { LiaSpinnerSolid } from "react-icons/lia";
-import styles from './Spinner.module.css'; // Let's create a css module for it
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import styles from './Spinner.module.css';
 
-const Spinner = () => {
+const CustomSpinner = ({ spinning = false, tip = '', children }) => {
+  const customIcon = <LoadingOutlined style={{ fontSize: 36, color: '#58cc02' }} spin />;
+
   return (
-    <div className={styles.spinnerContainer}>
-      <LiaSpinnerSolid className={styles.spinner} />
-    </div>
+    <Spin spinning={spinning} indicator={customIcon} tip={tip}>
+      {children}
+    </Spin>
   );
 };
 
-export default Spinner;
+export default CustomSpinner;
