@@ -242,17 +242,19 @@ const ExerciseList = () => {
                     }
                     key={lesson.id}
                   >
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      className={styles.addButton}
-                      onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
-                    >
-                      Thêm bài tập
-                    </Button>
+                    <div className={styles.panelActions}>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        style={{ backgroundColor: '#58cc02', borderColor: '#58cc02' }}
+                        onClick={() => navigate(`/admin/exercises/create/${lesson.id}`)}
+                      >
+                        Thêm bài tập
+                      </Button>
+                    </div>
                     <Table
                       columns={exerciseColumns}
-                      dataSource={filteredExercisesMap.get(lesson.id)}
+                      dataSource={filteredExercisesMap.get(lesson.id) || []}
                       rowKey="id"
                       pagination={false}
                       size="small"
