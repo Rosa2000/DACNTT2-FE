@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Row, Col } from 'antd';
 import Layout from '../../../../components/layout/Layout';
 import styles from './LessonCreate.module.css';
 import MarkdownEditor from '../../../../components/editor/MarkdownEditor';
 import MarkdownViewer from '../../../../components/markdownViewer/MarkdownViewer';
 import { createLesson } from '../../../../slices/lessonSlice';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 
@@ -67,80 +68,83 @@ const LessonCreate = () => {
   };
 
   return (
-    <Layout role="admin" pageHeaderTitle="Thêm bài học mới">
-      <div className={styles.container}>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          className={styles.form}
-        >
-          {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
-          <div className={styles.formFields}>
-            <Form.Item
-              name="title"
-              label="Tiêu đề bài học"
-              rules={[{ required: true, message: 'Vui lòng nhập tiêu đề bài học!' }]}
-            >
-              <Input placeholder="Nhập tiêu đề bài học" />
-            </Form.Item>
+    <>
+      <PageTitle title="Thêm bài học mới" />
+      <Layout role="admin" pageHeaderTitle="Thêm bài học mới">
+        <div className={styles.container}>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            className={styles.form}
+          >
+            {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
+            <div className={styles.formFields}>
+              <Form.Item
+                name="title"
+                label="Tiêu đề bài học"
+                rules={[{ required: true, message: 'Vui lòng nhập tiêu đề bài học!' }]}
+              >
+                <Input placeholder="Nhập tiêu đề bài học" />
+              </Form.Item>
 
-            <Form.Item
-              name="level"
-              label="Cấp độ"
-              rules={[{ required: true, message: 'Vui lòng chọn cấp độ!' }]}
-            >
-              <Select placeholder="Chọn cấp độ">
-                <Option value={1}>Cơ bản</Option>
-                <Option value={2}>Trung bình</Option>
-                <Option value={3}>Nâng cao</Option>
-              </Select>
-            </Form.Item>
+              <Form.Item
+                name="level"
+                label="Cấp độ"
+                rules={[{ required: true, message: 'Vui lòng chọn cấp độ!' }]}
+              >
+                <Select placeholder="Chọn cấp độ">
+                  <Option value={1}>Cơ bản</Option>
+                  <Option value={2}>Trung bình</Option>
+                  <Option value={3}>Nâng cao</Option>
+                </Select>
+              </Form.Item>
 
-            <Form.Item
-              name="category"
-              label="Danh mục"
-              rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
-            >
-              <Select placeholder="Chọn danh mục">
-                <Option value="Thì hiện tại">Thì hiện tại</Option>
-                <Option value="Thì quá khứ">Thì quá khứ</Option>
-                <Option value="Thì tương lai">Thì tương lai</Option>
-                <Option value="Cấu trúc câu">Cấu trúc câu</Option>
-                <Option value="Từ loại">Từ loại</Option>
-                <Option value="Khác">Khác</Option>
-              </Select>
-            </Form.Item>
+              <Form.Item
+                name="category"
+                label="Danh mục"
+                rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
+              >
+                <Select placeholder="Chọn danh mục">
+                  <Option value="Thì hiện tại">Thì hiện tại</Option>
+                  <Option value="Thì quá khứ">Thì quá khứ</Option>
+                  <Option value="Thì tương lai">Thì tương lai</Option>
+                  <Option value="Cấu trúc câu">Cấu trúc câu</Option>
+                  <Option value="Từ loại">Từ loại</Option>
+                  <Option value="Khác">Khác</Option>
+                </Select>
+              </Form.Item>
 
-            <div className={styles.editorContainer}>
-              <div className={styles.editor}>
-            <Form.Item
-              name="content"
-              label="Nội dung bài học"
-              initialValue={CONTENT_TEMPLATE}
-              rules={[{ required: true, message: 'Vui lòng nhập nội dung bài học!' }]}
-            >
-                  <MarkdownEditor onChange={handleContentChange} placeholder="Nhập nội dung bài học..." />
-            </Form.Item>
-              </div>
-              <div className={styles.preview}>
-                <h3>Xem trước</h3>
-                <div className={styles.previewContent}>
-                  <MarkdownViewer content={content} />
+              <div className={styles.editorContainer}>
+                <div className={styles.editor}>
+                  <Form.Item
+                    name="content"
+                    label="Nội dung bài học"
+                    initialValue={CONTENT_TEMPLATE}
+                    rules={[{ required: true, message: 'Vui lòng nhập nội dung bài học!' }]}
+                  >
+                    <MarkdownEditor onChange={handleContentChange} placeholder="Nhập nội dung bài học..." />
+                  </Form.Item>
+                </div>
+                <div className={styles.preview}>
+                  <h3>Xem trước</h3>
+                  <div className={styles.previewContent}>
+                    <MarkdownViewer content={content} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className={styles.formActions}>
-            <Button onClick={handleCancel}>Hủy</Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Thêm bài học
-            </Button>
-          </div>
-        </Form>
-      </div>
-    </Layout>
+            <div className={styles.formActions}>
+              <Button onClick={handleCancel}>Hủy</Button>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Thêm bài học
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Layout>
+    </>
   );
 };
 

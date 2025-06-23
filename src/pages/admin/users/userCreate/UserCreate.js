@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Select, Button, message, Space } from 'antd';
+import { Form, Input, Select, Button, message, Space, Row, Col } from 'antd';
 import { createUser } from '../../../../api/userApi';
 import Layout from '../../../../components/layout/Layout';
 import styles from './UserCreate.module.css';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 
@@ -37,111 +38,114 @@ const UserCreate = () => {
   ];
 
   return (
-    <Layout
-      pageHeaderTitle="Thêm mới người dùng"
-      pageHeaderSubtitle="Tạo tài khoản người dùng mới trong hệ thống"
-      pageHeaderBreadcrumb={breadcrumb}
-    >
-      <div className={styles.container}>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          className={styles.form}
-        >
-          <Form.Item
-            name="username"
-            label="Tên đăng nhập"
-            rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
+    <>
+      <PageTitle title="Thêm người dùng mới" />
+      <Layout
+        pageHeaderTitle="Thêm mới người dùng"
+        pageHeaderSubtitle="Tạo tài khoản người dùng mới trong hệ thống"
+        pageHeaderBreadcrumb={breadcrumb}
+      >
+        <div className={styles.container}>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            className={styles.form}
           >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              name="username"
+              label="Tên đăng nhập"
+              rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            name="password"
-            label="Mật khẩu"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
-          >
-            <Input.Password />
-          </Form.Item>
+            <Form.Item
+              name="password"
+              label="Mật khẩu"
+              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+            >
+              <Input.Password />
+            </Form.Item>
 
-          <Form.Item
-            name="fullname"
-            label="Họ và tên"
-            rules={[{ required: true, message: 'Vui lòng nhập họ và tên' }]}
-          >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              name="fullname"
+              label="Họ và tên"
+              rules={[{ required: true, message: 'Vui lòng nhập họ và tên' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: 'Vui lòng nhập email' },
-              { type: 'email', message: 'Email không hợp lệ' }
-            ]}
-          >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: 'Vui lòng nhập email' },
+                { type: 'email', message: 'Email không hợp lệ' }
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            name="phoneNumber"
-            label="Số điện thoại"
-            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại' }]}
-          >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              name="phoneNumber"
+              label="Số điện thoại"
+              rules={[{ required: true, message: 'Vui lòng nhập số điện thoại' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item name="gender" label="Giới tính">
-            <Select>
-              <Option value="male">Nam</Option>
-              <Option value="female">Nữ</Option>
-              <Option value="other">Khác</Option>
-            </Select>
-          </Form.Item>
+            <Form.Item name="gender" label="Giới tính">
+              <Select>
+                <Option value="male">Nam</Option>
+                <Option value="female">Nữ</Option>
+                <Option value="other">Khác</Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item name="address" label="Địa chỉ">
-            <Input />
-          </Form.Item>
+            <Form.Item name="address" label="Địa chỉ">
+              <Input />
+            </Form.Item>
 
-          <Form.Item name="ward" label="Phường/Xã">
-            <Input />
-          </Form.Item>
+            <Form.Item name="ward" label="Phường/Xã">
+              <Input />
+            </Form.Item>
 
-          <Form.Item name="district" label="Quận/Huyện">
-            <Input />
-          </Form.Item>
+            <Form.Item name="district" label="Quận/Huyện">
+              <Input />
+            </Form.Item>
 
-          <Form.Item name="province" label="Tỉnh/Thành phố">
-            <Input />
-          </Form.Item>
+            <Form.Item name="province" label="Tỉnh/Thành phố">
+              <Input />
+            </Form.Item>
 
-          <Form.Item name="country" label="Quốc gia">
-            <Input />
-          </Form.Item>
+            <Form.Item name="country" label="Quốc gia">
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            name="userGroupId"
-            label="Nhóm người dùng"
-            rules={[{ required: true, message: 'Vui lòng chọn nhóm người dùng' }]}
-          >
-            <Select mode="multiple">
-              <Option value={1}>Admin</Option>
-              <Option value={2}>Học viên</Option>
-            </Select>
-          </Form.Item>
+            <Form.Item
+              name="userGroupId"
+              label="Nhóm người dùng"
+              rules={[{ required: true, message: 'Vui lòng chọn nhóm người dùng' }]}
+            >
+              <Select mode="multiple">
+                <Option value={1}>Admin</Option>
+                <Option value={2}>Học viên</Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Thêm mới
-              </Button>
-              <Button onClick={() => navigate('/admin/users')}>Hủy</Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </div>
-    </Layout>
+            <Form.Item>
+              <Space>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  Thêm mới
+                </Button>
+                <Button onClick={() => navigate('/admin/users')}>Hủy</Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </div>
+      </Layout>
+    </>
   );
 };
 

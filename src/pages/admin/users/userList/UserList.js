@@ -5,9 +5,10 @@ import Layout from '../../../../components/layout/Layout';
 import CommonTable from '../../../../components/commonTable/CommonTable';
 import { fetchUsers, deleteUserAction, restoreUserAction } from '../../../../slices/userSlice';
 import { getUserById } from '../../../../api/userApi';
-import { Button, Space, Modal, message, Input, Select, Typography, Tag } from 'antd';
+import { Button, Space, Modal, message, Input, Select, Typography, Tag, Row, Col } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styles from './UserList.module.css';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -174,107 +175,112 @@ const UserList = () => {
   ];
 
   return (
-    <Layout role="admin" pageHeaderTitle="Quản lý người dùng">
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.filters}>
-            <Input
-              placeholder="Tìm kiếm người dùng..."
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              allowClear
-              className={styles.filterInput}
+    <>
+      <PageTitle title="Quản lý người dùng" />
+      <Layout role="admin" pageHeaderTitle="Quản lý người dùng">
+        <div className={styles.container}>
+          <Row gutter={[16, 16]} align="middle" className={styles.header}>
+            <Col xs={24} lg={18}>
+              <div className={styles.filters}>
+                <Input
+                  placeholder="Tìm kiếm người dùng..."
+                  prefix={<SearchOutlined />}
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                  allowClear
+                  className={styles.filterInput}
+                />
+                <Select
+                  placeholder="Vai trò"
+                  allowClear
+                  value={groupIdFilter}
+                  onChange={setGroupIdFilter}
+                  className={styles.filterSelect}
+                >
+                  <Option value={1}>Quản trị viên</Option>
+                  <Option value={2}>Học viên</Option>
+                </Select>
+                <Select
+                  placeholder="Trạng thái"
+                  allowClear
+                  value={statusIdFilter}
+                  onChange={setStatusIdFilter}
+                  className={styles.filterSelect}
+                >
+                  <Option value={1}>Hoạt động</Option>
+                  <Option value={2}>Đã ẩn</Option>
+                </Select>
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />} 
+                  onClick={() => navigate('/admin/users/create')}
+                  className={styles.filterButton}
+                >
+                  Thêm người dùng
+                </Button>
+              </div>
+            </Col>
+          </Row>
+
+          <div className={styles.tableContainer}>
+            <CommonTable
+              columns={columns}
+              dataSource={users}
+              loading={loading}
+              total={total}
+              pagination={{
+                current: pagination.current,
+                pageSize: pagination.pageSize,
+                total: total,
+                showSizeChanger: true,
+                showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} người dùng`,
+              }}
+              onChange={(pagination) => setPagination({
+                current: pagination.current,
+                pageSize: pagination.pageSize
+              })}
+              scroll={{ x: 900 }}
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+                style: { cursor: 'pointer' }
+              })}
             />
-            <Select
-              placeholder="Vai trò"
-              allowClear
-              value={groupIdFilter}
-              onChange={setGroupIdFilter}
-              className={styles.filterSelect}
-            >
-              <Option value={1}>Quản trị viên</Option>
-              <Option value={2}>Học viên</Option>
-            </Select>
-            <Select
-              placeholder="Trạng thái"
-              allowClear
-              value={statusIdFilter}
-              onChange={setStatusIdFilter}
-              className={styles.filterSelect}
-            >
-              <Option value={1}>Hoạt động</Option>
-              <Option value={2}>Đã ẩn</Option>
-            </Select>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />} 
-              onClick={() => navigate('/admin/users/create')}
-              className={styles.filterButton}
-            >
-              Thêm người dùng
-            </Button>
           </div>
-        </div>
 
-        <div className={styles.tableContainer}>
-          <CommonTable
-            columns={columns}
-            dataSource={users}
-            loading={loading}
-            total={total}
-            pagination={{
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: total,
-              showSizeChanger: true,
-              showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} người dùng`,
+          <Modal
+            open={isModalVisible}
+            title="Chi tiết người dùng"
+            footer={null}
+            onCancel={() => {
+              setIsModalVisible(false);
+              setSelectedUser(null);
             }}
-            onChange={(pagination) => setPagination({
-              current: pagination.current,
-              pageSize: pagination.pageSize
-            })}
-            scroll={{ x: 900 }}
-            onRow={(record) => ({
-              onClick: () => handleRowClick(record),
-              style: { cursor: 'pointer' }
-            })}
-          />
+          >
+            {userDetailLoading ? (
+              <div>Đang tải...</div>
+            ) : selectedUser ? (
+              <div>
+                <p><b>Tên đăng nhập:</b> {selectedUser.username}</p>
+                <p><b>Họ tên:</b> {selectedUser.fullname}</p>
+                <p><b>Email:</b> {selectedUser.email}</p>
+                <p><b>Số điện thoại:</b> {selectedUser.phone_number}</p>
+                <p><b>Giới tính:</b> {selectedUser.gender}</p>
+                <p><b>Địa chỉ:</b> {selectedUser.address}</p>
+                <p><b>Phường/Xã:</b> {selectedUser.ward}</p>
+                <p><b>Quận/Huyện:</b> {selectedUser.district}</p>
+                <p><b>Tỉnh/Thành phố:</b> {selectedUser.province}</p>
+                <p><b>Quốc gia:</b> {selectedUser.country}</p>
+                <p><b>Vai trò:</b> {ROLE_MAP[selectedUser.user_group?.[0]] || 'Không xác định'}</p>
+                <p><b>Trạng thái:</b> {STATUS_MAP[selectedUser.status_id]?.text || 'Không xác định'}</p>
+                <p><b>Ngày tạo:</b> {new Date(selectedUser.created_date).toLocaleDateString('vi-VN')}</p>
+              </div>
+            ) : (
+              <div>Không có dữ liệu</div>
+            )}
+          </Modal>
         </div>
-
-        <Modal
-          open={isModalVisible}
-          title="Chi tiết người dùng"
-          footer={null}
-          onCancel={() => {
-            setIsModalVisible(false);
-            setSelectedUser(null);
-          }}
-        >
-          {userDetailLoading ? (
-            <div>Đang tải...</div>
-          ) : selectedUser ? (
-            <div>
-              <p><b>Tên đăng nhập:</b> {selectedUser.username}</p>
-              <p><b>Họ tên:</b> {selectedUser.fullname}</p>
-              <p><b>Email:</b> {selectedUser.email}</p>
-              <p><b>Số điện thoại:</b> {selectedUser.phone_number}</p>
-              <p><b>Giới tính:</b> {selectedUser.gender}</p>
-              <p><b>Địa chỉ:</b> {selectedUser.address}</p>
-              <p><b>Phường/Xã:</b> {selectedUser.ward}</p>
-              <p><b>Quận/Huyện:</b> {selectedUser.district}</p>
-              <p><b>Tỉnh/Thành phố:</b> {selectedUser.province}</p>
-              <p><b>Quốc gia:</b> {selectedUser.country}</p>
-              <p><b>Vai trò:</b> {ROLE_MAP[selectedUser.user_group?.[0]] || 'Không xác định'}</p>
-              <p><b>Trạng thái:</b> {STATUS_MAP[selectedUser.status_id]?.text || 'Không xác định'}</p>
-              <p><b>Ngày tạo:</b> {new Date(selectedUser.created_date).toLocaleDateString('vi-VN')}</p>
-            </div>
-          ) : (
-            <div>Không có dữ liệu</div>
-          )}
-        </Modal>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 

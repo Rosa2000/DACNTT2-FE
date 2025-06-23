@@ -6,6 +6,7 @@ import CategoryCard from "../../../../components/categoryCard/CategoryCard";
 import styles from './Categories.module.css';
 import { fetchLessons } from '../../../../slices/lessonSlice';
 import { FaGraduationCap, FaClock, FaBook, FaLanguage, FaTags, FaEllipsisH } from 'react-icons/fa';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -111,66 +112,69 @@ const Categories = () => {
   };
 
   return (
-    <Layout pageHeaderTitle="Danh sách bài học" pageHeaderSubtitle="Hãy chọn một bài học để bắt đầu hành trình học tập của bạn.">
-      <div className={styles.container}>
-        <section className={styles.section}>
-          <h2>Học theo cấp độ</h2>
-          <div className={styles.cardGrid}>
-            {levelCategories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                subtitle={category.levelText}
-                title={category.title}
-                description={category.description}
-                buttonText="Xem bài học"
-                onClick={() => handleLevelClick(category.level)}
-                outlined={true}
-                icon={category.icon}
-                features={category.features}
-              />
-            ))}
-          </div>
-        </section>
+    <>
+      <PageTitle title="Danh mục bài học" />
+      <Layout pageHeaderTitle="Danh sách bài học" pageHeaderSubtitle="Hãy chọn một bài học để bắt đầu hành trình học tập của bạn.">
+        <div className={styles.container}>
+          <section className={styles.section}>
+            <h2>Học theo cấp độ</h2>
+            <div className={styles.cardGrid}>
+              {levelCategories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  subtitle={category.levelText}
+                  title={category.title}
+                  description={category.description}
+                  buttonText="Xem bài học"
+                  onClick={() => handleLevelClick(category.level)}
+                  outlined={true}
+                  icon={category.icon}
+                  features={category.features}
+                />
+              ))}
+            </div>
+          </section>
 
-        <section className={styles.section}>
-          <h2>Học theo thì</h2>
-          <div className={styles.cardGrid}>
-            {tenseCategories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                subtitle={category.category}
-                title={category.title}
-                description={category.description}
-                buttonText="Xem bài học"
-                onClick={() => handleCategoryClick(category.category)}
-                outlined={true}
-                icon={category.icon}
-                features={category.features}
-              />
-            ))}
-          </div>
-        </section>
+          <section className={styles.section}>
+            <h2>Học theo thì</h2>
+            <div className={styles.cardGrid}>
+              {tenseCategories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  subtitle={category.category}
+                  title={category.title}
+                  description={category.description}
+                  buttonText="Xem bài học"
+                  onClick={() => handleCategoryClick(category.category)}
+                  outlined={true}
+                  icon={category.icon}
+                  features={category.features}
+                />
+              ))}
+            </div>
+          </section>
 
-        <section className={styles.section}>
-          <h2>Chủ đề khác</h2>
-          <div className={styles.cardGrid}>
-            {otherCategories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                subtitle={category.category}
-                title={category.title}
-                description={category.description}
-                buttonText="Xem bài học"
-                onClick={() => handleOtherClick(category.category)}
-                outlined={true}
-                icon={category.icon}
-                features={category.features}
-              />
-            ))}
-          </div>
-        </section>
-      </div>
-    </Layout>
+          <section className={styles.section}>
+            <h2>Chủ đề khác</h2>
+            <div className={styles.cardGrid}>
+              {otherCategories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  subtitle={category.category}
+                  title={category.title}
+                  description={category.description}
+                  buttonText="Xem bài học"
+                  onClick={() => handleOtherClick(category.category)}
+                  outlined={true}
+                  icon={category.icon}
+                  features={category.features}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+      </Layout>
+    </>
   );
 };
 

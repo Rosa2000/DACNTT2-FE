@@ -6,6 +6,7 @@ import Layout from "../../../../components/layout/Layout";
 import LessonHorizontalCard from "../../../../components/lessonHorizontalCard/LessonHorizontalCard";
 import styles from './LessonList.module.css';
 import { fetchLessons, studyLesson } from '../../../../slices/lessonSlice';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const LessonList = () => {
   const { level, category } = useParams();
@@ -88,55 +89,58 @@ const LessonList = () => {
   const lessonList = lessons || [];
 
   return (
-    <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
-      <div className={styles.container}>
-        <button
-          className={styles.backButton}
-          onClick={() => navigate('/user/lessons')}
-          style={{ marginBottom: '16px', background: '#f3f4f6', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: 500, cursor: 'pointer', color: '#222' }}
-        >
-          ← Quay về danh mục
-        </button>
-        <div className={styles.card}>
-          {lessonList.length === 0 ? (
-            <p>Không có bài học nào</p>
-          ) : (
-            <div className={styles.cardGrid}>
-              {lessonList.map(lesson => (
-                <div className={styles.fullWidthCard} key={lesson.id}>
-                  <LessonHorizontalCard
-                    lesson={lesson}
-                    onStart={async () => {
-                      try {
-                        // Chỉ cập nhật status khi bài học chưa học (status 3)
-                        const newStatusId = lesson.study_status_id === 3 ? 4 : lesson.study_status_id;
-                        
-                        await dispatch(studyLesson({
-                          lesson_id: lesson.id,
-                          status_id: newStatusId ?? 3,
-                          user_id: user.id
-                        })).unwrap();
-                        
-                        // Navigate to lesson detail with state
-                        navigate(`/user/lessons/${lesson.id}`, {
-                          state: {
-                            from: level ? 'level' : category ? 'category' : 'all',
-                            level: level,
-                            category: category
-                          }
-                        });
-                      } catch (error) {
-                        message.error('Không thể bắt đầu bài học. Vui lòng thử lại!');
-                      }
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+    <>
+      <PageTitle title={getPageTitle()} />
+      <Layout role="user" pageHeaderTitle={getPageTitle()} pageHeaderBreadcrumb={getBreadcrumbItems()}>
+        <div className={styles.container}>
+          <button
+            className={styles.backButton}
+            onClick={() => navigate('/user/lessons')}
+            style={{ marginBottom: '16px', background: '#f3f4f6', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: 500, cursor: 'pointer', color: '#222' }}
+          >
+            ← Quay về danh mục
+          </button>
+          <div className={styles.card}>
+            {lessonList.length === 0 ? (
+              <p>Không có bài học nào</p>
+            ) : (
+              <div className={styles.cardGrid}>
+                {lessonList.map(lesson => (
+                  <div className={styles.fullWidthCard} key={lesson.id}>
+                    <LessonHorizontalCard
+                      lesson={lesson}
+                      onStart={async () => {
+                        try {
+                          // Chỉ cập nhật status khi bài học chưa học (status 3)
+                          const newStatusId = lesson.study_status_id === 3 ? 4 : lesson.study_status_id;
+                          
+                          await dispatch(studyLesson({
+                            lesson_id: lesson.id,
+                            status_id: newStatusId ?? 3,
+                            user_id: user.id
+                          })).unwrap();
+                          
+                          // Navigate to lesson detail with state
+                          navigate(`/user/lessons/${lesson.id}`, {
+                            state: {
+                              from: level ? 'level' : category ? 'category' : 'all',
+                              level: level,
+                              category: category
+                            }
+                          });
+                        } catch (error) {
+                          message.error('Không thể bắt đầu bài học. Vui lòng thử lại!');
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 

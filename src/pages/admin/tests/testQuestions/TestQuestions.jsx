@@ -100,7 +100,12 @@ const TestQuestions = () => {
             <Title level={3} style={{ flex: 1, textAlign: 'center', margin: 0 }}>
               {testLoading ? 'Đang tải...' : pageTitle}
             </Title>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate(`/admin/exercises/create/${testId}`)}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => navigate(`/admin/exercises/create/${testId}`)}
+              style={{ backgroundColor: '#58cc02', borderColor: '#58cc02' }}
+            >
               Thêm câu hỏi
             </Button>
           </div>

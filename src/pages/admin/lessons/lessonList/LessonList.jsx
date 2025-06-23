@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../../../../components/layout/Layout';
 import styles from './LessonList.module.css';
 import { fetchLessons } from '../../../../slices/lessonSlice';
-import { Button, Table, Input, Select, Space, Tag, Modal, message } from 'antd';
+import { Button, Table, Input, Select, Space, Tag, Modal, message, Row, Col } from 'antd';
 import { PlusOutlined, SearchOutlined, UndoOutlined } from '@ant-design/icons';
 import { deleteLesson, updateLesson, restoreLesson } from '../../../../api/lessonApi';
 import CommonTable from '../../../../components/commonTable/CommonTable';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -201,83 +202,90 @@ const LessonList = () => {
   ];
 
   return (
-    <Layout role="admin" pageHeaderTitle="Quản lý bài học">
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.filters}>
-            <Input
-              placeholder="Tìm kiếm bài học..."
-              prefix={<SearchOutlined />}
-              onChange={(e) => handleSearch(e.target.value)}
-              value={searchText}
-              style={{ width: 300 }}
-              allowClear
-              onClear={handleClearFilters}
-            />
-            <Select
-              placeholder="Cấp độ"
-              allowClear
-              style={{ width: 150 }}
-              onChange={handleLevelChange}
-              value={levelFilter}
-            >
-              <Option value={1}>Cơ bản</Option>
-              <Option value={2}>Trung bình</Option>
-              <Option value={3}>Nâng cao</Option>
-            </Select>
-            <Select
-              placeholder="Danh mục"
-              allowClear
-              style={{ width: 200 }}
-              onChange={handleCategoryChange}
-              value={categoryFilter}
-            >
-              <Option value="Thì hiện tại">Thì hiện tại</Option>
-              <Option value="Thì quá khứ">Thì quá khứ</Option>
-              <Option value="Thì tương lai">Thì tương lai</Option>
-            </Select>
-            <Select
-              placeholder="Trạng thái"
-              allowClear
-              style={{ width: 150 }}
-              onChange={handleStatusChange}
-              value={statusFilter}
-              onClear={handleClearFilters}
-            >
-              <Option value={1}>Hoạt động</Option>
-              <Option value={2}>Đã ẩn</Option>
-            </Select>
-          </div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleCreateLesson}
-          >
-            Thêm bài học
-          </Button>
-        </div>
+    <>
+      <PageTitle title="Quản lý bài học" />
+      <Layout role="admin" pageHeaderTitle="Quản lý bài học">
+        <div className={styles.container}>
+          <Row gutter={[16, 16]} className={styles.header}>
+            <Col xs={24} md={18}>
+              <div className={styles.filters}>
+                <Input
+                  placeholder="Tìm kiếm bài học..."
+                  prefix={<SearchOutlined />}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  value={searchText}
+                  style={{ width: 300 }}
+                  allowClear
+                  onClear={handleClearFilters}
+                />
+                <Select
+                  placeholder="Cấp độ"
+                  allowClear
+                  style={{ width: 150 }}
+                  onChange={handleLevelChange}
+                  value={levelFilter}
+                >
+                  <Option value={1}>Cơ bản</Option>
+                  <Option value={2}>Trung bình</Option>
+                  <Option value={3}>Nâng cao</Option>
+                </Select>
+                <Select
+                  placeholder="Danh mục"
+                  allowClear
+                  style={{ width: 200 }}
+                  onChange={handleCategoryChange}
+                  value={categoryFilter}
+                >
+                  <Option value="Thì hiện tại">Thì hiện tại</Option>
+                  <Option value="Thì quá khứ">Thì quá khứ</Option>
+                  <Option value="Thì tương lai">Thì tương lai</Option>
+                </Select>
+                <Select
+                  placeholder="Trạng thái"
+                  allowClear
+                  style={{ width: 150 }}
+                  onChange={handleStatusChange}
+                  value={statusFilter}
+                  onClear={handleClearFilters}
+                >
+                  <Option value={1}>Hoạt động</Option>
+                  <Option value={2}>Đã ẩn</Option>
+                </Select>
+              </div>
+            </Col>
+            <Col xs={24} md={6}>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleCreateLesson}
+              >
+                Thêm bài học
+              </Button>
+            </Col>
+          </Row>
 
-        <div className={styles.tableContainer}>
-          <CommonTable
-            columns={columns}
-            dataSource={lessons}
-            loading={loading}
-            pagination={{
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: total,
-              showSizeChanger: true,
-              showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} bài học`,
-            }}
-            onChange={(pagination) => setPagination({
-              current: pagination.current,
-              pageSize: pagination.pageSize
-            })}
-            scroll={{ x: 900 }}
-          />
+          <div className={styles.tableContainer}>
+            <CommonTable
+              columns={columns}
+              dataSource={lessons}
+              loading={loading}
+              pagination={{
+                current: pagination.current,
+                pageSize: pagination.pageSize,
+                total: total,
+                showSizeChanger: true,
+                showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total} bài học`,
+              }}
+              onChange={(pagination) => setPagination({
+                current: pagination.current,
+                pageSize: pagination.pageSize
+              })}
+              scroll={{ x: 900 }}
+            />
+          </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 

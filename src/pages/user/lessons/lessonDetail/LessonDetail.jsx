@@ -7,6 +7,7 @@ import MarkdownViewer from '../../../../components/markdownViewer/MarkdownViewer
 import styles from './LessonDetail.module.css';
 import { fetchLessonById, studyLesson, clearCurrentLesson } from '../../../../slices/lessonSlice';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const LessonDetail = () => {
   const { id } = useParams();
@@ -119,42 +120,45 @@ const LessonDetail = () => {
   }
 
   return (
-    <Layout 
-      role="user" 
-      pageHeaderTitle={lesson.title}
-      pageHeaderBreadcrumb={[
-        { title: 'Trang chủ', path: '/' },
-        { title: 'Học Ngữ Pháp', path: '/user/lessons' },
-        { title: levelName, path: `/user/lessons/level/${lesson.level}` },
-        { title: lesson.title }
-      ]}
-    >
-      <div className={styles.container}>
-        <div className={styles.content}>
-          <MarkdownViewer content={lesson.content} />
-        </div>
-        <div className={styles.actions}>
-          {lesson.status_id === 5 ? (
-            <button 
-              className={`${styles.button} ${styles.retry}`} 
-              onClick={() => handleStartExercise(true)}
-            >
-              Học lại
+    <>
+      <PageTitle title={lesson?.title || "Chi tiết bài học"} />
+      <Layout 
+        role="user" 
+        pageHeaderTitle={lesson.title}
+        pageHeaderBreadcrumb={[
+          { title: 'Trang chủ', path: '/' },
+          { title: 'Học Ngữ Pháp', path: '/user/lessons' },
+          { title: levelName, path: `/user/lessons/level/${lesson.level}` },
+          { title: lesson.title }
+        ]}
+      >
+        <div className={styles.container}>
+          <div className={styles.content}>
+            <MarkdownViewer content={lesson.content} />
+          </div>
+          <div className={styles.actions}>
+            {lesson.status_id === 5 ? (
+              <button 
+                className={`${styles.button} ${styles.retry}`} 
+                onClick={() => handleStartExercise(true)}
+              >
+                Học lại
+              </button>
+            ) : (
+              <button 
+                className={styles.button} 
+                onClick={() => handleStartExercise(false)}
+              >
+                {lesson.status_id === 3 ? 'Tiếp tục học' : 'Bắt đầu bài tập'}
+              </button>
+            )}
+            <button className={`${styles.button} ${styles.outlined}`} onClick={handleBack}>
+              Quay lại
             </button>
-          ) : (
-            <button 
-              className={styles.button} 
-              onClick={() => handleStartExercise(false)}
-            >
-              {lesson.status_id === 3 ? 'Tiếp tục học' : 'Bắt đầu bài tập'}
-            </button>
-          )}
-          <button className={`${styles.button} ${styles.outlined}`} onClick={handleBack}>
-            Quay lại
-          </button>
+          </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 

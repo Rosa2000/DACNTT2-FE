@@ -1,51 +1,37 @@
 import React from 'react';
-import SimpleMDE from 'react-simplemde-editor';
-import 'easymde/dist/easymde.min.css';
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 import styles from './MarkdownEditor.module.css';
 
-const MarkdownEditor = ({ 
-  value = "", 
-  onChange,
-  className,
-  placeholder
-}) => {
-  const options = {
-    spellChecker: false,
-    status: false,
-    toolbar: [
-      'bold',
-      'italic',
-      'heading',
-      '|',
-      'quote',
-      'unordered-list',
-      'ordered-list',
-      '|',
-      'link',
-      'image',
-      'code',
-      'table',
-      '|',
-      'preview',
-      'side-by-side',
-      'fullscreen',
-      '|',
-      'guide'
-    ],
-    placeholder: placeholder,
-    autofocus: true,
-    minHeight: '500px'
-  };
+const mdParser = new MarkdownIt();
 
+const MarkdownEditor = ({ value, onChange, placeholder, height = 500 }) => {
   return (
-    <div className={`${styles.editorWrapper} ${className || ''}`}>
-      <SimpleMDE
+    <div className={styles.editorWrapper}>
+      <MdEditor
         value={value}
-        onChange={onChange}
-        options={options}
+        style={{ height }}
+        renderHTML={(text) => mdParser.render(text)}
+        onChange={({ text }) => onChange(text)}
+        placeholder={placeholder}
+        config={{
+          view: {
+            menu: true,
+            md: true,
+            html: false, // Tắt chế độ xem trước bên trong editor
+          },
+          canView: {
+            menu: true,
+            md: true,
+            html: false,
+            fullScreen: true,
+            hideMenu: true,
+          }
+        }}
       />
     </div>
   );
 };
 
-export default MarkdownEditor; 
+export default React.memo(MarkdownEditor); 

@@ -9,6 +9,7 @@ import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../sli
 import { fetchLessonById , clearCurrentLesson } from '../../../../slices/lessonSlice';
 import QuestionCard from '../../../../components/questionCard/QuestionCard';
 import CustomSpinner from '../../../../components/spinner/Spinner';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const ExerciseDetail = () => {
   const { lessonId } = useParams();
@@ -104,129 +105,132 @@ const ExerciseDetail = () => {
   }
 
   return (
-    <Layout role="user">
-      <PageHeader 
-        title={currentLesson ? `Bài tập: ${currentLesson.title}` : 'Bài tập'}
-        breadcrumb={getBreadcrumbItems()}
-      />
-      <div className={styles.container}>
-        {!error && exercises.length === 0 && (
-          <div className={styles.error}>Không có dữ liệu bài tập cho bài học này.</div>
-        )}
-        {error && <div className={styles.error}>{error}</div>}
-        {exercises.length > 0 && !showResults && (
-          <div className={styles.questionContainer}>
-            <div className={styles.progress}>
-              Câu hỏi {currentQuestionIndex + 1}/{exercises.length}
-              <div className={styles.progressBar}>
-                <div
-                  className={styles.progressBarFill}
-                  style={{ width: `${((currentQuestionIndex + 1) / exercises.length) * 100}%` }}
-                />
+    <>
+      <PageTitle title={currentLesson ? `Bài tập: ${currentLesson.title}` : 'Đang tải...'} />
+      <Layout role="user">
+        <PageHeader 
+          title={currentLesson ? `Bài tập: ${currentLesson.title}` : 'Bài tập'}
+          breadcrumb={getBreadcrumbItems()}
+        />
+        <div className={styles.container}>
+          {!error && exercises.length === 0 && (
+            <div className={styles.error}>Không có dữ liệu bài tập cho bài học này.</div>
+          )}
+          {error && <div className={styles.error}>{error}</div>}
+          {exercises.length > 0 && !showResults && (
+            <div className={styles.questionContainer}>
+              <div className={styles.progress}>
+                Câu hỏi {currentQuestionIndex + 1}/{exercises.length}
+                <div className={styles.progressBar}>
+                  <div
+                    className={styles.progressBarFill}
+                    style={{ width: `${((currentQuestionIndex + 1) / exercises.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+              <QuestionCard
+                question={exercises[currentQuestionIndex]}
+                userAnswer={userAnswers[exercises[currentQuestionIndex].id]}
+                onSelect={handleAnswerSelect}
+                onInput={handleAnswerInput}
+              />
+              <div className={styles.navigation}>
+                {currentQuestionIndex === 0 ? (
+                  <button
+                    className={styles.secondaryButton}
+                    onClick={() => navigate(`/user/lessons/${lessonId}`)}
+                  >
+                    Quay lại bài học
+                  </button>
+                ) : (
+                  <button
+                    className={styles.secondaryButton}
+                    onClick={handlePreviousQuestion}
+                  >
+                    Câu trước
+                  </button>
+                )}
+                <button
+                  onClick={handleNextQuestion}
+                  disabled={
+                    userAnswers[exercises[currentQuestionIndex]?.id] === undefined ||
+                    userAnswers[exercises[currentQuestionIndex]?.id] === ''
+                  }
+                >
+                  {currentQuestionIndex === exercises.length - 1 ? 'Kết thúc' : 'Câu tiếp'}
+                </button>
               </div>
             </div>
-            <QuestionCard
-              question={exercises[currentQuestionIndex]}
-              userAnswer={userAnswers[exercises[currentQuestionIndex].id]}
-              onSelect={handleAnswerSelect}
-              onInput={handleAnswerInput}
-            />
-            <div className={styles.navigation}>
-              {currentQuestionIndex === 0 ? (
-                <button
-                  className={styles.secondaryButton}
-                  onClick={() => navigate(`/user/lessons/${lessonId}`)}
-                >
-                  Quay lại bài học
+          )}
+          {showResults && (
+            <div className={styles.results}>
+              <h2>Kết quả bài tập</h2>
+              <div className={styles.score}>Điểm số: {calculateScore()}%</div>
+              <div className={styles.actions}>
+                <button onClick={() => navigate(`/user/lessons/${lessonId}`)}>Quay lại bài học</button>
+                <button onClick={() => setShowDetail((prev) => !prev)}>
+                  {showDetail ? 'Ẩn chi tiết kết quả' : 'Xem chi tiết kết quả'}
                 </button>
-              ) : (
-                <button
-                  className={styles.secondaryButton}
-                  onClick={handlePreviousQuestion}
-                >
-                  Câu trước
-                </button>
+                <button onClick={() => {
+                  setShowResults(false);
+                  setCurrentQuestionIndex(0);
+                  setUserAnswers({});
+                  setShowDetail(false);
+                }}>Làm lại</button>
+              </div>
+              {showDetail && (
+                <div className={styles.detailResult}>
+                  <h3>Chi tiết kết quả</h3>
+                  <ul>
+                    {exercises.map((q, idx) => (
+                      <li key={q.id} style={{marginBottom: 16}}>
+                        <div><b>Câu {idx + 1}:</b> {q.content}</div>
+                        {q.type === 'multiple_choice' && q.options && (
+                          <ul style={{margin: '8px 0 8px 16px'}}>
+                            {q.options.map(opt => (
+                              <li
+                                key={opt.id}
+                                style={{
+                                  fontWeight: opt.id === q.correct_answer ? 'bold' : 'normal',
+                                  color:
+                                    opt.id === q.correct_answer
+                                      ? '#58cc02'
+                                      : opt.id === userAnswers[q.id]
+                                      ? '#f44336'
+                                      : 'inherit'
+                                }}
+                              >
+                                {opt.text}
+                                {opt.id === q.correct_answer && ' (Đáp án đúng)'}
+                                {opt.id === userAnswers[q.id] && opt.id !== q.correct_answer && ' (Bạn chọn)'}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {q.type !== 'multiple_choice' && (
+                          <>
+                            <div>
+                              Đáp án đúng: <b>{q.correct_answer}</b>
+                            </div>
+                            <div>
+                              Đáp án của bạn: <span style={{
+                                color: userAnswers[q.id]?.toLowerCase() === q.correct_answer?.toLowerCase() ? '#58cc02' : '#f44336'
+                              }}>
+                                {userAnswers[q.id] || <i>Chưa trả lời</i>}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
-              <button
-                onClick={handleNextQuestion}
-                disabled={
-                  userAnswers[exercises[currentQuestionIndex]?.id] === undefined ||
-                  userAnswers[exercises[currentQuestionIndex]?.id] === ''
-                }
-              >
-                {currentQuestionIndex === exercises.length - 1 ? 'Kết thúc' : 'Câu tiếp'}
-              </button>
             </div>
-          </div>
-        )}
-        {showResults && (
-          <div className={styles.results}>
-            <h2>Kết quả bài tập</h2>
-            <div className={styles.score}>Điểm số: {calculateScore()}%</div>
-            <div className={styles.actions}>
-              <button onClick={() => navigate(`/user/lessons/${lessonId}`)}>Quay lại bài học</button>
-              <button onClick={() => setShowDetail((prev) => !prev)}>
-                {showDetail ? 'Ẩn chi tiết kết quả' : 'Xem chi tiết kết quả'}
-              </button>
-              <button onClick={() => {
-                setShowResults(false);
-                setCurrentQuestionIndex(0);
-                setUserAnswers({});
-                setShowDetail(false);
-              }}>Làm lại</button>
-            </div>
-            {showDetail && (
-              <div className={styles.detailResult}>
-                <h3>Chi tiết kết quả</h3>
-                <ul>
-                  {exercises.map((q, idx) => (
-                    <li key={q.id} style={{marginBottom: 16}}>
-                      <div><b>Câu {idx + 1}:</b> {q.content}</div>
-                      {q.type === 'multiple_choice' && q.options && (
-                        <ul style={{margin: '8px 0 8px 16px'}}>
-                          {q.options.map(opt => (
-                            <li
-                              key={opt.id}
-                              style={{
-                                fontWeight: opt.id === q.correct_answer ? 'bold' : 'normal',
-                                color:
-                                  opt.id === q.correct_answer
-                                    ? '#58cc02'
-                                    : opt.id === userAnswers[q.id]
-                                    ? '#f44336'
-                                    : 'inherit'
-                              }}
-                            >
-                              {opt.text}
-                              {opt.id === q.correct_answer && ' (Đáp án đúng)'}
-                              {opt.id === userAnswers[q.id] && opt.id !== q.correct_answer && ' (Bạn chọn)'}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      {q.type !== 'multiple_choice' && (
-                        <>
-                          <div>
-                            Đáp án đúng: <b>{q.correct_answer}</b>
-                          </div>
-                          <div>
-                            Đáp án của bạn: <span style={{
-                              color: userAnswers[q.id]?.toLowerCase() === q.correct_answer?.toLowerCase() ? '#58cc02' : '#f44336'
-                            }}>
-                              {userAnswers[q.id] || <i>Chưa trả lời</i>}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </Layout>
+          )}
+        </div>
+      </Layout>
+    </>
   );
 };
 
