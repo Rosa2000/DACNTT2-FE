@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
-import { forgotPasswordAsync } from '../../slices/authSlice';
+import { forgotPasswordAsync, clearMessages } from '../../slices/authSlice';
 import styles from './AuthPage.module.css';
 
 const ForgotPassword = () => {
@@ -10,6 +10,11 @@ const ForgotPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error, successMessage } = useSelector((state) => state.auth);
+
+  // Clear messages khi component mount để tránh hiển thị thông báo cũ
+  useEffect(() => {
+    dispatch(clearMessages());
+  }, [dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,11 +24,15 @@ const ForgotPassword = () => {
   useEffect(() => {
     if (status === 'succeeded' && successMessage) {
       message.success(successMessage);
+      setTimeout(() => {
+        dispatch(clearMessages());
+        setEmail('');
+      }, 1000);
       navigate('/auth');
     } else if (status === 'failed' && error) {
       message.error(error);
     }
-  }, [status, error, successMessage, navigate]);
+  }, [status, error, successMessage, navigate, dispatch]);
 
   return (
     <div className={styles['form-content']}>
