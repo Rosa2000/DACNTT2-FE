@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { message, Progress, Button, Card, Space, Typography, Modal } from 'antd';
-import { ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import Layout from '../../../components/layout/Layout';
-import PageHeader from '../../../components/pageHeader/PageHeader';
+import { message, Progress, Button, Card, Typography, Modal } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
+import Layout from '../../../../components/layout/Layout';
+import PageHeader from '../../../../components/pageHeader/PageHeader';
 import styles from './TestDetail.module.css';
-import { fetchExercisesByLessonId, submitExerciseResults } from '../../../slices/exerciseSlice';
-import { fetchLessonById, studyLesson, clearCurrentLesson } from '../../../slices/lessonSlice';
-import QuestionCard from '../../../components/questionCard/QuestionCard';
-import CustomSpinner from '../../../components/spinner/Spinner';
-import PageTitle from '../../../components/pageTitle/PageTitle';
+import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
+import { fetchLessonById, studyLesson } from '../../../../slices/lessonSlice';
+import QuestionCard from '../../../../components/questionCard/QuestionCard';
+import CustomSpinner from '../../../../components/spinner/Spinner';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Title, Text } = Typography;
 const { confirm } = Modal;

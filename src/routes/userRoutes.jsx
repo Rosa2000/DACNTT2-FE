@@ -8,8 +8,8 @@ import LessonList from '../pages/user/lessons/lessonList/LessonList';
 import LessonDetail from '../pages/user/lessons/lessonDetail/LessonDetail';
 import ExerciseDetail from '../pages/user/exercises/exerciseDetail/ExerciseDetail';
 import Categories from '../pages/user/lessons/categories/Categories';
-import TestList from '../pages/user/tests/TestList';
-import TestDetail from '../pages/user/tests/TestDetail';
+import TestList from '../pages/user/tests/testList/TestList';
+import TestDetail from '../pages/user/tests/testDetail/TestDetail';
 
 const UserRoutes = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);

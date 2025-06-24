@@ -57,9 +57,11 @@ export const registerUserAsync = createAsyncThunk(
 
 export const forgotPasswordAsync = createAsyncThunk(
   'auth/forgotPassword',
-  async ({ email }, { rejectWithValue }) => {
+  async (email, { rejectWithValue }) => {
     try {
-      const response = await forgotPassword({ email });
+      const response = await forgotPassword(email);
+
+      console.log('Response:', email);
       // Backend trả về dữ liệu trực tiếp
       return response.data.message || 'Email khôi phục đã được gửi!';
     } catch (error) {

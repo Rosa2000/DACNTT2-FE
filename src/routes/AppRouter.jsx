@@ -11,7 +11,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import UserProfile from '../pages/profile/UserProfile';
 
 const AppRouter = () => {
-  const { isAuthenticated, status, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
     <Routes>

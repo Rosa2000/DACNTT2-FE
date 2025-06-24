@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Row, Col, Input, Select, Button, message, Tag } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import Layout from '../../../components/layout/Layout';
-import PageHeader from '../../../components/pageHeader/PageHeader';
-import { fetchLessons } from '../../../slices/lessonSlice';
-import { fetchExercises } from '../../../slices/exerciseSlice';
+import Layout from '../../../../components/layout/Layout';
+import PageHeader from '../../../../components/pageHeader/PageHeader';
+import { fetchLessons } from '../../../../slices/lessonSlice';
+import { fetchExercises } from '../../../../slices/exerciseSlice';
 import styles from './TestList.module.css';
-import CustomSpinner from '../../../components/spinner/Spinner';
-import PageTitle from '../../../components/pageTitle/PageTitle';
+import CustomSpinner from '../../../../components/spinner/Spinner';
+import PageTitle from '../../../../components/pageTitle/PageTitle';
 
 const { Option } = Select;
 
@@ -16,11 +16,6 @@ const LEVEL_MAP = {
   1: 'Cơ bản',
   2: 'Trung bình', 
   3: 'Nâng cao'
-};
-
-const STATUS_MAP = {
-  1: { text: 'Hoạt động', color: 'green' },
-  2: { text: 'Đã ẩn', color: 'red' }
 };
 
 const TestList = () => {

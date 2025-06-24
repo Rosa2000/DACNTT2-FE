@@ -13,7 +13,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(forgotPasswordAsync({ email }));
+    dispatch(forgotPasswordAsync(email));
   };
 
   useEffect(() => {

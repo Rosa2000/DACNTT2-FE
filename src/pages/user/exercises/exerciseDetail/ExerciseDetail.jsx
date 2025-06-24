@@ -6,7 +6,7 @@ import Layout from "../../../../components/layout/Layout";
 import PageHeader from "../../../../components/pageHeader/PageHeader";
 import styles from './ExerciseDetail.module.css';
 import { fetchExercisesByLessonId, submitExerciseResults } from '../../../../slices/exerciseSlice';
-import { fetchLessonById , clearCurrentLesson } from '../../../../slices/lessonSlice';
+import { fetchLessonById } from '../../../../slices/lessonSlice';
 import QuestionCard from '../../../../components/questionCard/QuestionCard';
 import CustomSpinner from '../../../../components/spinner/Spinner';
 import PageTitle from '../../../../components/pageTitle/PageTitle';
