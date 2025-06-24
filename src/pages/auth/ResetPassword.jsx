@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { message } from 'antd';
-import { resetPasswordAsync } from '../../slices/authSlice';
+import { resetPasswordAsync, clearMessages } from '../../slices/authSlice';
 import styles from './AuthPage.module.css';
 
 const ResetPassword = () => {
@@ -17,6 +17,11 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error, successMessage } = useSelector((state) => state.auth);
+
+  // Clear messages khi component mount để tránh hiển thị thông báo cũ
+  useEffect(() => {
+    dispatch(clearMessages());
+  }, [dispatch]);
 
   // Kiểm tra token khi component mount
   useEffect(() => {
