@@ -9,7 +9,6 @@ import DashboardRedirect from '../components/DashboardRedirect';
 import UserRoutes from './userRoutes';
 import ProtectedRoute from '../components/ProtectedRoute';
 import UserProfile from '../pages/profile/UserProfile';
-import ResetPassword from '../pages/auth/ResetPassword';
 
 const AppRouter = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -26,9 +25,6 @@ const AppRouter = () => {
 
       {/* Các route cho auth */}
       <Route path="/auth/*" element={<AuthPage />} />
-
-      {/* Reset password route - có thể truy cập trực tiếp từ email */}
-      <Route path="/auth/reset-password" element={<ResetPassword />} />
 
       {/* Profile route - shared between admin and user */}
       <Route 
